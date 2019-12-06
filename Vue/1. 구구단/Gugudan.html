@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>구구단</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+<body>
+  <div id="root">
+    <h2>{{numLeft}} 곱하기 {{numRight}}는?</h2>
+    <input type="number">
+    <button>제출</button>
+  </div>
+</body>
+<script>
+    const app = new Vue({
+      el: "#root",
+      data: {
+        numLeft: 0,
+        numRight: 0
+      },
+    })
+  </script>
+</html>
