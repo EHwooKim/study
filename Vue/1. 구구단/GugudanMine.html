@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>구구단</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+<body>
+  <div id="root">
+    <h2>{{numLeft}} 곱하기 {{numRight}}는?</h2>
+    <input id="answer" type="number">
+    <button @click="submitAnswer">입력</button>
+    <h2 v-show="answerSign"> 정답 </h2>
+  </div>
+</body>
+<script>
+    const app = new Vue({
+      el: "#root",
+      data: {
+        numLeft: 0,
+        numRight: 0,
+        answerSign: false
+      },
+      methods: {
+        getRandomInt(min, max) {
+          min = Math.ceil(min)
+          max = Math.floor(max)
+          return Math.floor(Math.random() * (max - min)) + min
+        },
+        submitAnswer(event) {
+          const answer = document.querySelector('#answer').value
+          if (Number(answer) === this.numLeft * this.numRight) {
+            this.answerSign = true
+          } else {
+            this.answerSign = false
+          }
+          this.numLeft = this.getRandomInt(1, 10)
+          this.numRight = this.getRandomInt(1, 10)      
+          answer = ''    
+        }
+      },
+      mounted: function() {
+        this.numLeft = this.getRandomInt(1, 10)
+        this.numRight = this.getRandomInt(1, 10)
+      }
+    })
+  </script>
+</html>
