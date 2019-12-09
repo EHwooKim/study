@@ -9,23 +9,40 @@
 </head>
 <body>
   <div id="root">
-    <div> 곱하기 는?</div>
-    <form action="">
-      <input type="number">
-      <button>입력</button>
+    <div> {{first}}곱하기 {{second}}는?</div>
+    <form v-on:submit="onSubmitForm">
+      <input type="number" ref="answer" v-model="value">
+      <button type="submit">입력</button>
     </form>
+    <div id="result">{{result}}</div>
   </div>
 <!-- 바뀌는 부분이 어디인지 확인하자. 그게 데이터이다. -->
   <script>
     const app = new Vue({
       el: '#root',
       data: {
-        first: Math.random,
-        second: '',
+        first: Math.ceil(Math.random() * 9),
+        second: Math.ceil(Math.random() * 9),
         value: '',
         result: '',
       },
-      methods: {},
+      methods: {
+        onSubmitForm(e) {
+          e.preventDefault()
+          console.log(this)
+          if (this.first * this.second === parseInt(this.value)) {
+            this.result = '정답'
+            this.first = Math.ceil(Math.random() * 9)
+            this.second = Math.ceil(Math.random() * 9)
+            this.value = ''
+            this.$refs.answer.focus()
+          } else {
+            this.result = '땡'
+            this.value = ''
+            this.$refs.answer.focus()
+          }
+        },
+      },
     })
   </script>
 </body>
