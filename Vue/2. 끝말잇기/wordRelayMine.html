@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>끝말잇기</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="root">
+    <h1>{{word}}</h1>
+    <form @submit="wordRelay">
+      <input type="text" v-model="answer">
+      <input type="submit">
+    </form>
+    <h2>{{result}}</h2>
+  </div>
+</body>
+<script>
+  const app = new Vue({
+    el: '#root',
+    data: {
+      word: '태우',
+      result: '',
+      answer: ''
+    },
+    methods: {
+      wordRelay(e) {
+        e.preventDefault()
+        if (this.answer.startsWith(this.word.slice(this.word.length-1))) {
+          this.result = '정답!'
+          this.word = this.answer
+          this.answer = ''
+        } else {
+          this.result = '땡!'
+        }
+      }
+    },
+  })
+</script>
+</html>
