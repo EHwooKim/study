@@ -262,3 +262,43 @@ output: {
 
 * `div`를 단순히 어떤 태그들을 감싸는 용도로만 사용한다면 `div`대신 `template`을 써보자.
 * 그렇게 하면 `div`로 감쌌을 때와는 다르게 `template`바깥의 태그들와 형제태그가 된다.
+
+### vue-devtools
+
+* 크롬 웹스토어 -> `vue.js devtools` 설치 //
+* **배포환경에서는 못 보게 해야 보안에 좋다!**  -> `Vue.config.devtools = false`
+
+### dist/app.js
+
+`webpack build`시 생겼던 dist/app.js가 `webpack dev server`를 사용하니 안생겼다.
+
+ 하지만 정상적으로 코드는 작동되는데 `webpack dev server`의 특징 때문이다.
+
+webpack의 `output`을 파일로 만들어서 저장하는 것이 아니라 **메모리에 저장**한다.
+
+## 05. 가위바위보
+
+> vue 의 life cycle에 대하여
+
+### v-bind
+
+`v-bind` 사용시 `class`와 `style`은 객체 형태로 사용이 가능해서 다음과 같은 작성해도 된다.
+
+```html
+<div id="computer" :class="{state:true, hello:false}" :style="{backgroundImage: '', fontSize: '14px'}"></div>
+```
+
+### life-cycle
+
+![lifeCycle](./img/lifeCycle.png)
+
+* `created`: 컴포넌트가 보여지게 될 때 (아직 화면에 나타나기 전)
+  * 컴포넌트가 만들어질 때 각 데이터들을 다 넣어진 상태. 아직 화면에는 보여지기 전
+* `mounted`: 컴포넌트가 화면에 나타난 후 (화면에 나타나고 접근이 가능하기에 화면과 관련된 내용은 mounted에서 처리한다.)
+  * 화면에 보여질 때. 
+  * 즉, js상에서만 보이는건 `created`, 화면에 보이면 `mounted`
+  * `mounted`에서 실행시키면 해당 컴포넌트가 사라져도 mounted는 계속 실행되고 있어서 메모리누수(memory leak)가 생기기 때문에 `beforeDestroy`에서 멈추게 해주면 된다. 
+* `updated`: 데이터가 바뀌면서 화면이 다시 그려질 때
+* `destroyed`: 컴포넌트가 화면에서 사라질 때
+* `before-`: 각각의 행동들이 취해지기 전에 실행
+  * 
