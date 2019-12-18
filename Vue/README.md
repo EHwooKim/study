@@ -301,4 +301,53 @@ webpack의 `output`을 파일로 만들어서 저장하는 것이 아니라 **�
 * `updated`: 데이터가 바뀌면서 화면이 다시 그려질 때
 * `destroyed`: 컴포넌트가 화면에서 사라질 때
 * `before-`: 각각의 행동들이 취해지기 전에 실행
-  * 
+
+## 06.로또추첨기
+
+### setTimeout, setInterval, cleartInterval
+
+* `setTimeout` : 일정시간 후 함수를 실행합니다.
+
+  * setTimeout(fn, delay)
+
+  ```javascript
+  setTimeout(function(){console.log('setTimeout')}, 1000)
+  // 1초 후 setTimeout 출력
+  ```
+
+* `setInterval` : 일정시간마다 함수를 실행합니다.
+
+  * setInterval(fn, delay)
+
+  ```javascript
+  setInterval(function(){console.log('setInterval')}, 1000)
+  // 1초마다 setInterval 출력
+  ```
+
+  * 다음과 같이 사용하면 반복없이 한번만 출력된다.
+
+  ```javascript
+  setInterval(console.log('setInterval'), 1000)
+  // setInterval 한번만 출력
+  ```
+
+* 위의 두가지를 사용할 때 메모리 누수를 방지를 위해 상황에 맞게 멈춰줘야 한다.
+
+  * `clearInterval` : setInterval로 반복하고 있는걸 멈추게 한다.
+  * `clearTimeout()`: setTimeout의 실행을 멈춘다
+  * 먼저 setInterval(), setTimeout()메소드를 변수에 메모리 하고 그것을 clear하는 방법으로 사용한다.
+
+  ```javascript
+  var count = 0
+  var repeat = setInterval(function() {
+      consoke.log('setInterval')
+      count++
+      if (count == 5) {
+          cleartInterval(repeat)
+      }
+  }, 1000)
+  ```
+
+  
+
+  
