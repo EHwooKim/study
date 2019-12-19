@@ -395,10 +395,88 @@ result; // 6
   }
 ```
 
+## 07.틱택토
 
+* `<table>` 생성시 `<tr>`, `<td> ` 를 쓰지 않고 `tr-component`, `td-component`를 따로 만드는 이유
+  * table 컴포넌트 하나로 테이블을 만들 경우 한 칸을 클릭했을 때 테이블 전체가 다시 계산되기 때문에 데이터가 많아지면 성능에 문제가 생긴다.
 
+### props, $root, $parent
 
+* 부모컴포넌트의 데이터를 props를 통해 자식컴포넌트에게 넘겨줄 수 있다.
+* td컴포넌트에서 `turn` 데이터를 사용하려면 4번에 걸쳐 props로 넘겨주는 방법도 있겠지만
+* `this.$root.$data` 로 한번에 root데이터에 접근이 가능하다.
+* `this.$parent.$data` 로 한번에 부모 데이터에 접근이 가능하다.
 
+> 위의 개념을 적용하여 
+>
+> td 클릭시 마다 해당 칸에 turn이 표시되도록 다음과 같은 코드를 작성하였으나
+>
+> 데이터는 바뀌지만 화면에 표시는 안되었다.
 
+```javascript
+this.$root.$data.tableData[this.rowIndex][this.cellIndex] = this.$root.$data.turn
+```
 
+#### :lipstick: 중요! 계속 실수하게 되는 내용
 
+* `Vue`에서 `배열`이 있고 배열 내부의 값을 `인덱스`를 통해 접근하여 바꾸면 화면에 반영이 되지 않는다! 
+  * `push`와 같이 배열의 `메소드`를 사용하여 값을 바꿀 때는 화면에 반영이 된다.
+  * 이것을 해결하기 위한 아래의 두가지 방법!
+
+### :lipstick: Vue.set / this.$set
+
+```html
+<script>
+  import Vue from 'vue'
+  methods: {
+    onChangeData() {
+      //this.tableData[1][0] = 'x' : 작동하지 않음.
+      Vue.set(this.tableData[1], 0, 'X')  // 이 방법은 작동. => (1, 0)에 X를 넣는다.
+    }
+  },    
+```
+
+*  `this.$set`을 사용하면  Vue를 불러오지 않고도 가능하다.
+
+```html
+<script>
+  methods: {
+    onChangeData() {
+      //this.tableData[1][0] = 'x' : 작동하지 않음.
+      this.$set(this.tableData[1], 0, 'X')  // 윗줄 대신 이렇게 써야한다.
+    }
+  },   
+```
+
+### VueX의 필요성
+
+* 위에서 배운 `this.$root`, `this.$parent` 로 root와 parent 데이터에 접근이 가능함을 배웠다.
+* 그런데 중간 단계에 있는 데이터에 접근하려 하면?
+  * `this.$parent.$parent.$parent` 와 같은 코드가 나올 것이고
+  * 컴포넌트의 개수가 많이 질수록 이 코드를 보고 어떤 컴포넌트를 가르키는지 알기 어려워진다.
+* 그래서! 모든 데이터를 중앙통제실에서 한번에 관리할 수 있는게 바로!  `VueX`
+
+## 07.틱택토EventBus
+
+> 데이터를 중앙에서 통제하는 VueX와는 다르게
+>
+> Event를 중앙에서 통제하는 EventBus
+
+* td에서 table data에 접근할 때 this.$root.$data로 해야했지만
+
+* tisTacToe에서 직접 eventbus를 통해 메소드를 사용하기 때문에 this.tableData로 접근이 가능하다
+
+  ```html
+  <-- ticTacToe.vue ->>
+  methods: {
+    onClickTd() {
+  	...
+    }
+  }
+  ...
+  created() {
+  	eventBus.$on('clickTd', this.onClickTd)
+  }
+  ```
+
+  
