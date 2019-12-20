@@ -16,7 +16,7 @@
         console.log(this.$parent.$data) // 부모 컴포넌트의 데이터에 접근
 
         if (this.cellData) return // 이미 누른칸을 또 눌렀을 때는 코드 중단 
-        // this.$root.$data.tableData[this.rowIndex][this.cellIndex] = this.$root.$data.turn 이건 작동안한다
+        // this.$root.$data.tableData[this.rowIndex][this.cellIndex] = this.$root.$data.turn //이건 작동안한다
         const rootData = this.$root.$data
         this.$set(rootData.tableData[this.rowIndex], this.cellIndex, rootData.turn)
         // this.$set(바꾸고싶은 배열의 인덱스들, 키-마지막 인덱스, 바꾸고 싶은 값.)
