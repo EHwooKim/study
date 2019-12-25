@@ -27,15 +27,15 @@
       }
     },
     methods: {
-      onCLickTd() {
-        this.$set(this.tableData[this.rowIndex], this.cellIndex, this.turn)
+      onClickTd(rowIndex, cellIndex) {
+        this.$set(this.tableData[rowIndex], cellIndex, this.turn)
         // this.$set(바꾸고싶은 배열의 인덱스들, 키-마지막 인덱스, 바꾸고 싶은 값.)
 
         let win = false
-        if (this.tableData[this.rowIndex][0] === this.turn && this.tableData[this.rowIndex][1] === this.turn && this.tableData[2]) {
+        if (this.tableData[rowIndex][0] === this.turn && this.tableData[rowIndex][1] === this.turn && this.tableData[2]) {
           win = true
         }
-        if (this.tableData[0][this.cellIndex] === this.turn && this.tableData[1][this.cellIndex] === this.turn && this.tableData[2][this.cellIndex] === this.turn) {
+        if (this.tableData[0][cellIndex] === this.turn && this.tableData[1][cellIndex] === this.turn && this.tableData[2][cellIndex] === this.turn) {
           win = true
         }
         if (this.tableData[0][0] === this.turn && this.tableData[1][1] === this.turn && this.tableData[2][2] === this.turn) {
@@ -69,7 +69,7 @@
       }
     },
     created() {
-      eventBus.$on('clicktd', this.onClickTd)  // 이벤트 등록
+      eventBus.$on('clickTd', this.onClickTd)  // 이벤트 등록
     }
   }
 </script>

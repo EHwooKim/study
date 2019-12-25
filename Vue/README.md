@@ -456,11 +456,25 @@ this.$root.$data.tableData[this.rowIndex][this.cellIndex] = this.$root.$data.tur
   * 컴포넌트의 개수가 많이 질수록 이 코드를 보고 어떤 컴포넌트를 가르키는지 알기 어려워진다.
 * 그래서! 모든 데이터를 중앙통제실에서 한번에 관리할 수 있는게 바로!  `VueX`
 
-## 07.틱택토EventBus
+## 08.틱택토EventBus
 
 > 데이터를 중앙에서 통제하는 VueX와는 다르게
 >
 > Event를 중앙에서 통제하는 EventBus
+
+### EventBus
+
+* eventBus.js 파일 생성
+
+  ```javascript
+  import Vue from 'vue'
+  export default new Vue()
+  ```
+
+  * 깡통(?) vue를 하나 만들어서 vue에서 기본으로 제공하는 메소드를 사용하는데 `event`만 쓸거라 eventBus
+
+
+### $root, $parent
 
 * td에서 table data에 접근할 때 this.$root.$data로 해야했지만
 
@@ -479,4 +493,207 @@ this.$root.$data.tableData[this.rowIndex][this.cellIndex] = this.$root.$data.tur
   }
   ```
 
+  ```html
+  <-- tdComponent.vue -->
+      method() {
+      	onclickTd() {
+      		...
+      		eventBus.$emit('clickTd', this.rowIndex, this.cellIndex)   
+      		// $emit 은 $on이랑 대응된다.
+      }
+      }
+  ```
   
+  * $emit과 $on은 대응되어있다.
+    * td에서 $emit('clickTd')가 호출되면 ticTacToe에서 $on에 대응되어 연결된 핸들러인 `this.onClickTd`) 가 실행된다. 
+  * 이런식으로 데이터 조작을 `RootComponent`에서 다 처리할 수 있고 흩어진 component에서는 $emit으로 실행만 시키면되니 작업이 편해지겠지! ( 물론 root component의 코드 길이가 길어지겠지)
+  
+
+### eventbus의 단점
+
+* `EventBus`는 중앙통제를 하기때문에 간단해지고 원하는 코드를 한 파일 내에서 찾을 수 있다는 장점이 있지만
+
+  **코드가 너무 길어진다**는 단점이 있다.
+
+
+
+## 09.틱택토 VueX
+```bash
+$ npm i vuex
+```
+
+### store
+
+* `store`를 하나만 만들어야하는 `Redux`와 다르게 `Vue`는 `store`를 여러개 만들어도 된다.
+
+  * `vue`가 `react`와 `angular`와 같은 것들의 단점들을 개선하며 만들었다보니 이런 장점들이 많다.
+  
+* vue가 더 쉽기도하고 뭔가 알아서 처리해주는게 많아서 좋긴 하지만 개발자가 지시하대로 딱 움직이게 하여 직관적인 코드를 짜고싶은 사람들은 react를 더 좋아하기도 한다.
+  
+  (하지만 이번에는 store 하나로 해결하는것만 다룬다.)
+
+
+* `store.js`
+
+  ```javascript
+  import Vuex from 'vuex'
+  
+  export default new Vuex.Store({
+    state: {
+  
+    },  // vue의 data 속성과 비슷
+    getters: {
+  
+    },  // vue의 computed와 비슷
+    mutations: {
+    
+    },  // state를 수정할 떄 사용, 동기적으로
+    actions: {
+  
+    },  // 비동기를 사용할 때, 또는 여러 mutations을 연달아 실핼할 때
+  })
+  ```
+
+  
+  * state - vue에서 data에 적었던 것들을 이곳에.
+  
+  * mutations 
+  
+  
+    * 대문자로 정의하는게 규칙
+      * state(data)를 수정할 때, state.tableData에 바로 대입하는 것이 아니라 mutation `함수`를 이용하여 값을 바꾼다. 
+      * 왜 바로 바꾸지 않고 mutation을 통해서 바꿀까?
+  
+          * vuex 를 사용하면 vue devtools에서 두번째 탭을 사용할 수 있는데 이곳에서 데이터를 어떻게 바꿨는지 **추적**이 가능하다
+  
+  * getters
+  
+  
+    * computed처럼 state(data)에 추가적인 작업을 할 수 있다
+  
+      ```javascript
+      getters: {
+        turnMessage(state) {
+          return state.turn + '님이 승리하셨습니다.'
+        }
+      ```
+  
+  
+      * `computed`와 마찬가지로 
+        1. 캐싱이 되고
+        2. state.turn이 바뀔 때만 값이 변경되기 때문에 유용하다
+  
+  
+    * 동적 속성
+  
+      ```javascript
+      mutations: {
+          SET_WINNER(state, winner) {
+            state.winner = winner
+          }    
+      }
+      ```
+  
+      위와 같이 쓰는 것을 `ES2015`문법으로 아래와 같이 변수로 뺴는 방법이 있는데 vuex에서는 보통 이렇게 쓴다.
+  
+      ```javascript
+      export const SET_WINNER = 'SET_WINNER'
+      
+      mutations: {
+          [SET_WINNER](state, winner) {
+            state.winner = winner
+          }    
+      }
+      ```
+  
+      그리고 `export`를 함께 써서 다른 파일에서도 쓸 수 있게 해주었다.
+  
+      **왜 이렇게 변수로 따로 뺴서 사용 할까?**
+  
+      * tdComponent에서 this.$store.commit('CLICK_CELL') 처럼 문자열 안에 mutation 을 넣어야 하는데 문자열같은 경우 오타내기가 쉬우며 오타나 났을 떄 찾기도 어렵다.
+  
+      * 하지만 export -> import { CLICK_CELL } from './store' 처럼 가져와 사용하여 
+  
+        this.$store.commit(CLICK_CELL)과같이 변수로 쓰면 오타도 줄어들고 오타가 나면 오류로 띄워주기에 디버깅이 쉽다. 
+  
+
+### mutation 사용하여 state(data) 변경
+
+
+* `store`에서 `state`와 `mutation`를 다 정의 했으면 하위컴포넌트에서 아래와 같이 쓸 수 있다
+
+  ```javascript
+  import { SET_WINNER } from './store'
+  ...
+  this.$store.commit(SET_WINNER, this.turn)
+  ```
+
+
+  * mutation에 접근할 떄는 `commit`으로
+  * 첫번쨰 인자는 mutation명, 두번쨰 인자는 데이터
+
+### vue와 vuex,  store와 최상위 컴포넌트  연결하기
+
+
+* vue와 vuex 연결 시키기
+
+
+  * 오류 -`[vuex] must call Vue.use(Vuex) before creating a store instance.`
+  * 오류내용 그대로 `store.js`에서 Store 선언 전에 `Vue.use(Vuex)` 를 적어주면 해결.
+
+* store와 최상위 컴포넌트 연결 시키기
+
+  ```javascript
+  //최상위 컴포넌트
+  
+  <script>
+      import store from './store'
+  ...
+  	export default {
+  		store,
+  		...
+  }
+  ```
+
+### state
+
+
+* `vuex`를 사용하게 되면서 이제 어떤 부모로부터 어떤 자식에게 어떤 데이터를 넘겨주고 올려주는지를 생각할 필요가 없어졌다!!!
+
+* 이제 필요한 컴포넌트별로 필요한 데이터가 있다면 computed에서 바로 끌어다 쓰면 된다.
+
+  ```javascript
+  computed: {
+      winner() {
+          return this.$store.state.winner
+      }
+  }
+  ```
+
+* 그런데!!! 이 끌어다 쓰는 과정도 만약 데이터가 100개가 필요하다면 100개를 가져와야하니 귀찮잖아? 그래서 이미 개발해놓은게 있지
+
+### mapState
+
+* `mapState`를 이용하면 한번에 store의 `state`를 연결할 수 있다.
+
+  ```javascript
+  <script>
+    import { mapState } from 'vuex'
+    ...
+    computed: {
+      ...mapState(['winner', 'turn'])
+    }
+  ```
+
+  * 위의 형태가 기본형태이고 추가적으로 변형도 가능하다 [공식문서](https://vuex.vuejs.org/kr/guide/state.html)
+
+* `mapState`뿐 아니라 `mapGetters`등 다른 것들도 존재한다.
+
+### Vue.use() 추가 내용
+
+vue에서 각종 플러그인, 라이브러리를 사용할 때 `Vue.use`를 해야한다.
+
+그런데 `main.js`가 아닌 `store.js`에서 하는 이유는 코드를 실행하면 위에서부터 차례대로 읽는데
+
+`main.js`에서 `Vue.use`를 해버리면 `store`를 가져오기 전에 사용하게 되다보니 오류가 생긴다.
+
