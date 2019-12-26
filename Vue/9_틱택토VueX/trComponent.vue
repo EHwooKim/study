@@ -18,7 +18,7 @@
     },
     computed: {
       rowData() {
-        return this.$store.state.tableData[ths.rowIndex]
+        return this.$store.state.tableData[this.rowIndex]
       }
     },
     props: {  
