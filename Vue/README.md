@@ -720,4 +720,17 @@ vue에서 각종 플러그인, 라이브러리를 사용할 때 `Vue.use`를 해
   * 하지만 배열의 중간값이 삭제된다면, 해당 값 이후의 원소들의 `index`가 변경되어 모두 다시 그린다.
 * 따라서 배열이 계속 커지거나, 중간 값이 `수정`되는 경우에는 `index`를 `key`값으로 써도 되지만
 * 중간에 값이 `삭제`되는 경우에는 불필요한 리랜더링이 되기 떄문에 `index`를 `key`로 안쓰는 것이 좋다
-* 
+
+
+
+## 10. 지뢰찾기
+
+* 변하는 부분이 데이터이다! -> 이제 데이터를 vue component에 쓰는게 아니라 `store.js`에 쓰는거지
+* 그렇다고 해서 모든 데이터를 `store.js`에 쓰는 것은 아니다!
+  * `vuex - state`에 데이터를 넣으면 그에 맞는 `mutation`도 만들어줘야 하다보니 코드가 길어진다.
+  * 중앙괸리가 필요없는, **해당 컴포넌트 안에서만** 쓰는 데이터는 일반적인 vuex 데이터처럼 관리하면 된다.
+    * 물론 그냥 하나로 관리해도 되지만 한번 해보면 vuex - state 만들어 주는게 생각보다 귀찮을 거야
+
+### 구조분해
+
+[JavaScript - 구조분해](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
