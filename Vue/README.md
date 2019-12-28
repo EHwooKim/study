@@ -734,3 +734,8 @@ vue에서 각종 플러그인, 라이브러리를 사용할 때 `Vue.use`를 해
 ### 구조분해
 
 [JavaScript - 구조분해](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+
+### 타이머
+
+* 자바스크립트에서 setInterval를 활용한 타이머는 정확하지 않을 수 있다..
+* 정확한 시간계산이 필요하다면 new Date를 활용해서 코드를 짜보도록 하자

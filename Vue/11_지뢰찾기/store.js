@@ -59,6 +59,7 @@ export default new Vuex.Store({
       mine: 0,
     }, // 관련 있는 데이터라 하나로 묶어줬다.
     timer: 0,
+    halted: true, // 게임이 정지된 상태 (false가 시작 상태)
     result: ''
   },
   getters: {
@@ -73,12 +74,16 @@ export default new Vuex.Store({
       }
       state.tableData = plantMine(row, cell, mine)
       state.timer = 0
+      state.halted = false  // 게임 실행
+      // 지금 여기에서 타이머를 실행시켜도 되지만 halted를 watch해도 되겠지 => mineSweeper
     },
     [OPEN_CELL](state) {},
     [CLICK_MINE](state) {},
     [FLAG_CELL](state) {},
     [QUESTION_CELL](state) {},
     [NORMALIZE_CELL](state) {},
-    [INCREMENT_TIMER](state) {},
+    [INCREMENT_TIMER](state) {
+      state.timer += 1
+    },
   },
 })
