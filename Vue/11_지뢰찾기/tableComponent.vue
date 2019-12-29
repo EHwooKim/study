@@ -66,7 +66,7 @@
             case CODE.CLICKED_MINE:
               return '펑'
             default:
-              return this.$store.tableData[row][cell] || '' // 주변 지뢰개수 혹은 빈칸
+              return this.$store.state.tableData[row][cell] || '' // 주변 지뢰개수 혹은 빈칸
           }
         }
       }
