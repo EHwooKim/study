@@ -60,7 +60,8 @@ export default new Vuex.Store({
     }, // 관련 있는 데이터라 하나로 묶어줬다.
     timer: 0,
     halted: true, // 게임이 정지된 상태 (false가 시작 상태)
-    result: ''
+    result: '',
+    openedCount : 0,
   },
   getters: {
 
@@ -75,9 +76,12 @@ export default new Vuex.Store({
       state.tableData = plantMine(row, cell, mine)
       state.timer = 0
       state.halted = false  // 게임 실행
+      state.openedCount = 0
+      state.result = ''
       // 지금 여기에서 타이머를 실행시켜도 되지만 halted를 watch해도 되겠지 => mineSweeper
     },
     [OPEN_CELL](state, { row, cell }) {
+      let openedCount = 0
       const checked = []
       function checkAround(row, cell) { // 주변 8칸 지뢰인지 검색
         const checkRowOrcellIsUndefined = row < 0 || row >= state.tableData.length || cell < 0 || cell >= state.tableData[0].length
@@ -129,9 +133,21 @@ export default new Vuex.Store({
             }
           })
         }
+        if (state.tableData[row][cell] === CODE.NORMAL) {
+          openedCount += 1
+        }
         Vue.set(state.tableData[row], cell, counted.length)
       }
       checkAround(row, cell)
+      let halted = false
+      let result = ''
+      if (state.data.row * state.data.cell - state.data.mine === state.openedCount + openedCount) {
+        halted = true
+        result = `${state.timer}초만에 승리하였습니다.`
+      }
+      state.openedCount += openedCount
+      state.halted = halted
+      state.result = result
     },
     [CLICK_MINE](state, { row, cell }) {
       state.halted = true

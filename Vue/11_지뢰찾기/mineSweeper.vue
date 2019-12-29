@@ -9,6 +9,7 @@
 
 <script>
   import {mapState} from 'vuex'
+  import {INCREMENT_TIMER} from './store'
   
   import store from './store'
   import tableComponent from './tableComponent'
@@ -22,7 +23,7 @@
       mineForm
     },
     computed: {
-      ...mapState(['timer', 'result'])
+      ...mapState(['halted', 'timer', 'result'])
     },
     methods: {
 
