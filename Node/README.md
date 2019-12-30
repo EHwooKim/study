@@ -142,5 +142,51 @@ const [node, obj, , bool = array
   >
   > 첫번째 인자로 표시할 객체, 두번째 인자로 옵션을 넣는다. (기본 depth: 2)
 
+### 타이머 
 
+* `setTimeout(콜백 함수, 밀리초)` & `clearTimeout(아이디)` : 주어진 밀리초 이후 콜백 실행
 
+* `setInterval(콜백 함수, 밀리초)` & `clearInterval(아이디)`: 주어진 밀리초마다 콜백 반복
+
+* `setImmediate(콜백 함수)` & `clearImmediate(아이디)`: 즉시 실행
+
+  > 타이머 함수들은 모두 아이디를 반환한다.  아이디를 사용하여( 반환되는 아이디를 변수에 담아서 ) 타이머를 취소할 수 있다
+
+* `setImmediate`가  있으니 `setTimeout(콜백, 0)`은 사용하지 않는 것을 권장한다.
+
+### filename, dirname
+
+```javascript
+console.log(__filename)
+console.log(__dirname)
+```
+
+* `path 모듈`과 함께 경로 처리를 할 때 사용한다.
+
+### 마이크로 태스크
+
+```javascript
+// nextTick.js
+setImmediate(() => {
+    console.log('immediate')
+})
+process.nextTick(() => {
+    console.log('nextTick')
+})
+setTimeout(() => {
+    console.log('timeout')
+}, 0)
+Promise.resolve().then(() => console.log('promise'))
+```
+
+```bash
+$ node nextTick
+nextTick
+promise
+timeout
+immediate
+```
+
+* `process.nextTick(콜백)`: 이벤트 루프가 다른 콜백 함수들 보다 nextTick의 콜백 함수를 우선 처리하도록 한다.
+* resolve된 promise 역시 다른 콜백들보다 우선시된다.
+* 그래서 위의 두개를 마이크로태스크(microtack)라고 따로 구분지어 부른다.
