@@ -111,3 +111,36 @@ const [node, obj, , bool = array
   * `resolve` -> `then`
   * `reject` -> `catch`
 * resolve, reject에 넣은 인자는 각각 then, catch 의 매개변수에서 받을 수 있다.
+
+## 노드 내장 객체
+
+#### global
+
+> 남용금지..
+
+#### console
+
+> console 객체는 보통 디버깅을 위해 사용된다.
+
+* `time(레이블) / timeEnd(레이블)`
+
+  ```javascript
+  console.time('시간측정')
+  ...
+  console.timeEnd('시간측정')
+  ```
+
+  > `time`과 `timeEnd`사이의 시간을 측정한다.
+
+* `console.dir(객체, 옵션)`
+
+  ```javascript
+  console.idr(obj, { colors:true, depth:1 })
+  ```
+
+  > 객체를 콘솔에 표시할 떄 사용.
+  >
+  > 첫번째 인자로 표시할 객체, 두번째 인자로 옵션을 넣는다. (기본 depth: 2)
+
+
+
