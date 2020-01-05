@@ -306,7 +306,7 @@ CONST_USER = {name: 'woo'}  				  // TypeError
 >
 > 하지만, 재할당은 불가능 하기에 새로운 객체나 배열을 재할당하려하면 에러가 발생한다.
 
-## 스코프체인
+## 스코프체인 이해하기 (이론) - 다시 좀 읽어보자...
 
 > 함수 안에 함수를 선언한 중첩 함수에서 자식 함수가 부모 함수의 변수에 어떻게 접근 가능한지에 대해 알아보자.
 
@@ -314,8 +314,278 @@ CONST_USER = {name: 'woo'}  				  // TypeError
 
 ### 실행 컨텍스트, 렉시컬 환경
 
+> 스코프 체인을 이해하기 위해서는 `실행 컨텍스트`와 `렉시컬 환경`에 대한 이해가 필요하다.
+
 * `실행 컨텍스트(Execution Context)` - 코드가 실행되기 위해 필요한 정보를 가지고 있으며 실행 가능한 코드가 실행될 때 생성된다. 대표적인 실행 가능한 코드로는 `전역 코드`와 `함수 코드`가 있다. (eval과  모듈 코드도 있다)
-* `렉시컬 환경(Lexical Environment)` - 
+  * 처음에는 전역 코드가 먼저 실행됩니다. 이떄 `전역 컨텍스트`를 만들고 전역 코드를 순차적으로 평가합니다. 그러다 함수가 호출문을 만나면 새로운 `실행 컨텍스트`가 만들어지면서 해당 함수 실행부의 코드를 순차적으로 평가합니다. 이때 `스택`을 이용해 `실행 컨텍스트`를 관리하게 되는데, 새로운 `실행 컨텍스트`가 생성되면 스택에 쌓고 실행 중인 코드가 종료되면 해당 `실행 컨텍스트`를 스택에서 제거합니다.
+
+```javascript
+var person = 'kim'
+function print() {
+    var person2 = 'hong'
+    function innerPrint() {
+        console.log(person)
+        console.log(person2)
+    }
+   	innerPrint()
+    console.log('print finished')
+}
+print()
+console.log('finished')
+```
+
+>kim
+>
+>hong
+>
+>print finished
+>
+>finished
+
+* 위 코드에 대한 실행 컨텍스트가 실행될 떄 시간에 따라 어떻게 스택에 쌓이고 제거되는지를 확인해보자.
+
+![043](./043.png)
+
+* `실행 컨텍스트`는 `렉시컬 환경`을 가지고 있는데, 렉시컬 환경은 `환경 레코드(EnvironmentRecord)`와 `외부 렉시컬 환경(OuterLexicalEnvironment)`으로 구성됩니다. 실행 컨텍스트를 자바스크립트 객체 형태로 표현하면 다음과 같습니다.
+
+  ```javascript
+  ExecutionContext = {
+      LexicalEnvironment: {
+          EnvironmentRecord: {
+              
+          },
+          OuterLexicalEnvironment: 참조
+      }
+  }
+  ```
+
+  * 실제 함수와 변수같은 식별자와 그 식별자가 가리키는 값은 키(key)와 값의 쌍르호 `환경 레코드`에 기록됩니다. 그리고 렉시컬 환경은 환경 레코드 외에 다신의 실행 환경을 감싸는 외부 실행 환경에 대한 참조를 깆고 있습니다.
+
+* 위 코드의 실행 컨텍스트와 내부 렉시컬 환경을 그림으로 나타내면 다음과 같습니다.
+
+![043-1](./043-1.jpg)
+
+* 각 `식별자`는 `outerLexicalEnvironment`로 체인처럼 연결되어 있습니다. 이렇게 각 렉시컬 환경이 연결되어 있기 때문에 스코프 체인이 형성될 수 있습니다. 위 예제코드에서 스코프 체인으로 식별자를 찾는 문장을 살표보겠습니다
+* innerPrint함수가 호출될 때 두 변수 person과 person2, 즉 각 식별자는 연결된 값을 자신의 실행 컨텍스트의 렉시컬 환경에서 찾습니다. 하지만 person과 person2는 innerPrint함수 내에 선언되지 않았습니다. 그러면 위 그림처럼 inner 실행 컨텍스트의 환경 레코드에는 아무런 키-값의 쌍이 없게 됩니다.
+* 이렇게 자신의 실행 컨텍스트에 없으면 외부 렉시컬 환경의 참조를 통해 연결된 print 실행 컨텍스트에서 해당 식별자는 찾게 됩니다. 이때 person을 print 실행 컨텍스트의 환경 레코드에서 찾아서 'hong'을 출력하게 됩니다. 마찬가지로 person2는 전역 실행 컨텍스트까지 가서 찾아 값을 출력합니다.
+
+## 클로저 이해하기(이론) - 다시 좀 읽어보자..
+
+> 자바스크립트에서 클로저가 어떻게 생성되고 활용되는지
+
+```javascript
+function createCounterClosure() {
+    let count = 0
+    return {
+        increase: function() {
+            count++
+        },
+        getCount: function() {
+            return count;
+        }
+    }
+}
+
+const counter1 = createCounterClosure()
+const counter2 = createCounterClosure()
+
+counter1.increase()
+counter1.increase()
+console.log(`counter 1의 값: ${counter1.getCount()}`)  // 2
+counter2.increase()
+console.log(`counter 2의 값: ${counter2.getCount()}`)  // 1
+```
+
+* `createCounterClosure()` 함수는 `객체`를 반환하는데 객체는 increase와 getCount 메소드가 있고, 모두 count 변수에 접근합니다.
+* `counter`과 `counter2` 객체의 increase 메소드를 호출하면 createCounterClosure 함수 내부의 count 변수에 모두 접근합니다. 하지만 두 객체의 getCount를 호출한 결과를 보면 `counter1`과 `counter2`가 가리키는 `count`가 다른 값을 가지고 있는 것을 알 수 있습니다.
+* 두 counter 객체가 다른 count에 접근하는 것은 다른 `렉시컬 환경`의 `환경 레코드`에서 count에 접근하는 것입니다. 이러한 현상이 가능한 이유는 바로 클로저 떄문입니다.
+
+> `클로저`란 함수가 정의될 때의 렉시컬 환경을 기억하는 함수를 말합니다.
+
+* `increase`와 `getCount` 함수가 정의될 떄의 렉시컬 환경은 `creaseCounterClosure` `실행 컨텍스트`의 `렉시컬 환경`입니다. 이 `실행 컨텍스트`는 13, 14 라인에서 각각 생성됩니다. 그래서 increase 함수와 getCOunt 함수는 createCounterClosure `실행 컨텍스트`의 `렉시컬 환경`을 기억하고 있는 `클로저`가 됩니다.
+* 대체로 `실행 컨텍스트` 가 `컨텍스트 스택`에서 제거되면 해당 환경은 사라지기 마련인데 위 예제처럼 클로저가 ㅁ나들어지면 해당 환경은 사라지지 않습니다. 왜냐하면 해당 참조가 존재하기 떄문입니다(예제는 counter1과 counter2가 전역 변수에 할당되어 참조가 존재합니다.)
+
+**이해가 잘 안되니 더 공부해보도록 합시다...**
+
+## 객체 속성 기술자 이해하기
+
+> 자바스크립트의 모든 객체 `속성`은 자기 자신에 대한 정보를 담고 있는 `속성 기술자`를 가지고 있고 이 속서 기술자는 객체로 표현된다.
+
+* `getOwnPropertyDescriptor(객체, '속성')` - 속성 기술자 객체를 가져온다.
+* `Object.defineProperty(객체, '속성', 옵션)` - 해당 객체의 속성을 정의한다.
+  * `value` : 해당 속성의 `값`을 나타낸다.
+  * `enumerable` : `for...in` 루프나 `Object.keys`메소드같이 속성을 나열할 떄 나열 가능 여부를 정의한다. false일 경우 해당 속성은 나열되지 않는다.
+  * `writable` : 값을 변경할 수 있는 여부를 정의한다. false일 경우 값이 변하지 않는다.
+  * `configurable` : 속성 기술자를 변경할 수 있는 여부를 정의한다. false일 경우 속성 기술자를 다시 변경할 수 없다.
+
+* 위의 옵션처럼 **데이터에 대한 정보**를 정의하는 것 외에도 `get`, `set`을 통해 **데이터에 접근하는 방법**을 정의할 수도 있다. 
+
+## Get, Set을 통한 속성 접근 관리하기
+
+* `get` - 속성에 `접근`할 때 호출된다.
+* `set` - 속성에 값을 대입할 때 호출된다.
+
+```javascript
+let user = {}
+
+Object.defineProperty(user, 'age', {
+    get: function () {
+        return this._age
+    },
+    set: function (age) {
+        if (age < 0) {
+            console.error('0보다 작은값은 올 수 없습니다.')
+        } else {
+            this._age = age
+        }
+    },
+    enumerable: true
+})
+user.age = 10  // user.age에 10을 대입 -> set 메소드 호출되고 user._age에 10이 할당.
+console.log(user.age)  // age 속성에 접근 할때 get이 출되어 this._age가 반환되어 출력
+user.age = -1  // set 메소드 호출, 0보다 작은 값을 대입하려하여 에러 발생.
+
+let user2 = {
+    get name() {  //  이렇게 객체를 정의할 때 메소드를 정의하는 메소드명 앞에 get, set 정의가능
+        return this._name
+    },
+    set name(val) {
+        if (val.length < 3) {
+            throw new Error('3자 이상이어야 합니다.')
+        }
+        this._name = val
+    }
+}
+user2.name = 'harin'
+console.log(user2.name)
+user2.name = 'han'
+```
+
+> user._age 와 같이 속성 이름 앞에 _를 붙이는 것은 암묵적으로 비공개(Private) 속성임을 나타냅니다. 자바스크립트 객체는 속성 접근 제한자가 없어서 모든 속성은 공개입니다. 그래서 대체로 이름 규칙을 통해 비공개임을 나타냅니다.
+
+## 화살표 함수 (ES6)
+
+> function 키워드 대신 => 연산자를 이용하여 함수를 정의할 수 있다.
+
+* 화살표 함수 규칙
+  1. 매개변수가 하나일 경우에는 인자를 정의할 떄 괄호를 생략할 수 있습니다.
+  2. 매개변수가 없거나 둘 이상일 경우 괄호를 작성해야 합니다.
+  3. 화살표 함수 코드 블록을 지정하지 않고 한 문장으로 작성 시 return 문을 사용하지 않아도 화살표 오른쪽 표현식의 계산 결과값이 반환됩니다.
+  4. 화살표 함수 코드 블록을 지정했을 경우 반환하고 하는 값에 return 문을 작성해야 합니다. return문이 없을 시 **undefined**가 반환됩니다.
+* 화살표 함수는 `arguments`객체가 만들어지지 않습니다.
+  * arguments 객체가 필요한 경우 `나머지 매개변수 (...args) ` 사용을 권합니다.
+
+## 객체지향 프로그래밍
+
+* `객체지향 프로그래밍`이란, **프로그램을 객체들로 구성하고 객체들 간에 서로 상호작용하도록 작성하는 방법**
+
+* 객체지향에서의 `객체`란, 식별 가능한 구체적인 사물 또는 추상적인 개념
+
+* `객체`는 **특징적인 행동**과 **변경 가능한 상태**를 가진다.
+  * 함수 값을 가지는 속성인 `메소드`가 특징적인 행동이며,
+  * 그 외에 다른 값들은 변경 가능한 상태라 볼 수 있다.
+
+```javascript
+// 객체지향 프로그래밍
+const teacherJay = {
+    name: '제이',
+    age: 30,
+    teachJavascript: function(student) {
+        student.gainExp()
+    }
+}
+const studentBbo = {
+    name: '뽀',
+    age: 20,
+    exp: 0,
+    gainExp: function() {
+        this.exp++
+    }
+}
+
+console.log(studentBbo.exp)
+teacherJay.teachJavascript(studentBbo)
+console.log(studentBbo.exp)
+```
+
+> teachJavascript 메소드는 학생을 매개변수로 정의하고 있다. 즉, teacherJay 객체는 student 객체를 사용한다.
+
+* 자바스크립트는 `프로토타입 기반`으로 객체지향 프로그래밍을 지원한다.  자바의 클래스 기반과의 큰 차이점으로 `프로토타입`으로 `객체`에 공통 사항을 적용할 수 있습니다.
+* 즉, 모든 객체는 `원형(Prototype)`이 될 수 있다. 
+
+```javascript
+// 객체지향 프로그래밍 - 프로토타입
+const studentProto = {
+    gainExp: function() {
+        this.exp++
+    }
+}
+const harin = {
+    name: '하린',
+    age: 10,
+    exp: 0,
+    __proto__: studentProto
+}
+const bbo = {
+    name: '뽀',
+    age: 20,
+    exp: 10,
+    __proto__: studentProto
+}
+bbo.gainExp()
+harin.gainExp()
+harin.gainExp()
+console.log(harin)
+console.log(bbo)
+```
+
+> gainExp 메소드를 가지는 객체를 정의하고 다른 객체에 proto 속성으로원형 객체를 정의(연결)해준다.
+
+* \_\_proto\_\_ 속성에 다른 객체를 할당하지 않으면 기본적으로 `Object.prototype`객체가 연결되어 있다.
+
+## 생성자 함수 이해하기
+
+* 자바스크립트에서 `함수`는 재사용 가능한 코드의 묶으로 사용하는 것 외에 **객체를 생성하기 위한 방법**으로도 사용됩니다.
+* 객체를 생성하기 위해 직접적으로 객체를 반환해도 되지만, `new`키워드를 사용하여 함수를 호출하게 되면 **return문 없이도 새로운 객체가 반환됩니다.** 그리고 함수 바디에서 `this`키워드를 사용하여 반환되는 객체의 초기 상태와 행위를 정의할 수 있습니다.
+* **생성자 함수**는 `new` 키워드를 사용하지 않으면 일반적인 함수와 동일하게 동작하며 새로운 객체를 반환하지 않습니다. 
+* 그렇기 때문에 생성자 한수는 함수명을 **대문자**로 시작하는 관례를 가집니다.
+
+```javascript
+function Teacher(name, age, subject) {
+    this.name = name
+    this.age = age
+    this.subject = subject
+    this.teach = function (student) {
+        console.log(`${student}에게 ${this.subject}를 가르칩니다.`)
+    }
+}
+const jay = new Teacher('jay', 30, 'JavaScript')
+console.log(jay)
+jay.teach('bbo')
+
+console.log(jay.constructor)
+console.log(jay instanceof Teacher)
+
+const jay2 = Teacher('jay', 30, 'Python')
+console.log(jay2)
+console.log(age)
+```
+
+* Teacher 함수는 return문이 없지만 new키워드로 인해 객체를 반환하게 된다. 이때 반환되는 새로운 객체를 가리키는 것이 this이다
+* 모듣 객체는 `constructor` 속성을 가지고 이 속성은 객체를 만든 생성자 함수를 기르킨다. jay 객체는 Teacher 생성자 함수를 가리키게 된다.
+* `new` 키워드를 뺴고 Teacher 함수 호출시 생성자 함수의 `this`는 **전역 객체**를 가르키게 된다. 그래서 console.log(age)에서 전역 변수 age를 참조하여 30이 출력되게 된다. 새로운 객체를 반환하지 않았기 떄문에 jay2는 undefined가 출력된다.
+
+* 생성자 함수의 `new`호출을 통한 객체 생성 과정
+
+  ```text
+  1. 빈 객체를 만듭니다.
+  2. 만든 빈 객체를 this에 할당합니다.
+  3. 생성자 함수 바디의 코드를 실행합니다(this에 속성 및 메소드 추가)
+  4. 만든 빈 객체의 __proto__에 생성자 함수의 prototype 속성을 대입합니다.
+  5. this를 생성자의 반환값으로 변환합니다.
+  ```
+
+  
 
 
 
@@ -323,7 +593,7 @@ CONST_USER = {name: 'woo'}  				  // TypeError
 
 
 
-> > 
+
 
 #### JSON  - 잠시 뺴놓습니다..
 
