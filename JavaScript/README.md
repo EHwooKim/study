@@ -831,8 +831,44 @@ console.log(age)
   * 가져온 모듈에서 value값이 변경되었기 때문이다.
   * 값이 복제되는 것이라면 2초뒤에도 그대로 1이 복사되었을 것이다.
 
-  
+## 표준 내장 객체 이해하기
 
+> [코드](./part3/060.js), [코드-1](./part3/060-1.js)
+
+* 몇몇 `표준 내장 객체`는 객체임에도 불구하고 함수처럼 호출할 수 있고 이러한 형태를 `내장 함수 객체(Built-in Function Object)`라고 한다. 
+* `new` 지시자를 사용하여 함수 형태로 호출하며, `생성자(Constructor)`를 생성합니다. 
+* `Math`, `Date`, `JSON`과 같은 객체는 선언없이 객체의 메소도와 속성을 바로 가져다 사용할 수 있습니다.
+
+---
+
+* `Object` : 다른 표중 내장 객체의 기본이 되는 일반 객체
+* `NUmber` : 숫자형을 감싼 객체
+* `String` : 문자형을 감싼 객체
+* `Array` : **모든** 배열은 Array.prototype을 상속받는다. Array 객체는 리스트처럼 배열 역할을 지닌다.
+* `Math` : 수리 연산을 하기 위한 내장 객체. 다른 내장 객체와 ㄷㄹ리 `new`를 통해 인스턴스를 생성하지 않는다.
+* `Date` : 시간과 고나련된 객체
+* `JSON` : `JavaScript Object Notation`, 다른 자로형으로 변환하거나 다시 JSON으로 변환하는 등의 메소드 제공
+* `RegExp` : ES6부터 추가된 Map객체는 키:값 데이터 구조를 지닌 데이터 집합체이다.키의 중복을 하용하지 않으며 Iterator를 통해 Map의 데이터를 순회한다.
+* `Set` : ES6부터 추가된 객체형으로, 오직 값으로 이루어진 데이터 집합체이다.
+
+---
+
+* **표준 내장객체**인 `String`, `Number`, `Boolean`과 **원시 자료형**인 `문자형`, `숫자형`, `불린형`이 어떻게 다를까?
+
+  ```javascript
+  const str1 = '자바스크립트 200제'
+  const str2 = new String('자바스크립트 200제')
+  console.log(typeof str1)	// string
+  console.log(typeof str2)	// object
+  console.log(str1 === '자바스크립트 200제')		// true
+  console.log(str2 === new String('자바스크립트 200제'))		// false
+  console.log(str1.valueOf())		// '자바스크립트 200제'
+  console.log(str2.valueOf())		// '자바스크립트 200제'
+  ```
+  
+  * 자바스크립트에서는 `원시 자료형`이 각 성격에 맞게 `표준 내장 객체`로 자동으로 **매핑**된다.
+  * 즉, 문자열로 작성된 값이 String 객체로 래핑된다는 의미이다. 그렇기 때문에 자료형을 보면 분명 다르지만 원시 자료형 값이 내장 객체에서 제공하는 메소드나 속성을 가져다 사용할 수 있다.
+  * 원시자료형은 값 자체가 할당되어 있어서 *5번째줄 코드*에서 `true`가 나오지만, String 객체인 str2는 값이 아닌 주소값을 참조하기 때문에 일치하지 않아 `false`가 반환된다.
 
 
 
@@ -848,5 +884,4 @@ console.log(age)
 > JSON(JavaScript Object Notation)
 
 * `객체`와 `JSON`은 형태는 비숫해 보여도 동일하지 않다.
-* `JSON`의 `key`는 반드시 큰따옴표 `" "`로 표시된 문자열이어야 한다.
-
+* `JSON`의 `key`는 반드시 큰따옴표 `" "`로 표시된 문자열이어야 한다
