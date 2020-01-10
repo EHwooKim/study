@@ -1,14 +1,4 @@
 # part2
-## 비트연산자
-
-```javascript
-150.toString(2)  // 10010110
-```
-
-> 비트 연산을 위해 이진수로 변환하는 방법입니다.
->
-> 연산 자바스크립트의 .toString(2)를 활용하면 수자를 바이너리 형탤 변환할 수 있습니다.
-
 ## 자료형 변환
 
 * 형변환 방법
@@ -983,6 +973,27 @@ console.log(age)
 
   > 무슨 말일까...
 
+#### 활용 - 진수변환, 진법 변환
+
+> 10진수의 숫자를 다른 진법으로 변환하는 방법 [코드](./part3/107.js)
+
+* `숫자.toString(진법)` : Number객체(숫자)의 메소드 toString, 해당 진법의 수 문자열로 변환됩니다.
+
+  ```javascript
+  const num = 531
+  const str = '531'
+  console.log(num.toString(2))   // 1000010011 - 정상 작동
+  console.log(str.toSting(2))	   // 531 - 정상 작동 X
+  ```
+
+* 10진수가 아닌 진법을 다른 진법으로 변환
+
+  ```javascript
+  const oct = 1023
+  const hexByOct = parseInt(oct, 8).toString(16)
+  console.log(hexByOct)
+  ```
+
 ### concat
 
 > 두 개 이상의 문자열 합치기 [코드](./part3/073.js)
@@ -1188,7 +1199,7 @@ console.log(['배열'].concat('합치기'))		// ['배열', '합치기']
 
 * 기본 reduce를 활용
 
-## 배열 메소드
+## 속성 메소드
 
 ### keys
 
@@ -1225,7 +1236,60 @@ console.log(['배열'].concat('합치기'))		// ['배열', '합치기']
 
 * `strict mode`에서는 에러를 발생시킨다 (일반상태에서는 그냥 아무 작동X)
 
+### seal
 
+> 객체에 새로운 속성이 추가되지 않는 방법 [코드](./part3/105.js)
+
+* `Object.seal(객체)` : 객체를 밀봉하여 속성 `추가/삭제`를 할 수 없습니다. 기존 속성 **변경은 가능**합니다.
+* `strict mode`가 선언된 스코프에서 속성 추가/삭제시 **에러가 발생**합니다.
+
+### assign
+
+> 객체를 병합하고 확장하는 방법 [코드](./part3/106.js)
+
+* `Object.assign(반환될 객체, ... 병합될 다른 객체들)` : 첫번째 인자를 기준으로 객체들을 하나로 병합합니다. **첫번째 인자의 원본이 수정되어 반환** 됩니다.
+  * 기존 객체가 수정되지 않으면서 병합되길 바라면 첫번쨰 인자로 `{}`을 넣으면 되겠죠
+
+## Math
+
+### random
+
+> 무작위 숫자를 출력하는 방법 [코드](./part3/109.js)
+
+* `Maht.random()` : 0 이상 1 미만의 부동소숫점 난수를 반환합니다.
+
+### round
+
+> 특정 소수점 자리에서 반올림한 값을 구하는 방법 [코드](./part3/110.js)
+
+* `Math.round(숫자)` : 소수점 첫쨰자리 값에서 반올림을 합니다.
+
+* 활용 - 특정 소수점 자리에서 반올림하기
+
+  ```javascript
+  const val = 573.926
+  
+  console.log(Math.round(val))				// 573
+  console.log(Math.round(val * 10) / 10)      // 573.9
+  console.log(Math.round(val * 100) / 100)	// 573.93
+  console.log(Math.round(val / 10) * 10)		// 570
+  console.log(Math.round(val / 100) * 100)	// 600
+  ```
+
+### ceil
+
+> 특정 소수점 자리에서 올림값을 구하는 방법 [코드](./part3/111.js)
+
+* `Math.ceil(숫자)` : 소수 첫째자리 값에서 올림.
+* `음수` 올림에 유의
+* 특정 자리수에서 올림하는 방법은 round 활용과 동일.
+
+### floor
+
+> 특정 소수점 자리에서 내림값을 구하는 방법 [코드](./part3/112.js)
+
+* `Math.floor(숫자)` : 소수 첫째자리 값에서 내림.
+* `음수` 내림에 유의
 
   
 
