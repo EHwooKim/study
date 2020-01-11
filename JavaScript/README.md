@@ -1291,6 +1291,21 @@ console.log(['배열'].concat('합치기'))		// ['배열', '합치기']
 * `Math.floor(숫자)` : 소수 첫째자리 값에서 내림.
 * `음수` 내림에 유의
 
+## getFullYear, getMonth, getDate
+
+> 현재 시간을 특정 포멧으로 출력하는 방법 [코드](./part3/113.js)
+
+* Date 객체 prototype으로 yyyymmdd 이름의 메소드를 정의한다.
+* `getFullYear()` : 연도를 가져온다
+* `getMonth()` : 월 단위 값을 가져옵니다. 기본적으로 **0부터 시작**합니다. 
+* `getDate()` : 일자 값을 가져옵니다.
+
+## Date.UTC
+
+> UTC 기준 날짜, 세계 표준 현재 시간을 나타내는 방법 [코드](./114.js)
+
+
+
   
 
 
