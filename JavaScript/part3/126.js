@@ -1,3 +1,4 @@
+// set, get, delete, has 
 const map = new Map()
 
 map.set('one', 1)
@@ -5,8 +6,9 @@ map.set('two', 2)
 console.log(map)
 
 console.log(map.get('one'))
-console.log(map.set('one'))
+console.log(map.has('one'))
 map.delete('one')
+console.log(map)
 
 console.log(map.has('one'))
 console.log(map.has('two'))
