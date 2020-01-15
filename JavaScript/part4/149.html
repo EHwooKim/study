@@ -1,0 +1,38 @@
+<!-- 이벤트 위임 처리하기 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>이벤트 위임 처리하기</title>
+</head>
+<body>
+  <h2>할 일</h2>
+  <ul id="todo-list">
+    <li>
+      공부하기<button class="remove-button">x</button>
+    </li>
+    <li>
+      장보기<button class="remove-button">x</button>
+    </li>
+    <li>
+      숙제하기<button class="remove-button">x</button>
+    </li>
+  </ul>
+  <script>
+    document
+      .querySelector('ul#todo-list')  
+      .addEventListener('click', function(event) {                // 부모 요소에 이벤트 리스너를 등록했기 때문에 자식요소인 li, button등을 클릭했을 떄 이벤트 감지가 가능하다.
+        if(event.target.className.indexOf('remove-button') < 0) { // evnet.target이 클릭한 대상이 되고        // 클릭 대상이 remove-button이 아니면 indexOf값이 -1 이다!
+          console.log(event.target)                               // button 말고 li 태그를 클릭해도 이벤트를 감지하기는 한다!
+          return                                                  // 그렇기 때문에 원하는 대상이 아닐경우 무시하는 코드가 필요하다
+        }
+        console.log(`event.target : ${event.target}`)
+        console.log(`event.target.className : ${event.target.className}`)
+
+        const li = event.target.closest('li')                     // closest 메소드는 현재 요소의 부모 중 인자로 전달한 선택자에 해당하는 가장 가까운 요소 반환.
+        console.log(`${li.innerText} 삭제`)
+        li.remove()
+      })
+  </script>
+</body>
+</html>

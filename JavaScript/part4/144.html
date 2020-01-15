@@ -1,0 +1,37 @@
+<!-- DOM 생성, 수정, 삭제 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>DOM 생성, 수정, 삭제</title>
+</head>
+<body>
+  <h2>상품 목록</h2>
+  <ul id="product-list"></ul>
+
+  <script>
+    const products = [
+      {id: 'p-01', name: '상품1'},
+      {id: 'p-02', name: '상품2'},
+      {id: 'p-03', name: '상품3'}
+    ]
+    const productListEl = document.querySelector('#product-list')
+    products
+      .map(product => {
+        const newEl = document.createElement('li')
+        newEl.id = product.id
+        newEl.innerText = product.name
+        return newEl
+      })
+      .forEach(newElement => {
+        productListEl.appendChild(newElement)
+      })
+    setTimeout(() => {
+      const deleteEl = document.querySelector('ul li:nth-child(2)')
+      deleteEl.remove()
+    }, 1000)
+    productListEl.after('<div>잘못된 사용, 노드 객체를 넣어야 정상작동합니다.</div>')
+    productListEl.insertAdjacentHTML('afterEnd', '<p>추가되는 위치를 확인해보세요.</p>')
+  </script>
+</body>
+</html>

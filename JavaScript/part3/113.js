@@ -1,4 +1,4 @@
-// getFullYear, getMonth, getDate
+getFullYear, getMonth, getDate
 console.log(new Date())
 Date.prototype.yyyymmdd = function() {
     const yyyy = this.getFullYear()     // this 는 Date 객체를 가리킨다.
@@ -9,3 +9,5 @@ Date.prototype.yyyymmdd = function() {
 
 const date = new Date()
 console.log(date.yyyymmdd())
+
+

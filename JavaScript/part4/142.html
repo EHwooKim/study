@@ -1,0 +1,36 @@
+<!-- DOM 탐색하기 -->
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>DOM 네비게이션 예제</title>
+  <link rel="stylesheet" href="./css/dom-navigation.css">
+</head>
+<body>
+  <h1>국내여행지</h1>
+  <ul>
+    <li>서울</li>
+    <!-- <li>수원</li> -->
+    <li>제주</li>
+    <li>속초</li>
+    <li>부산</li>
+  </ul>
+  <script>
+    const bodyEl = document.body
+    const bodyElChildren = bodyEl.children // body 요소는 Element 타입이기 때문에 children을 통해 자식 요소들을 가져올 수 있습니다.
+    console.log(bodyElChildren) // !!!!!!!!!!!모든 노드를 가져오는게 아니라 모든 요소를 가져오는 점에 유의하세요!!!!!!!!!!!
+
+    const cityList = bodyElChildren[1]
+
+    console.log(cityList.children.length)
+    const item2 = cityList.children.item(1)
+    console.log(item2) // <li>제주</li>
+    console.log(item2.previousElementSibling) // <li>제주</li> 요소를 기준으로 이전 요소인 <li>서울</li> 요소
+    console.log(item2.previousSibling)        // !!!!! previousSibling은 코드에서 개행을 했기 때문에 텍스트 노드(#text)가 됩니다.
+    console.log(item2.previousSibling.previousSibling) //텍스트 노드의 이전 노드는 코멘트 노드 <!-- <li>수원</li> --> 가 됩니다.
+    console.log(cityList.childNodes) // <ul> 요소의 하위 노드들을 콘솔에 출력합니다. HTML 코드상에 각 태그들 다음으로 개행을 했기 때문에 각 요소 중간에 텍스트 노드가 있는 것을 확일할 수 있습니다.
+    console.log(item2.firstChild) // <li>제주</li> 요소의 첫 번째 자식 노드와 마지막 자식 노드를 콘솔에 출력합니다. 
+    console.log(item2.lastChild) // 텍스트 노드인 "제주"만 자식노드로 있어 모두 "제주"가 출력됩니다.
+    console.log(item2.parentElement) //<li>제주 </li> 요소의 부모 요소를 콘솔에 출력합니다.
+  </script>
+</body>
+</html>

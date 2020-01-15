@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>스타일 예제</title>
+  <style>
+    .notification-bar {
+      padding: 10px;
+      border: 1px solid black;
+      background-color: yellow;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    class NotificationBar {
+      constructor() {                                 // 생성자 함수
+        this.barEl = document.createElement('div')    // div 요소를 생성하고
+        this.barEl.style.display = 'none'             // style을 주고
+        this.barEl.classList.add('notification-bar')
+        document.body.appendChild(this.barEl)
+      }
+      show(message, position = 'top') {               // 알림바의 show 메소드 정의 position 의 기본값 top으로 지정
+        if (position === 'top') {
+          this.barEl.style.top = '10px'
+          this.barEl.style.bottom = ''                // 빈 문자열을 값으로 할당하면 이미 적용된 값을 리셋할 수 있다.
+        }
+        if (position === 'bottom') {
+          this.barEl.style.top = ''
+          this.barEl.style.bottom = '10px'
+        }
+        this.barEl.style.left = '10px'
+        this.barEl.style.right = '10px'
+        this.barEl.style.display = ''                 // display: none으로 되어있던 것을 초기화시켜 화면에 표시한다.
+        this.barEl.innerHTML = message
+      }
+    }
+
+    const noti = new NotificationBar()
+    setTimeout(() => {
+      noti.show('welcome to Javascript 200')
+    }, 1000)
+
+    setTimeout(() => {
+      noti.show('welcome to Javascript 200', 'bottom')
+    }, 2000)
+  </script>
+</body>
+</html>
