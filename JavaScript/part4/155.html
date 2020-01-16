@@ -1,0 +1,34 @@
+<!-- 로컬스토리지 이용하기 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie-edge">
+  <title>로컬스토리지 예제</title>
+</head>
+<body>
+  <script>
+    class Cart {                                            // Cart 클래스를 선언하고
+      constructor() {                                       // 생성자 함수에서 
+        this._key = 'app-cart'                              // localStorage를 이용하여 주어진 키에 해당하는 문자열을 가지고 옵니다.
+        const itemString = localStorage.getItem(this._key)  // localStorage의 getItem 메소드는 특정 키에 해당하는 문자열을 가지고 옵니다.
+        if (itemString) {
+          this.items = JSON.parse(itemString)                // 가져온 문자열은 JSON 형식이기 떄문에 JSON.parse 메소드를 이용하여 객체화를 합니다. 그 결과를 items 속성에 대입합니다.
+        } else {                                            // 가져온 문자열이 없을 경우
+          this.items = []                                   // 카트가 초기화된 걸로 간주하고 빈 객체를 items 속성에 대입합니다.
+        }
+      }
+      addItem(item) {                                       // Cart 클래스에 addItem 메소드를 정의합니다.
+        this.items.push(item)                               // 주어진 item 객체를 items 배열에 추가하고
+        const itemString = JSON.stringify(this.items)       // 해당 배열을 JSON.stringify를 이용하여 JSON 문자열로 만들어 줍니다.
+        localStorage.setItem(this._key, itemString)         // 그리고 localStorage의 setItem 메소드를 이용하여 주어진 키에 해당하는 JSON 문자열을 추가합니다.
+        // this.items = item  // 책에 이줄은 왜 있는거지?      // 로컬 스토리지에는 arr-cart 키로 해당 JSON 문자열이 저장됩니다.
+      }
+    }
+    const cart = new Cart()                                 // 카트를 생성하고
+    console.table(cart.items)                               // 카트의 아이템들을 콘솔에 테이블 형태로 출력합니다.
+    cart.addItem({name: 'A노트북', price: 20000})           // 아이템을 추가합니다
+    cart.addItem({name: 'B태블릿', price: 40000})
+  </script>
+</body>
+</html>

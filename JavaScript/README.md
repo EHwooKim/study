@@ -1,4 +1,4 @@
-# part2
+# part2                                          
 ## 자료형 변환
 
 * 형변환 방법
@@ -1801,6 +1801,93 @@ ___
 * `closest(선택자)` : **부모 요소 중** 인자로 전달한 **선택자**에 해당하는 `가장 가까운 요소`를 반환합니다.
 
 * `remove()` 메소드를 통해 해당 요소를 삭제해줍니다.
+
+## 사용자 이벤트 생성하기
+
+> 기본적으로 제공하는 이벤트가 아닌 사용자의 데이터를 이용해서 이벤트를 생성하고 발생하는 방법 [코드](./part4/150.html)
+
+* new 키워드와 함께 CustomEvent함수를 사용하여 만든다.
+* 코드를 보며 다시 공부해보자...
+
+## HTML 폼 활용하기
+
+> 사용자로부터 정보를 입력받는 폼 요소를 다루는 방법 [코드](./part4/151.html)
+
+* form 요소는 `name` 어트리뷰트 값을 키로하여 `document.forms` 객체를 통해 가져올 수 있다.
+* form의 자식 요소들은 `name` 어트리뷰트 값을 키로하여 `elements`속성을 통해 가져올 수 있다.
+* `fieldset` 요소 또한 `name` 어트리뷰트 값으로 가져온다.
+
+## 스크롤 처리하기
+
+> 스크롤 시 화면의 특정 영역을 고정하는 방법 [코드](./part4/152.html)
+
+* `offsetTop` : 부모로부터 얼마나 멀리 떨어져 있는지 픽셀 단위 숫자값 반환.
+* `offsetLeft` : 브라우저 좌측으로부터 얼마나 떨어져있는지를 반환.
+* `window.pageYOffset` : 현재 스크롤된 화면이 브라우저 상단으로부터 얼마나 멀리 떨어져 있는지를 반환.
+* `window.pageXOffset` : 브라우저 왼쪽으로부터 얼마나 떨어져 있는지를 반환.
+
+## 문서 이동하기
+
+> 브라우저에서 현재 문서의 URL을 확인하거나 다른 문서로 이동하는 방법 [코드](./part3/153.html)
+
+* `href`, `hostname`, `pathname`, `protocol` 등으로 해당 문서의 URL정보, 도메인명, 경로명, 프로토콜 확인가능
+
+* `assign(주소)` 메소드를 통해 해당 웹사이트로 이동 가능.
+
+## 브라우저 히스토리 이해하기
+
+> HTML5에 추가된 히스토리 객체를 이용해서 브라우저 히스토리를 조작하는 방법 [코드](./part4/154.html)
+
+* `hsitory.pushState(state 객체, title 문자열, url 문자열)`
+  * state 객체 : 자바스크립트 객체로 현재 히스토리에 해당하는 상태를 history.state로 가져올 수 있습니다.
+  * title 문자열 : 브라우저 상단 타이틀을 변경합니다.
+  * url 문자열 : 새로운 히스토리 URL 입니다.
+* `history.back()` : 브라우저 상단의 뒤로가기를 클릭한 것과 같이 이전 히스토리로 돌아갑니다.  앞으로 가는 메소드는 `history.forward()` 입니다.
+* `history.go(숫자)` : 히스토리의 특정 시점으로 이동합니다. history.go(1)은 앞으로 이동, history.go(-2)는 두 단계 뒤로 갈 수 있습니다.
+
+## 브라우저 로컬 스토리지 사용하기
+
+> 브라우저의 로컬 스토리지를 사용하여 브라우저에 데이터를 저장하는 방법 [코드](./part4/155.html)
+
+```text
+로컬 스토리지는 사용자의 스키마 + 호스트 이름 + 포트로 관리됩니다. 나의 콘솔을 보면 http://127.0.0.1:5500 을 확인할 수 있는다. 즉, http://127.0.0.1:5500로 호스팅되는 페이지들은 모두 같은 로컬 스트로지 객체를 가지게 됩니다. 그래서 키를 통하여 데이터를 관리해야 합니다. 마찬가지로 http://127.0.0.1:5500의 페이지에서는 http://google.com의 로컬 스토리지 객체에는 접근할 수 없습니다. 호스트 이름은 location.hostname으로 확인할 수 있습니다.
+```
+
+* 스토리지에서 데이터 가져오기
+
+  ```javascript
+  const itemString = localStorage.getItem(this._key)
+    if (itemString) {
+      this.items = JSON.parse(itemString)
+    } else {
+      this.items = []
+    }
+  ```
+
+  * localStorage의 getItem 메소드는 특정 키에 해당하는 **문자열**을 가지고 옵니다. 가져온 문자열은 `JSON` 형식이기 때문에 `JSON.parse` 메소드를 이용하여 **객체화**를 합니다.
+
+* 스토리지에 데이터 저장하기
+
+  ```javascript
+    addItem(item) {
+      this.items.push(item)
+      const itemString = JSON.stringify(this.items)
+      localStorage.setItem(this._key, itemString)
+    }
+  
+  ```
+
+  * item 객체를 items 배열에 추가하고
+  * 해당 배열을 `JSON.stringify`를 이용하여 JSON 문자열로 만들어 줍니다.
+  * 그리고 localStorage의 setItem 메소드를 이용하여 주어진 키에 해당 JSON 문자열을 추가합니다.
+
+## 로컬 파일을 브라우저에서 읽기
+
+> 로컬 파일을 브라우저에서 드래그 앤 드랍 방식으로 읽는 방법 [코드](./part4/156.html)
+
+* `dragover` 이벤트 : 이미지 파일이 해당 요소를 지나갈 때 발생하는 이벤트
+* `drop` 이벤트 : 파일을 드롭 했을 떄 발생하는 이벤트
+* 그 외에는 [코드](./part4/156.html)를 보면서.
 
 #### JSON  - 잠시 뺴놓습니다..
 

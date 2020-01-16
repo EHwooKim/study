@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로컬 파일을 브라우저에서 읽기 예제</title>
+  <link rel="stylesheet" href="./css/readFile.css">
+</head>
+<body>
+  <div id="file-box" class="dot-box">
+    이미지 파일을 선택한 후 이곳에 끌어서 놓아주세요.
+  </div>
+  <output id="result"></output>
+  <script>
+    var dropZone = document.getElementById('file-box') // 요소를 선택하고
+    dropZone.addEventListener('dragover', e => {  // 이미지 파일이 해당 요소를 지나갈 때 발생하는 dragover 이벤트 등록
+      e.stopPropagation() // 이벤트 상위 전파를 막고
+      e.preventDefault()  // 이미지 파일을 브라우저가 읽어 해당 이미지 화면으로 변경되는 것을 방지
+    })
+    dropZone.addEventListener('drop', e => { // 파일을 드롭했을 때 발생하는 drop 이벤트 리스너 함수 등록
+      e.stopPropagation() // 이벤트 상위 전파를 막고
+      e.preventDefault()  // 기본 동작을 막는다.
+      const files = e.dataTransfer.files // drop 이벤트 객체의 dataTransfer 속성을 통해 DataTransfer 타입의 객체에 접근이 가능하다.
+                      // DataTransfer 객체는 대상을 끌어서 놓을 때 대상을 아이템으로 담고 있습니다. DataTransfer 객체에 담긴 아이템은 파일이거나 문자열입니다.
+                      // 아이템은 items 소석으로 가져올 수 있습니다. 그리고 대상이 파일일 경우에 files 속성을 통해 해당 파일에 접근할 수 있습니다.
+      Array.from(files)  // DataTransfer 객체의 files 속성은 배열이 아니라 FileList 타입입니다. 
+                         // 그래서 배열의 프로토타입에 연결된 메소드들을 사용할 수 없기 때문에 FileList를 배열로 변경합니다.
+        .filter(file => file.type.match('image.*'))  // 파일의 타입을 검사하여 이미지 파일만 처리하도록 필터 처리를 합니다.
+        .forEach(file => {                           // 앞의 필터에서 이미지 파일들이 forEach 메소드의 인자로 전달됩니다.
+          const reader = new FileReader()            // 파일을 비동기로 읽기 위해 FileReader를 생성합니다.
+          reader.onload = (e) => {                   // 그리고 onload 콜백 함수를 등록해 줍니다. 파일 리더를 통해 파일의 내용을 모두 읽으면 onload에 연결된 콜백 함수가 실행됩니다.
+            const imgEl = document.createElement('img') //이미지 요소를 생성하고 이미지 요소의 src를 파일이 읽힌 결과로 할당합니다. 
+            imgEl.src = e.target.result                 // 36라인에서 파일을 데이터 URL로 읽게 되어 읽은 결과를 src에 할당하면 해당 내용으로 이미지가 그려집니다.
+            imgEl.title = file.name
+            document.getElementById('result').appendChild(imgEl)
+          }
+          reader.readAsDataURL(file) // 파일 내용을 읽기 위해 파일을 인자로 전달하며 readAsDataURL 메소드를 호출합니다
+        })
+    })
+  </script>
+</body>
+</html>

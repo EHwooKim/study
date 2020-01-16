@@ -1,0 +1,40 @@
+<!-- 브라우저 히스토리 이해하기 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>브라우저 히스토리 이해하기 예제</title>
+  <link rel="stylesheet" href="./css/history.css">
+</head>
+<body>
+  <ul class="user-list">
+    <li data-name="jay">jay</li>
+    <li data-name="bbo">bbo</li>
+    <li data-name="harin">harin</li>
+  </ul>
+  <script>
+    const userList = document.querySelector('.user-list');
+
+    userList.addEventListener('click', e => {  // 이벤트 위임
+      const liEl = e.target;
+      if (liEl.tagName === 'LI') {
+        const name = liEl.dataset.name;
+        select(userList, liEl); // 밑에서 정의한 select 함수  
+        history.pushState(name, null, name) // pushState 메소드를 이용하여 새로운 히스토리를 추가합니다. pushState 메소드를 호출하면 새로운 히스토리가 추가되고
+      }                                     // 전달된 인자에 의해서 URL이 변경됩니다. 
+    })
+
+    window.addEventListener('popstate', function (e) {  // 브라우저 상단의 뒤로가기 또는 앞으로가기를 누를 때마다 브라우저 히스토리가 되고 popstate 이벤트가 발생합니다.
+      const selectedUser = document // history.back 메소드나 history.go 메소드와 같은 자바스크립트 메소드에도 이벤트는 발생합니다.
+        .querySelector(`.user-list [data-name="${e.state}"]`); // 하지만 history.pushState 메소드에는 popstate 이벤트가 발생하지 않습니다.
+      select(userList, selectedUser);
+    });
+
+    function select(ulEl, liEl) {  // 전체 목록 중 하나의 아이템 요소를 선택하는 select 함수를 정의합니다.
+      Array.from(ulEl.children)    
+        .forEach(v => v.classList.remove('selected'));  // 첫 번쨰 인자인 목록 요소의 모든 자식들을 순회하면서 selected CSS 클래스를 제거합니다.
+      if (liEl) liEl.classList.add('selected'); // 그리고 두 번쨰 인자인 선택할 리스트 아이템 요소에 selceted CSS 클래스를 추가합니다.
+    }                                           // 사용자 목록을 클릭할 떄와 popstate 이벤트가 발생할 떄 호출됩니다.
+  </script>
+</body>
+</html>
