@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>XMLHttpRequest 예제</title>
+</head>
+<body>
+  <div id="user"></div>
+  <script>
+    function httpGet(url, succesccCallback, errorCallback) { //XMLHttpRequest를 생성할 함수 정의
+      const req = new XMLHttpRequest() // XMLHttpRequest는 생성자 함수이기 때문에 new 키워드사용 인스턴스 생성
+      req.onload = () => {
+        if (req.status >= 200 && req.status < 300) {
+          succesccCallback(req.response)
+        } else {
+          errorCallback(new Error(req.statusText))
+        }
+      }
+      req.onerror = errorCallback
+      req.open('GET', url)
+      req.setRequestHeader('Accept', 'application/json')
+      req.send()
+    }
+    const userEl = document.getElementById('user')
+
+    httpGet('https://api.github.com/users/EHwooKim',
+      data => {
+        const user = JSON.parse(data)  // JSON 문자열을 객체로 변환
+        userEl.innerHTML = 
+        `<img src='${user.avatar_url}' />
+         <br> 사용자 이름 : ${user.login}, 깃헙주소 : ${user.html_url}`
+      }, error => alert(error))
+  </script>
+</body>
+</html>
