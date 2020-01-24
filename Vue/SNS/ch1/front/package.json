@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {  
+  "scripts": {
     "dev": "nuxt"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nuxtjs/axios": "^5.9.3",
+    "@nuxtjs/vuetify": "^1.10.2",
+    "axios": "^0.19.2",
     "nuxt": "^2.11.0",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vuetify": "^2.2.6"
   }
 }
