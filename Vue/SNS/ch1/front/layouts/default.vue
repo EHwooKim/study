@@ -1,12 +1,21 @@
 <template>
-  <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link> <!-- router-link  와 같은 역할-->
-      <nuxt-link to="/profile">profile</nuxt-link>
-      <nuxt-link to="/signup">signup</nuxt-link>
-    </nav>
-    <nuxt /> <!--router-view와 같은 역할-->
-  </div>
+  <v-app>
+    <div>
+      <v-toolbar dark color="green">
+        <v-toolbar-title>
+          <nuxt-link to="/"> NodeBird</nuxt-link>
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-text-field label="검색" hide-details prepend-icon="mdi-magnify" :style="{display: 'flex', alignItems: 'center'}" />
+        <v-btn text nuxt to="/profile" :style="{display: 'flex', alignItems: 'center'}">
+          <div>프로필</div>
+        </v-btn>
+        <v-btn text nuxt to="/signup" :style="{display: 'flex', alignItems: 'center'}">
+          <div>회원가입</div>
+        </v-btn>
+      </v-toolbar>
+    </div>
+  </v-app>
 </template>
 
 
