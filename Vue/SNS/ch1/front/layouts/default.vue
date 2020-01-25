@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <div>
+    <nav>
       <v-toolbar dark color="green">
         <v-toolbar-title>
           <nuxt-link to="/"> NodeBird</nuxt-link>
@@ -14,7 +14,15 @@
           <div>회원가입</div>
         </v-btn>
       </v-toolbar>
-    </div>
+    </nav>
+    <v-row>
+      <v-col cols="12" md="4">
+        로그인창
+      </v-col>
+      <v-col cols="12" md="8">
+        <nuxt/>  <!--이걸 써줘야 router-view와 같은 기능 한다그랬지?-->
+      </v-col>
+    </v-row>
   </v-app>
 </template>
 

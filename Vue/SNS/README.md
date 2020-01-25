@@ -36,7 +36,19 @@ npm run dev  # nuxt 실행
 
 * `nuxt.config.js`는 nuxt에 대한 설정을 담당하는 파일이다.
 
-  
+## vuetify 
+
+```bash
+$ npm i vuetify @nuxtjs/vuetify
+```
+
+* nuxt는 외부라이브러리 연결이 조금 독특하다.
+
+  * vue에서는 `Vue.use(Vuex)`와 같이 연결했었는데 Nuxt는 페이지가 하나가 아니라 여러개라서 모든 페이지에 `Vue.use(Vuex)`를 해줘야하다보니 중복이 너무 많기에 다른 방법을 쓴다.
+
+  * [nuxt.config.js](./ch1/front/nuxt.config.js)에서 관리한다.
+
+    
 
   
 
