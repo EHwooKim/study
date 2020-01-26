@@ -1,5 +1,5 @@
 <template>
-  <v-lsit-title>
+  <v-list-title>
     <ul>
       <li>
         <span>제로초</span>
@@ -14,7 +14,7 @@
         <v-icon>mdi-minus-circle-outline</v-icon>
       </li>
     </ul>
-  </v-lsit-title>
+  </v-list-title>
 </template>
 
 <script>

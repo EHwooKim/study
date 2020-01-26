@@ -1,11 +1,16 @@
 export const state = () => ({
   me: null, // me 가 null 이면 로그인 안한상태, 그 외에는 로그인 상태  
+  followerList: [],
+  followingList: [],
 })
 
 export const mutations = { // 단순 동기 작업
   setMe(state, payload) {  // state는 위에서 정의한 state로 반드시 첫 번쨰 인자
     state.me = payload  // payload는 이와같이 state를 어떻게 바꿀지에 대한 것.
   },
+  changeNickname(state, payload) {
+    state.me.nickname = payload.nickname
+  }
 }
 
 export const actions = {  // 동기, 비동기를 포함한 복잡한 작업. 비동기는 무조건 actions에서!!
@@ -19,4 +24,7 @@ export const actions = {  // 동기, 비동기를 포함한 복잡한 작업. �
   logOut({ commit }, payload) {
     commit('setMe', null)
   },
+  changeNickname({ commit }, payload) {
+    commit('changeNickname', payload)
+  }
 }
