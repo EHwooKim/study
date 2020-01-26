@@ -50,7 +50,41 @@ $ npm i vuetify @nuxtjs/vuetify
 
     
 
+
+## eslint
+
+* 실무에서 여러사람이 함께 일하다보니 서로 코딩하는 스타일이 다른데 코딩 스타일은 하나로 통일하는게 좋다. `eslint`가 가장 유명하고 많이 쓰인다.
+
+* 설치
+
+  ```bash
+  $ npm i -D eslint eslint-plugin-vue
+  ```
+
+* 폴더에 [.eslintrc](./ch1/front/.eslintrc) 파일 생성.
+
+  * eslint에 대한 설정을 적는 파일
+
+  * 각종 설정들을 적어주고 package.json에 다음 추가
+
+    ```bash
+    # package.json
+    "scripts" : {
+	"lint": "eslint **/*"  # 모든 파일을 검사한다는 의미의 **/*
+    }
+    ```
+    
+  * eslint  적용시키고 싶지않은 파일이 있다면 `.eslintignore` 파일을 만들어 적어준다
   
+  * 그 이후 `npm run lint`를 하면 막 오류가 뜰거야..
+  
+  * `eslint-plugin-vue`도 설치해줘서 vue에 대한 코딩 스타일도 같이 적용시켰다.
+  
+* `error` 는 정말 고쳐야 하는 그런 코드에 대한 메시지
+
+* `warning`은 반드시 고칠 필요는 없는 코드에 대한 메시지
+
+* 사용하는 에디터 프로그램과도 연동이 가능하고 연동을 해놓으면 terminal이 아닌 에디터에서 바로 확인 가능
 
 
 

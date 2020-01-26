@@ -1,5 +1,5 @@
 <template>
-  <v-lsit-title >
+  <v-lsit-title>
     <ul>
       <li>
         <span>제로초</span>

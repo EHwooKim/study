@@ -11,7 +11,12 @@
               label="닉네임"
               required
             />
-            <v-btn color="blue" type="submit">수정</v-btn>
+            <v-btn 
+              color="blue" 
+              type="submit"
+            >
+              수정
+            </v-btn>
           </v-container>
         </v-form>
       </v-card>
