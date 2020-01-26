@@ -14,15 +14,16 @@
           :rules="[v => !!v.trim || '내용을 입력하세요']"
           @input="onChangeTextarea"
         />
+        <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
+        <v-btn>이미지 업로드</v-btn>
       </v-form>
-      <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
-      <v-btn>이미지 업로드</v-btn>
     </v-container>
   </v-card>
 </template>
 
 <script>
   import { mapState } from 'vuex'
+  
   export default {
     data() {
       return {
@@ -34,7 +35,7 @@
       }
     },
     computed: {
-      ...mapState(['users/me'])   // return 방식 말고 이 방법도 있다고 그랬지?  ...mapState('users', ['me'])도 가능하다.
+      ...mapState('users', ['me'])   // return 방식 말고 이 방법도 있다고 그랬지?
     },
     methods : {
       onChangeTextarea() {        // 한글자라도 치면 밑에 작은 부분을 없애주기 위한 코드. 왜? 다음 게시글 작성 후 다음 게시글 작성시 이전 상태 초기화를 위해.
@@ -55,6 +56,7 @@
             createdAt: Date.now(),
           })
           .then(() => {
+            this.content = ''
             this.hideDetails = false
             this.success = true
             this.successMessages = '게시글 등록 성공' // hideDetails 부분이 생기면서 게시글 등록 성공이 보일거다
