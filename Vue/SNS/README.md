@@ -36,7 +36,7 @@ npm run dev  # nuxt 실행
 
 * `nuxt.config.js`는 nuxt에 대한 설정을 담당하는 파일이다.
 
-## vuetify 
+### vuetify 
 
 ```bash
 $ npm i vuetify @nuxtjs/vuetify
@@ -49,9 +49,7 @@ $ npm i vuetify @nuxtjs/vuetify
   * [nuxt.config.js](./ch1/front/nuxt.config.js)에서 관리한다.
 
     
-
-
-## eslint
+### eslint
 
 * 실무에서 여러사람이 함께 일하다보니 서로 코딩하는 스타일이 다른데 코딩 스타일은 하나로 통일하는게 좋다. `eslint`가 가장 유명하고 많이 쓰인다.
 
@@ -86,5 +84,22 @@ $ npm i vuetify @nuxtjs/vuetify
 
 * 사용하는 에디터 프로그램과도 연동이 가능하고 연동을 해놓으면 terminal이 아닌 에디터에서 바로 확인 가능
 
+## ch 2.
 
+* `.nuxt` 폴더는 nuxt 개발환경, 배포환경으로 build할 때 그 결과물들이 들어가는 폴더로 자동으로 생성된다.
+* 모듈 집어넣고 코스 스플릿팅, 서버사이드 렌더링 등 할 거  모두 한 결과물
+* 빌드가 꼬이면 지우고 다시 설치하는 것도 하나의 해결 방법..
 
+### vuex
+
+* 클래식 모드
+
+  * 일반적으로 사용하는 store 하나만 사용하는 모드.
+
+* 모듈 모드
+
+  * store를 여러개 만들어서 기능별로 관리할 수 있는 모드.
+* nuxt 가 store 폴더를 알아서 보고 있기 때문에 Vue.use(Vuex) 등 **따로 연결을 안해줘도 된다**
+
+* `store`폴더 안에 있는 `index.js` 가 기본 vuex store가 되고 나머지 파일들은 모듈이 된다.
+* 
