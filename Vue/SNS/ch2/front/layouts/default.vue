@@ -34,7 +34,6 @@
       LoginForm,
     }, 
     methods: {
-
     }
   }
 </script>

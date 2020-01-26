@@ -96,9 +96,9 @@ $ npm i vuetify @nuxtjs/vuetify
 
   * 일반적으로 사용하는 store 하나만 사용하는 모드.
 
-* 모듈 모드
-
-  * store를 여러개 만들어서 기능별로 관리할 수 있는 모드.
+* **모듈** 모드
+* store를 여러개 만들어서 기능별로 관리할 수 있는 모드.
+  * **모듈**이기 떄문에 클래식모드와 사용방법에서 약간의 차이가 있다.
 * nuxt 가 store 폴더를 알아서 보고 있기 때문에 Vue.use(Vuex) 등 **따로 연결을 안해줘도 된다**
 
 * `store`폴더 안에 있는 `index.js` 가 기본 vuex store가 되고 나머지 파일들은 모듈이 된다.
@@ -114,4 +114,5 @@ $ npm i vuetify @nuxtjs/vuetify
   * `commit`로 mutations를 실행
   * `dispatch`로 actions를 실행
   * state, getters도 사용 가능하고, rootState, rootGetters로 `index`모듈의 state, getters도 사용 가능하다.
-
+  *  :lipstick:dispatch로 action을 실행 시켰을 떄마다주의해야 하는 것이 action은 **비동기** 라는 것이다. 회원가입이 완료 된 후 메인페이지로 가야하는데 비동기를 신경 쓰지 않으면 회원가입 실패했을 떄도 메인페이지로 가는 경우가 생긴다!!! :lipstick:
+  * `dispatch`는 자체적으로 **promise**이기 떄문에 `.then`을 사용하면 된다.

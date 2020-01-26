@@ -80,12 +80,44 @@
         // this.$refs.form.validate() // form에 ref="form" 써놓고 this.$refs로 접근 가능하고 vlid와 validate()는 vuetify에서 이렇게 하라고 한 것.
         // console.log(this.valid)    // form 조건들이 만족하면 valid를 true로 바꿔준다. this.valid 말고 위의 코드도 true,false를 반환하기에 이를 활용하여 다음 코드 작성도 가능, 아래처럼
         if (this.$refs.form.validate()) {
-          alert('회원가입 시도!')
+          this.$store.dispatch('users/signUp', { // 모듈이기 때문에! 그냥 signup이 아니라 앞에 users/를 붙여줘야 한다.
+            nickname: this.nickname,
+            email: this.email,
+          })
+          //this.$router.push({   // 페이지 전환, nuxt도 내부적으로 vue router를 쓰기 떄문에 이런 사용법은 거의 비슷하다.
+          //  path:'/'            // 그런데 주의할게 있지!!!!!!!!!!! action은 비동기라고 했잖아..!!  위에 작성한 코드가 끝난 뒤에 페이지가 이동되는게 맞겠지?
+          //})
+          .then(() => {           // dispatch는 자체적으로 promise이기 떄문에 then으로 간단하게 비동기처리가 가능하다.
+            this.$router.push({
+              path: '/'
+            })
+          })
+          .catch(() => {
+            alert('회원가입 실패')
+          })
         } else {
           alert('폼이 유효하지 않습니다.')
         }
-        
-      }
+      },
+    // onSubmitForm()을 async로 바꿔봅시다
+      // async onSubmitForm() {
+      //   if (this.$refs.form.validate()) {
+      //     try {
+      //       const result = await this.$store.dispatch('users/signUp', {
+      //         nickname: this.nickname,
+      //         email: this.email
+      //       })
+      //       this.$router.push({
+      //         path: '/'
+      //       })
+      //     }
+      //     catch (error) {
+      //       alert('회원가입 실패')
+      //     }
+      //   } else {
+      //     alert('폼이 유효하지 않습니다.')
+      //   }
+      // }
     },
     head() {
       return {
