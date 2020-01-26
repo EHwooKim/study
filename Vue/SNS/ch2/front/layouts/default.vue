@@ -33,6 +33,9 @@
     components: {
       LoginForm,
     }, 
+    methods: {
+
+    }
   }
 </script>
 

@@ -7,3 +7,7 @@ export const mutations = {
     state.hello = 'goodbye'
   }
 }
+
+export const actions = {
+
+}

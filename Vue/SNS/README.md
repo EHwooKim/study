@@ -102,4 +102,16 @@ $ npm i vuetify @nuxtjs/vuetify
 * nuxt 가 store 폴더를 알아서 보고 있기 때문에 Vue.use(Vuex) 등 **따로 연결을 안해줘도 된다**
 
 * `store`폴더 안에 있는 `index.js` 가 기본 vuex store가 되고 나머지 파일들은 모듈이 된다.
-* 
+* state만 `함수`형태이고 나머지는 `객체`로 export
+
+* `mutations`는 비동기 작업이 있으면 안된다. (setTimeout, promise, ajax요청 등...)
+  * 만약 서버가 있다면 로그인, 로그아웃, 게시글 작성 등 모두 서버에 요청을 보내고 응답을 받아야하잖아, 그러니 그런 것들은 actions에서 한다. 
+
+#### actions
+
+* actions의 인자로 넘겨주는 **context**는 `객체`로 `{ commit, dispatch, state, rootState, getters, rootGetters... }`와 같은 형태로 되어있다.
+  * 비동기작업, 동기작업 등 다양한 작업을 할 수 있도록 만들어졌기 떄문이다.
+  * `commit`로 mutations를 실행
+  * `dispatch`로 actions를 실행
+  * state, getters도 사용 가능하고, rootState, rootGetters로 `index`모듈의 state, getters도 사용 가능하다.
+
