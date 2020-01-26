@@ -15,9 +15,9 @@
         </v-btn>
       </v-toolbar>
     </nav>
-    <v-row>
+    <v-row dense>
       <v-col cols="12" md="4">
-        로그인창
+        <login-form/>
       </v-col>
       <v-col cols="12" md="8">
         <nuxt/>  <!--이걸 써줘야 router-view와 같은 기능 한다그랬지?-->
@@ -28,11 +28,18 @@
 
 
 <script>
+  import LoginForm from '~/components/LoginForm' // ~는 루트폴더를 의미한다. (정확히는 소스들의 루트폴더)
   export default {
-
+    components: {
+      LoginForm,
+    }, 
   }
 </script>
 
-<style>
-
+<style scoped>
+  a {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+  }
 </style>
