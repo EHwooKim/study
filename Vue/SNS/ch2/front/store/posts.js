@@ -11,6 +11,10 @@ export const state = () => ({
       const index = state.mainPosts.findIndex(v => v.id === payload.id) // 이 코드 뭘까..
       console.log(index)
       state.mainPosts.splice(index, 1)
+    },
+    addComment(state, payload) {
+      const index = state.mainPosts.findIndex(v => v.id === payload.postId);
+      state.mainPosts[index].Comments.unshift(payload);
     }
   }
 
@@ -21,5 +25,8 @@ export const state = () => ({
     },
     remove({ commit }, payload) {
       commit('removeMainPost', payload)
+    },
+    addComment({ commit }, payload) {
+      commit('addComment', payload);
     }
   }

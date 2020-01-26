@@ -38,10 +38,12 @@
       ...mapState('users', ['me'])   // return 방식 말고 이 방법도 있다고 그랬지?
     },
     methods : {
-      onChangeTextarea() {        // 한글자라도 치면 밑에 작은 부분을 없애주기 위한 코드. 왜? 다음 게시글 작성 후 다음 게시글 작성시 이전 상태 초기화를 위해.
-        this.hideDetails = true
-        this.success = false
-        this.successMessages = ''
+      onChangeTextarea(value) {        // 한글자라도 치면 밑에 작은 부분을 없애주기 위한 코드. 왜? 다음 게시글 작성 후 다음 게시글 작성시 이전 상태 초기화를 위해.
+        if (value.length){ 
+          this.hideDetails = true
+          this.success = false
+          this.successMessages = ''
+        }
       },
       onSubmitForm() {
         if (this.$refs.form.validate()) {
