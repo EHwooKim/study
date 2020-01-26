@@ -116,3 +116,15 @@ $ npm i vuetify @nuxtjs/vuetify
   * state, getters도 사용 가능하고, rootState, rootGetters로 `index`모듈의 state, getters도 사용 가능하다.
   *  :lipstick:dispatch로 action을 실행 시켰을 떄마다주의해야 하는 것이 action은 **비동기** 라는 것이다. 회원가입이 완료 된 후 메인페이지로 가야하는데 비동기를 신경 쓰지 않으면 회원가입 실패했을 떄도 메인페이지로 가는 경우가 생긴다!!! :lipstick:
   * `dispatch`는 자체적으로 **promise**이기 떄문에 `.then`을 사용하면 된다.
+
+#### 같은 이름의 actions 호출
+
+* `add` action이 index.js 와 post.js 두 곳에 있다면?
+
+  ```javascript
+  add({commit}, payload) {
+      commit('addMainPost', payload(or null), { root: true })
+  } // 위와 같이 root 옵션을 통해 index의 addMainPost 호출 가능, (기본값 false)
+  ```
+
+  
