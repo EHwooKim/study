@@ -28,17 +28,18 @@
       </v-card>
       <v-card style="margin-bottom: 20px">
         <v-container>팔로잉</v-container>
-        <follow-list />
+        <follow-list :users="followingList" :remove="removeFollowing" />
       </v-card>
       <v-card style="margin-bottom: 20px">
         <v-container>팔로워</v-container>
-        <follow-list />
+        <follow-list :users="followerList" :remove="removeFollower" />
       </v-card>
     </v-container>
   </div>
 </template>
 <script>
   import FollowList from '~/components/FollowList'
+
   export default {
     // layout: 'admin', // vue에는 없는 속성, 이렇게 하면 default가 아닌 다른 레이아웃 적용이 가능하다.
     components: {
@@ -56,7 +57,14 @@
     computed: {
       me() {
         return this.$store.state.users.me
-      }
+      },
+      followingList() {
+        return this.$store.state.users.followingList
+      },
+      followerList() {
+        return this.$store.state.users.followerList
+      },
+
     },
     methods: {
       onChangeNickname() {
@@ -66,7 +74,13 @@
         .then(() => {
           this.nickname = '';
         })
-      }
+      },
+      removeFollowing(id) {           // 같은 FollowList 컴포넌트에서 다르게 작동해야하니 method도 props로 넘겨주고, 삭제할 유저의 id를 모르니 매개변수로 넘겨준다
+        this.$store.dispatch('users/removeFollowing', { id }) // id: id 같이 키와 값이 같을떄 축약 가능하지
+      },
+      removeFollower(id) {
+        this.$store.dispatch('users/removeFollower', { id })
+      },
     }
   }
 
