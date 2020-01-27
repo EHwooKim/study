@@ -1,0 +1,22 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "sourceType": "module" // 뷰는 스크립트형식 안쓰고 import해서 사용하는 module 형식이니까
+  },
+  "env": {
+    "browser": true,    // browser 환경
+    "node": true        // node 환경   에서 쓰인다.
+  },
+  // 이 밑으로 세개는 조정하면 되는데
+  "extends": [        // extends 는 plugins를 모아둔 것이다.
+    "plugin:vue/recommended"  // 가장기본..? 무난한, 뷰에서 권장하는 코딩 스타일인데
+                              // 만약 우리팀의 코딩 스타일과 다르면 굳이 이거 안써도 되겠지
+  ],
+  "plugins":[  
+
+  ],
+  "rules": {
+    "vue/max-attributes-per-line": "off", // 에러 메시지를 보고 워치 않는 조언(?)은 이렇게 끌 수 있다.
+    "vue/singleline-html-element-content-newline": "off"
+  }
+}
