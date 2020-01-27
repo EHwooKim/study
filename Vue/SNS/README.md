@@ -143,3 +143,34 @@ $ npm i vuetify @nuxtjs/vuetify
 ### 동적 라우팅
 
 * Nuxt에서 동적라우팅은 `폴더/파일` 이 곧 주소가 된다. 동적인 부분인 파일명은 `_id.vue`와같이 언더스코어를 붙여 짓는다.
+
+### 무한 스크롤
+
+* 프론트엔드 개발자 입장에서 전체 게시글의 개수가 몇개인지 모르고 서비스가 커질 수록 그것을 알려고 하는 것이 db에 무리를 줄 수도 있다.
+
+* 게시물을 10개씩 가져올건데 그러다가 10개보다 적게 가져오게 되면 그게 마지막 페이지라는 것을 알 수 있겠지
+
+* `window.scrollY` : 내가 스크롤을 얼마나 올리고 내렸는지 알려주는 속성
+
+* `document.documentElement.clientHeight` : 해당 클라이언트의 세로 높이 - 지금 당장 눈에 보이는 화면
+
+* `document.documentElement.scrollHeight` : 화면 최상단에서 부터 스크롤을 전부 내렸을 때 최하단까지의 길이 - 스크롤을 포함한 화면
+
+* 위의 세가지로 인해 생기는 규칙
+
+  * 스크롤을 끝까지 내렸을 때
+
+    > window.scrollY + document.documentElement.clientHeight === document.documentElement.scrollHeight
+
+  * 그렇기 때문에 만약 스크롤이 밑에서부터 100만큼 위에 있을 때 뭔가를 작동시키고 싶다면 
+
+    ```javascript
+    window.scrollY + document.documentElement.clientHeight === document.documentElement.scrollHeight - 100 
+    ```
+
+    > 이런식으로 해주면 되겠지.  그런데 ===로 비교를 하게 되면 스크롤을 확 내렸을 떄가 계산이 안되기 떄문에 > 로 해주어야한다.
+
+* 지금까지 구현한 무한 스크롤에 **실무**에서는 **스로틀링이 추가되고 limit을 이용해서 데이터를 가져오지 않는다**
+
+  * `스로틀링`을 적용하는이유는 더미데이터는 바로바로 가져올 수 있지만 백엔드가 있으면 서버와 통신하는 시간이 필요하다! 인터넷이 느려 가져오는데 10초가 걸린다면? 사람들은 기다리지 못하고 스크롤을 엄청 움직이고 요청이 계속 가겠지.. 그걸 막기위한 것이다.
+  * `limit` 기반으로 하지 않는 이유는 게시글을 중간에 삭제하고 새로 쓰고 하면서 totalPosts가 실시간으로 바뀐다. 그래서 마지막으로 불러온 게시글 id 이후로 10개 불러오기 이런식으로 가져온다.
