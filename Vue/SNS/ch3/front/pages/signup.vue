@@ -101,7 +101,7 @@
           //this.$router.push({   // 페이지 전환, nuxt도 내부적으로 vue router를 쓰기 떄문에 이런 사용법은 거의 비슷하다.
           //  path:'/'            // 그런데 주의할게 있지!!!!!!!!!!! action은 비동기라고 했잖아..!!  위에 작성한 코드가 끝난 뒤에 페이지가 이동되는게 맞겠지?
           //})
-          .then(() => {           // dispatch는 자체적으로 promise이기 떄문에 then으로 간단하게 비동기처리가 가능하다.
+          .then(() => {           // dipatch는 자체적으로 promise이기 떄문에 then으로 간단하게 비동기처리가 가능하다.
             this.$router.push({
               path: '/'
             })
