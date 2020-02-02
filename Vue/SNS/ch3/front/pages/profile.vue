@@ -17,6 +17,7 @@
               :rules="nicknameRules"
             />
             <v-btn 
+              dark
               color="blue" 
               type="submit"
               :disabled="!valid"
@@ -27,12 +28,18 @@
         </v-form>
       </v-card>
       <v-card style="margin-bottom: 20px">
-        <v-container>팔로잉</v-container>
-        <follow-list :users="followingList" :remove="removeFollowing" />
+        <v-container>
+          <v-subheader>팔로잉</v-subheader>
+          <follow-list :users="followingList" :remove="removeFollowing" />
+          <v-btn @click="loadMoreFollwings" v-if="hasMoreFollowing" dark color="blue" style="width:100%">더보기</v-btn>
+        </v-container>
       </v-card>
-      <v-card style="margin-bottom: 20px">
-        <v-container>팔로워</v-container>
-        <follow-list :users="followerList" :remove="removeFollower" />
+    <v-card style="margin-bottom: 20px">
+        <v-container>
+          <v-subheader>팔로워</v-subheader>
+          <follow-list :users="followerList" :remove="removeFollower" />
+          <v-btn @click="loadMoreFollwers" v-if="hasMoreFollower" dark color="blue" style="width:100%">더보기</v-btn>
+        </v-container>
       </v-card>
     </v-container>
   </div>
@@ -64,7 +71,17 @@
       followerList() {
         return this.$store.state.users.followerList
       },
+      hasMoreFollowing() {
+        return this.$store.state.users.hasMoreFollowing
+      },
+      hasMoreFollower() {
+        return this.$store.state.users.hasMoreFollower
+      }
 
+    },
+    fetch({ store }) {
+      store.dispatch('users/loadFollowers')
+      store.dispatch('users/loadFollowings')
     },
     methods: {
       onChangeNickname() {
@@ -80,6 +97,12 @@
       },
       removeFollower(id) {
         this.$store.dispatch('users/removeFollower', { id })
+      },
+      loadMoreFollwings() {
+        this.$store.dispatch('users/loadFollowings')
+      },
+      loadMoreFollwers() {
+        this.$store.dispatch('users/loadFollowers')
       },
     },
     middleware: 'authenticated'
