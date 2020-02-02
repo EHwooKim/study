@@ -180,5 +180,47 @@ $ npm i vuetify @nuxtjs/vuetify
 > 직접 만들어 쓰기는 어렵고 제일 유명한 [라이브러리](https://www.npmjs.com/package/vue-virtual-scroll-list)를 사용한다.
 
 * 화면에 보이는 애들만 살려두고 나머지 위, 아래에 안보이는 애들은 없애는 방식. (메모리 상에는 아이디정도만 남겨둔다)
+
 * 지금 보여주는 애들, 안보이게 처리한 애들, 화면 갑자기 내렸을때 보여줄 벤치들 등 생각할게 많다...
+
 * 단점이랄게 있다면 화면의 높이를 알아야 한다. 그래야 화면 어다끼자 보이고 안보이고를 하는데 게시글 길이, 이미지 높이와 같은 것들 때문에 각각의 카드를 계산하기가 어렵다.. 그렇다보니 쓰기 위해서는 무슨 수를 써서라도 카드의 높이를 통일시켜주는 것이 편할 것이다... 방금 말한 가변 높이를 위한 조치도 이미 라이브러리에 있지만 쉽지 않을 거야...
+
+## ch.4
+
+### npm
+
+* `npm outdated` : 업데이트된 모듈 목록을 볼 수 있다.
+
+* `npm update` : 모듈을 업데이트 해준다.
+
+  * 모듈 업데이트 후 bash 마지막 줄에
+
+    ```bash
+    found 0 vulnerabilities     ```
+
+    이부분이 취약점의 개수를 알려주는데 이 숫자가 `0`이 아닐시 아래의 명령어를 입력해준다.
+    ```
+
+* `npm audit fix` : 자동으로 취약점을 고쳐준다.
+
+
+### express
+
+* back 폴더에서
+
+  ```bash
+  $ npm init
+  $ npm i express
+  ```
+
+* package.json에서 main을 `app.js`로 변경 후 `app.js`파일 생성
+
+  > main이 의미하는 것은 가장 중요한, 가장 먼저 보는 파일.
+  
+* `node`에서는 `import - export` 쓰지 않고, `require - module.exports`를 사용합니다.
+  
+  * 간략한 역사 : 
+  
+    `require - module.exports`는 common.js 문법인데 이 문법을 node가 채택 후 ECMAscript에서  `import - export` 문법을 만들어냈기 때문에 지금까지 node는 `require`, 브라우저는 `import` 이렇게 따로 사용중이다.
+  
+  
