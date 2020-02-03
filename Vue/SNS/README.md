@@ -203,6 +203,27 @@ $ npm i vuetify @nuxtjs/vuetify
 
 * `npm audit fix` : 자동으로 취약점을 고쳐준다.
 
+### HTTP
+
+* `req (요청)`
+  * GET/ naver.com/user/1  - 요청 서버 주소
+    * GET : 가져오다
+    * POST : 생성하다
+    * PUT : 전체 수정
+    * PATCH : 부분 수정
+    * DELETE : 삭제
+    * OPTIONS : 찔러보기
+  * header - 요청에 대한 데이터
+  * body - header에 못 넣는 데이터
+* `res (응답)`
+  * 200 / 400 / 50- 요청을 받을지 말지, 에러를 보낼지.
+  * header - 응답에 대한 데이터
+  * data - header에 못 넣는 데이터
+* https는 암호화랑 관련되어있다. (주소뒤에 포트 443이 숨어있다, http 포트는 80)
+
+
+
+
 
 ### express
 
@@ -223,4 +244,28 @@ $ npm i vuetify @nuxtjs/vuetify
   
     `require - module.exports`는 common.js 문법인데 이 문법을 node가 채택 후 ECMAscript에서  `import - export` 문법을 만들어냈기 때문에 지금까지 node는 `require`, 브라우저는 `import` 이렇게 따로 사용중이다.
   
-  
+
+### 시퀄라이즈
+
+```bash
+$ npm i sequelize mysql2
+```
+
+* `sequelize` : 자바스크립트로 SQL을 표현하게 해준다. DB와 상관 없이 쓸 수 있다.
+* `mysql2` : mysql DB를 설치한게 아니라 node와 mysql을 이어주는 드라이버.
+
+```bash
+$ npm i -D sequelize-cli
+```
+
+* 개발모드로 설치
+  * -g 로 글로벌에 설치하기도 하는데, 이것을 설치하면 이제 terminal에서 `sequelize`을 명령어로 사용할 수가 있는데 글로벌 설치는 문제가 **package.json**에 기록이 안된다고 그랬지!  그래서 명시해주기 위해 -D  설치.
+
+```bash
+$ npx sequelize init
+```
+
+* 설치하면 각종 폴더들이 생긴다.
+* `npx`는 package.json에서 패키지들 중 글로벌 설치가 아닌 `dependencies`나 `devDependencies`에 설치한 것도 `npx sequelize init`처럼 명령어로 쓸 수 있게 해준다. 명령어로 쓸 수 있게 해주는 기능 외에는 없어서 이번 프로젝트에서는 이제 잊어도 된다.
+* `sequelize init` : config, migrations, models, seeders 파일을 만들어준다. node랑 sequelize를 연결할 떄 설정을 편하게 해준다. 그런데 코드가 마냥 좋지는 않아서 수정해서 쓰는게 좋다..(강의 때는 models -> index.js 수정 함.)
+* `config.json`이 DB랑 관련된건데 개발용 DB인 `"development"` 의 username, password, databse 바꿔주고.. 나중에 배포 DB인 `"pproduction"`도 나중에 바꿔줄 예정
