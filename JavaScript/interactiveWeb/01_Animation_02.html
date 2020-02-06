@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    @keyframes spaceship-ani {
+      to {
+        background-position: -2550px;
+      }
+    }
+    .spaceship {
+      width: 150px;
+      height: 150px;
+      background: url('./sprite_spaceship.png') no-repeat 0 0 / auto 150px;
+      animation: spaceship-ani 2s infinite steps(17);
+    }
+  </style>
+</head>
+<body>
+  <h1>frame by frame - cell animation. 한땀한땀 그렸던 그것...</h1>
+  <div class="spaceship"></div>
+</body>
+</html>

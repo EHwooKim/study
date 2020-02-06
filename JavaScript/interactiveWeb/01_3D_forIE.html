@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .world {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80vw;
+      height: 80vh;
+      background: #fff000;
+      /* 3D 효과를 주기위해 배경에 줘야하는 속성으로, 눈으로부터의 거리라고 보면된다.. */
+      perspective: 500px;
+    }
+    .card-side {
+      width: 100px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin: -75px 0 0 -50px;
+      border-radius: 0.5em;
+      font-size: 1.5rem;
+      /* 지금 카드를 뒤집었을 떄 뒷면이 보이는데 아래의 속성으로 그것을 안보이게 해줄 수 있다 */
+      backface-visibility: hidden;
+      transition: 1s;
+    }
+    .card-side-front {
+      z-index: 1;
+      background:  white;
+    }
+    .card-side-back {
+      background: red;
+      transform: rotateY(180deg);
+    }
+    .world:hover .card-side-front {
+      transform: rotateY(180deg)
+    }
+    .world:hover .card-side-back {
+      transform: rotateY(360deg)
+    }
+  </style>
+</head>
+<body>
+  <div class="world">
+    <!-- IE에서는 transform-style:preserve-3d가 안먹혀서 card를 지웠다. -->
+    <div class="card-side card-side-front">F</div>
+    <div class="card-side card-side-back">B</div>
+
+  </div>
+</body>
+</html>

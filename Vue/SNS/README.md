@@ -245,7 +245,7 @@ $ npm i vuetify @nuxtjs/vuetify
     `require - module.exports`는 common.js 문법인데 이 문법을 node가 채택 후 ECMAscript에서  `import - export` 문법을 만들어냈기 때문에 지금까지 node는 `require`, 브라우저는 `import` 이렇게 따로 사용중이다.
   
 
-### 시퀄라이즈
+### DB - sequelize
 
 ```bash
 $ npm i sequelize mysql2
