@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    .characters {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: #fff000;
+    }
+    .ilbuni {
+      width: 100px;
+      cursor: pointer;
+    }
+    .characters .ilbuni {
+      display: inline-block;
+    }
+    .special {
+      border : red dotted 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="characters">
+    <div class="ilbuni a">
+      <img src="./ilbuni/ilbuni_0.png" alt="">
+    </div>
+    <div class="ilbuni b">
+      <img src="./ilbuni/ilbuni_1.png" alt="">
+    </div>
+    <div class="ilbuni c">
+      <img src="./ilbuni/ilbuni_2.png" alt="">
+    </div>
+    <div class="ilbuni d">
+      <img src="./ilbuni/ilbuni_3.png" alt="">
+    </div>
+  </div>
+  <script>
+    (function() {
+      const characters = document.querySelector('.characters')
+
+      function clickHandler(event) {
+        // console.log(event.currentTarget)
+        // console.log(this)
+        console.log(event.target)
+      }
+
+      characters.addEventListener('click', clickHandler)
+    })()
+  </script>
+</body>
+</html>
