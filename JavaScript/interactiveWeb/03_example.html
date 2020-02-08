@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    .stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      background: #333;
+      /* perspective: 800px; 무대에 이렇게 3D를 주니 눈에 위치에 따라 3D 적용이 다르게 됐다 */
+    }
+    .door {
+      position: relative;
+      width: 100px;
+      height: 150px;
+
+    }
+    .door-back {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+    .ilbuni {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100px;
+      height: 100px;
+      background-repeat: no-repeat;
+      background-position: 50% 100%;
+      background-size: contain;
+      transform: translate3d(100%, 0, 0);
+      transition: 0.5s 0.5s;
+    }
+    .door:nth-child(1) .ilbuni { background-image: url('./ilbuni/ilbuni_0.png') }
+    .door:nth-child(2) .ilbuni { background-image: url('./ilbuni/ilbuni_1.png') }
+    .door:nth-child(3) .ilbuni { background-image: url('./ilbuni/ilbuni_2.png') }
+    .door-body {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      transition: 0.5s;
+      transform-origin: 0%;
+    }
+    .door:nth-child(1) .door-body { background: rgba(255, 0, 0, 0.7); }
+    .door:nth-child(2) .door-body { background: rgba(0, 255, 0, 0.7); }
+    .door:nth-child(3) .door-body { background: rgba(0, 0, 255, 0.7); }
+    .door-opened .door-body {
+      transform: perspective(800px) rotateY(-110deg);
+    }
+    .door-opened .ilbuni {
+      transform: translate3d(0%, 0, 0);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="door">
+      <div class="door-back">
+        <div class="ilbuni"></div>
+      </div>
+      <div class="door-body"></div>
+    </div>
+    <div class="door">
+      <div class="door-back">
+        <div class="ilbuni"></div>
+      </div>
+      <div class="door-body"></div>
+    </div>
+    <div class="door">
+      <div class="door-back">
+        <div class="ilbuni"></div>
+      </div>
+      <div class="door-body"></div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      const stageElem = document.querySelector('.stage')
+      // 현재 활성화된 아이템을 저장하기위한 변수
+      let currentItem // null, undefined을 할당해줘도 상관없겠지
+
+      function doorHandler(e) {
+        const targetElem = e.target
+
+        // const currentItem = document.querySelector('.door-opened') 이렇게DOM과 className으로 접근하는건 좋은방법은 아니야..그래서 사용한게 유사(?) 전역변수, 위에 적은거
+        
+        if (currentItem) {
+          currentItem.classList.remove('door-opened')
+        }
+
+        if (targetElem.classList.contains('door-body')) {
+          targetElem.parentNode.classList.add('door-opened')
+          currentItem = targetElem.parentNode // 활성화 되는 순간 위에서 선언한 변수에 이렇게 넣어주면 되겠지
+          // 이 방식 정말 많이 쓰이는 중요한거다. 최종코드에서 한 번 더 개선해보자!
+        }
+      }
+
+      stageElem.addEventListener('click', doorHandler)
+    })()
+  </script>
+</body>
+</html>
