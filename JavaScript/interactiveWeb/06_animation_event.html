@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @keyframes ball-ani {
+      from {
+        transform: translate(0, 0)
+      }
+      to {
+        transform: translate(200px, 200px)
+      }
+    }
+    .ball {
+      position: absolute;
+      left:0;
+      top: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: red;
+      /* animation: ball-ani 1s alternate forwards 3; */
+    }
+    .ball.end {
+      border: 5px solid dodgerblue;
+    }
+  </style>
+</head>
+<body>
+  <div class="ball"></div>
+  <script>
+    const ballElem = document.querySelector('.ball')
+    
+    ballElem.addEventListener('click', function() {
+      ballElem.style.animation = 'ball-ani 1s 3 alternate forwards'
+
+    })
+    // transition이벤트와 마찬가지로 end, start가 있다.
+    ballElem.addEventListener('animationend', function() {
+      ballElem.classList.add('end')
+    })
+
+    // animationiteration - 반복이 될 떄마다 수행된다. 반복 될 떄 실행이니 처음에는 실행안된다.
+    ballElem.addEventListener('animationiteration', function() {
+      console.log('반복!')
+    })
+  </script>
+</body>
+</html>
