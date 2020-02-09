@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .card {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 150px;
+      border: 2px solid black;
+      border-radius: 10px;
+      font-size: 3rem;
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    function Card(num, color) {
+        this.num = num
+        this.color = color
+        // 밑에서 만든 prototype의 초기화 함수를 실행시켜줘야 적용되겠지
+        this.init()
+    }
+    // Card.prototype.xxx 형태로 새로운 프로토타입을 추가할 수 있었는데 이떄는 큰 문제가 없다. 기존 prototype에 하나를 더 추가한거니까
+    // 그런데 prototype도 객체라 아래와 같은 표현이 가능한데 이 떄 주의할 점이 있다.
+    // 이럴 떄는 프로토타입의 생성자를 따로 해줘야한다.
+    // Card 생성자 함수와 인스턴스까지만 만들어보고 console에 해당 인스턴스를 찍어보면 __proto__ 에 constructor로 Card 생성자 함수가 있는게 보인다.
+    // 그래서 아래처럼 prototype을 다시 세팅을 해주려면 constructor부터 먼저 지정해줘야 내가 원하는대로 만들어지겠지
+
+    Card.prototype = {
+      constructor: Card,
+      // 이제 원하는 것을 추가해주면 된다.
+      // init : 초기화 메서드
+      init: function() {
+        const mainElem = document.createElement('div')
+        mainElem.style.color = this.color
+        mainElem.innerHTML = this.num
+        mainElem.classList.add('card')
+        document.body.appendChild(mainElem)
+      }
+    }
+    const card1 = new Card(1, 'green')
+    const card2 = new Card(7, 'blue')
+
+
+      
+  </script>
+</body>
+</html>

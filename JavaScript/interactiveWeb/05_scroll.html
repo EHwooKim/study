@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    img {
+      max-width: 100%;
+    }
+    .content {
+      height: 1000vh;
+      padding: 20%;
+      background: yellowgreen;
+    }
+    .output {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      font-size: 2rem;
+      font-weight: 200;
+      color: #fff;
+      background: rgba(0,0,0,0.4);
+    }
+    .ilbuni {
+      width: 100px;
+      margin: 20px auto;
+      transition: 1s;
+    }
+    .ilbuni.zoom {
+      transform: scale(2);
+    }
+  </style>
+</head>
+<body>
+  <div class="output">output</div>
+  <div class="content">
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus assumenda ex dolor est maiores atque, odit labore rerum dolorem consequuntur temporibus quo totam nam laborum suscipit quis voluptate beatae nemo sunt molestiae accusantium maxime perferendis. Dolorum ratione laborum explicabo molestiae veniam pariatur. Libero amet omnis tempora eius sunt sit vel placeat sequi assumenda, labore quas consequuntur tenetur totam ipsa sapiente molestiae, officiis explicabo quidem perspiciatis magnam! Dicta reprehenderit, odit nisi eaque sapiente fugiat ratione! Amet ratione architecto voluptas accusantium dolor sint quisquam natus unde eum ipsa magnam qui doloremque, vitae voluptates ullam neque id, nostrum dicta iusto dolorum optio! Consequuntur, repudiandae rerum. Expedita asperiores praesentium dolorum iusto ea deleniti delectus id necessitatibus, doloremque suscipit a dolore porro corporis nisi ut eos accusamus tempore maiores explicabo dicta molestias minus omnis. Quam nobis repudiandae aperiam earum numquam explicabo quas nihil reprehenderit commodi porro assumenda harum veniam neque natus sed totam obcaecati, officiis dicta, atque corrupti maxime, voluptatum voluptate! Neque molestiae minima ratione porro. Commodi at, illum perspiciatis natus asperiores nesciunt aut ipsa sequi molestias, veniam suscipit culpa odit doloribus, modi consequatur! Illum corporis assumenda ipsa impedit, sequi nihil, debitis laboriosam quasi at minima tempore natus? Dignissimos molestiae soluta corrupti asperiores itaque voluptatibus pariatur eveniet tempora facilis animi earum, dolorem voluptatum totam in assumenda. Incidunt sit similique qui fugiat officiis omnis voluptas in, eos delectus tempora. Quas quos possimus provident, nemo ad accusamus. Placeat accusantium ipsa iure reiciendis, dolorem excepturi amet maxime? Sapiente ad, quae minus perferendis quis omnis dignissimos maiores excepturi totam facilis harum. Odio nihil nisi, totam dolorem cumque labore qui vitae voluptas beatae possimus ipsam quas assumenda reiciendis asperiores illum, aliquam necessitatibus architecto maxime veniam? Iusto consequatur laboriosam eaque quae ipsum modi ad expedita impedit doloremque eum. Numquam vitae rem a. Nemo maiores impedit delectus. Deleniti molestiae incidunt deserunt aperiam.</p>
+    <figure class="ilbuni">
+      <img src="./ilbuni/ilbuni_0.png" alt="">
+    </figure>
+  </div>
+  
+  <script>
+    (function() {
+      const outputElem = document.querySelector('.output')
+      const ilbuiElem = document.querySelector('.ilbuni')
+        // 스크롤을 내릴 떄마다 스크롤 위치를 알려준다
+        // outputElem.innerHTML = window.pageYOffset;
+        // 해당 요소의 "첫" 스크롤 위치를 알려준다. 스크롤을 내려도 갱신 안된다.
+        // outputElem.innerHTML = ilbuiElem.offsetTop
+        // 스크롤 움직임에 따른 요소의 위치를 알려주는 메소드, 리턴값이 어떤 객체인데, colsole에 찍어보니 크기와 위치 정보를 자세하게 알려준다.
+        // x, y 값보다 top, left 쓰면 호환성면에서 안전하다.
+        // console.log(ilbuiElem.getBoundingClientRect())
+        // 이벤트 리스너 안에는 단순하게 해주기 위해 밖으로 뺍니다~
+      function showValue() {
+        let posY = ilbuiElem.getBoundingClientRect().top
+        outputElem.innerHTML = posY
+
+        if (posY < window.innerHeight * 0.2) {
+          ilbuiElem.classList.add('zoom')
+        } else {
+          ilbuiElem.classList.remove('zoom')
+        }
+
+      }
+        
+      window.addEventListener('scroll', function() {
+        showValue()
+
+      })
+
+
+    })()
+  </script>
+</body>
+</html>
