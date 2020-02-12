@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .btn {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <button class="btn">취소</button>
+  <script>
+    // setInterval 은 반복적으로 뭔가 그리거나 실행시킬 때 주로 사용하는데
+    // 그런데 내가 아무리 빠르게 반복시키고 싶어도 컴퓨터가 그 능력이 안되면 처리가 안돼서 프레임이 떨어지거나 모바일은 배터리가 빨리 소모되는 단점이 있는데 그게 개선된 것이
+    // requestAnimationFrame!!
+
+    let timeId;
+    let n = 0;
+    const btn = document.querySelector('.btn')
+
+    function sample() {
+      n++
+      console.log(n)
+
+      if (n > 200) {
+        return  // 재귀함수 멈추는거처럼 아래 함수가 실행되지않아 반복이 멈춘다.
+      }
+
+      // requestAnimationFrame은 반복시킬 함수 안에 작성한다.
+      timeId = requestAnimationFrame(sample); // 초당 60번 반복이 목표인 메소드
+    }
+    // requestAnimationFrame(sample) // 이렇게 밖에서 실행시키면 한번만 실행된다. 위에처럼 함수 안에서 실행시켜야 재귀함수처럼 반복해서 실행되는 거다
+    sample() // 실행
+
+    btn.addEventListener('click', function() {
+      cancelAnimationFrame(timeId) // clearInterval같은 기능
+    })
+  </script>
+</body>
+</html>

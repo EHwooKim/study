@@ -1,0 +1,81 @@
+body {
+    height: 500vw;
+    font-family: 'Apple SD Gothic Neo', 'Roboto', 'Noto Sans KR', NanumGothic, 'Malgun Gothic', sans-serif;
+    -webkit-overflow-scrolling: touch;
+    color: #555;
+    background: #fff000;
+}
+
+/* world */
+.world {
+    /* 3D 공간 만들기 */
+    perspective: 1000px; 
+    /* 이 공간이 아래로 내려가는 형태가 아니니까 고정시켜야겠지 */
+    position:fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+.stage{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    /* perspective를 world에 줬으니 중간 단계에 preserve-3d 필요하지? */
+    transform-style: preserve-3d;
+}
+.house {
+    width: 100vw;
+    height: 100vh;
+    transform: translateZ(-490vw);
+    transform-style: preserve-3d;
+}
+.wall {
+    position: absolute;
+    left: 0;
+    top: 0;    
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+}
+.wall-left {
+    left: -500vw; /* translateZ(-500vw)와 같겠지 */
+    width: 1000vw;
+    background: #f8f8f8;
+    transform: rotateY(90deg);
+}
+.wall-right {
+    left: -500vw;
+    width: 1000vw;
+    background: #f8f8f8;
+    transform: rotateY(90deg) translateZ(100vw); /* left -400vw이랑 같겠지 */
+}
+/* .wall-front-a {transform: translateZ(300vw)}
+.wall-front-b {transform: translateZ(50vw)}
+.wall-front-c {transform: translateZ(-200vw)}
+.wall-front-d {transform: translateZ(-500vw)} */
+.wall-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.wall-title {
+    font-size: 5rem;
+}
+.progress-bar-con {
+    position:fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 5px;
+    background: #555
+}
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background: #00a8ff;
+}
