@@ -97,6 +97,7 @@
           this.$store.dispatch('users/signUp', { // 모듈이기 때문에! 그냥 signup이 아니라 앞에 users/를 붙여줘야 한다.
             nickname: this.nickname,
             email: this.email,
+            password: this.password,
           })
           //this.$router.push({   // 페이지 전환, nuxt도 내부적으로 vue router를 쓰기 떄문에 이런 사용법은 거의 비슷하다.
           //  path:'/'            // 그런데 주의할게 있지!!!!!!!!!!! action은 비동기라고 했잖아..!!  위에 작성한 코드가 끝난 뒤에 페이지가 이동되는게 맞겠지?

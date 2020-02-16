@@ -206,15 +206,25 @@ $ npm i vuetify @nuxtjs/vuetify
 ### HTTP
 
 * `req (요청)`
+  
   * GET/ naver.com/user/1  - 요청 서버 주소
     * GET : 가져오다
-    * POST : 생성하다
+    * POST : 생성하다  
+      * // POST로 보낸다고 더 안전하거나 그런거 없이 그냥 의미만 담는다. 암호화는 `HTTPS`를 통해서..
     * PUT : 전체 수정
     * PATCH : 부분 수정
     * DELETE : 삭제
     * OPTIONS : 찔러보기
-  * header - 요청에 대한 데이터
-  * body - header에 못 넣는 데이터
+    
+    > 그런데 모든 행동이 위의 6가지 경우에 항상 맞아 떨어질 수는 없다. '게시글 가져오면서 조회수 1늘리기' 같은 동작을하려면 get..? 부분수정이디 patch..? 헷갈릴 수 있는데 애매하면 그냥 post 쓴다.
+    
+  * header - 요청에 대한 데이터 ( 형식에 맞는, 정해진 데이터만 넣을 수 있다)
+  
+    > 관리자 도구 Network에서 Headers부분에 정해진 데이터 확인 가능... 종류가 많다..
+  
+  * body - header에 못 넣는 데이터, ( 그외의 데이터를 다 body에 넣는다.)
+  
+    > 관리자 도구 Headers 밑에 보면 payload라고 있는데 그게 body이다.
 * `res (응답)`
   * 200 / 400 / 50- 요청을 받을지 말지, 에러를 보낼지.
   * header - 응답에 대한 데이터
@@ -244,6 +254,14 @@ $ npm i vuetify @nuxtjs/vuetify
   
     `require - module.exports`는 common.js 문법인데 이 문법을 node가 채택 후 ECMAscript에서  `import - export` 문법을 만들어냈기 때문에 지금까지 node는 `require`, 브라우저는 `import` 이렇게 따로 사용중이다.
   
+* 보통 서버에 요청을 보낼 떄 `json`으로 보내는데 `express`는 json을 못받는다.. 그래서 뭔가 해줘야하는데!
+
+  ```javascript
+  // app.js
+  app.use(express.json()) 
+  ```
+
+* `app.use`를 통해 req와 res를 조작할 수 있고 **middleware**라고 부른다.  `app.get`, `app.post` 들도 middleware이기에 `express`는 **middleware**만 알면 다 안다고 할 수 있다.
 
 ### DB - sequelize
 
@@ -269,3 +287,15 @@ $ npx sequelize init
 * `npx`는 package.json에서 패키지들 중 글로벌 설치가 아닌 `dependencies`나 `devDependencies`에 설치한 것도 `npx sequelize init`처럼 명령어로 쓸 수 있게 해준다. 명령어로 쓸 수 있게 해주는 기능 외에는 없어서 이번 프로젝트에서는 이제 잊어도 된다.
 * `sequelize init` : config, migrations, models, seeders 파일을 만들어준다. node랑 sequelize를 연결할 떄 설정을 편하게 해준다. 그런데 코드가 마냥 좋지는 않아서 수정해서 쓰는게 좋다..(강의 때는 models -> index.js 수정 함.)
 * `config.json`이 DB랑 관련된건데 개발용 DB인 `"development"` 의 username, password, databse 바꿔주고.. 나중에 배포 DB인 `"pproduction"`도 나중에 바꿔줄 예정
+
+### nodemon
+
+```bash
+npm i -D nodemon
+```
+
+> 수정된 코드를 서버에 적용시키려면 서버를 껐다 켜야하는 귀찮음이있다. 그것을 해결해주는 것이 `nodemon`
+
+* 설치 후 `package.json` - `scripts` 에서 `"dev": "nodemon app.js"` 으로 수정해주면 된다.
+* 서버 재실행은 필요없지만 새로고침은 필요하다 ㅋ
+
