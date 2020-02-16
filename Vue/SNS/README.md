@@ -287,6 +287,8 @@ $ npx sequelize init
 * `npx`는 package.json에서 패키지들 중 글로벌 설치가 아닌 `dependencies`나 `devDependencies`에 설치한 것도 `npx sequelize init`처럼 명령어로 쓸 수 있게 해준다. 명령어로 쓸 수 있게 해주는 기능 외에는 없어서 이번 프로젝트에서는 이제 잊어도 된다.
 * `sequelize init` : config, migrations, models, seeders 파일을 만들어준다. node랑 sequelize를 연결할 떄 설정을 편하게 해준다. 그런데 코드가 마냥 좋지는 않아서 수정해서 쓰는게 좋다..(강의 때는 models -> index.js 수정 함.)
 * `config.json`이 DB랑 관련된건데 개발용 DB인 `"development"` 의 username, password, databse 바꿔주고.. 나중에 배포 DB인 `"pproduction"`도 나중에 바꿔줄 예정
+* app.js에 db를 실행하는 코드인 `db.sequelize.sync()`를 적어줘야 서버 실핼할 떄 db도 실행시킨다.
+* 회원가입을 위한 user model 생성, index.js와 연결 등을 하고 npm run dev 를 하면 알아서 db가 업데이트된다.
 
 ### nodemon
 
