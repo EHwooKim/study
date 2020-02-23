@@ -621,4 +621,209 @@ $ npm init
 * 클라이언트의 요청을 받아서 처리한 후, 다시 클라이언트에게 응답한다는 점은 http 서버와 같습니다
 * 하지만 중간에 `미들웨어`를 거친다는 것이 다릅니다. 
 
+## 미들웨어
+
+* 미들웨어는 익스프레스으 핵심으로 요청과 응답 중간에 위치하여 미들웨어라고 부릅니다.
+* 라우터와 에러 핸들러 또한 미들웨어의 일종이므로 미들웨어가 익스프레스의 전부라고 해도 과언이 아닙니다.
+* 미들웨어는 요청과 응답을 조작하여 기능을 추가하기도 하고, 나쁜 요청을 걸러내기도 합니다
+* `미들웨어`는 주로 `app.use`와 함께 사용됩니다. 
+  * `app.use` 메서드의  **인자로 들어가있는 함수**가 `미들웨어`입니다.
+  * [app.js](./ch6/learn-express/app.js)에서 제일 위에 있는 `logger('dev')`부터 시작하여 미들웨어들을 순차적으로 거친 후 라우터에서 클라이언트로 응답을 보냅니다.
+  * 라우터와 에러 헨들러도 `미들웨어`의 일종이기 떄문에서 app.use로 app과 연결해준 것을 볼 수 있습니다.
+
+### 커스텀 미들웨어
+
+* `app.user()`의 인자에 함수를 작성하여 간단하게 새로운 미들웨어를 만들 수 있습니다.
+
+* 그런데 반드시 미들웨어 안에서 `next()`를 작성해줘야 다음 미들웨어로 넘어갑니다.
+
+* `next()` 의 인자에 따라 기능이 구분됩니다.
+
+  * `next()` : 다음 미들웨어로.
+  * `next('route')` : 다음 라우터로.
+  * `next(error)` : route 외의 다른 값을 넣으면 미들웨어나 라우터를 건너 뛰고 에러 핸들러로 이동합니다. 넣어준 값은 에러에 대한 내용으로 간주됩니다.
+    * `app.js`의 404 처리 미들웨어가 이에 해당합니다.
+
+* 하나의 user에 미들웨어를 여러개 장착할 수도 있습니다.
+
+  ```javascript
+  app.use('/', function(req, res, next) {
+      console.log('첫번쨰 미들웨어')
+      next()
+  }, function(req, res, next) {
+      console.log('두번쨰 미들웨어')
+      next()
+  }, function(req, res, next) {
+      console.log('세번쨰 미들웨아')
+      next()
+  })
+  ```
+
+* next()가 없으면 다음 미들웨어로 넘어가지 않는 성질을 사용하여 다음과 같은 미들웨어도 만들 수 있습니다.
+
+  ```javascript
+  app.use(function(req, res, next) {
+      if (Date.now() % 2 === 0) {
+          return res.status(404).send('50% 실패')
+      } else {
+          next()
+      }
+  }, function(req, res, next) {
+      console.log('50% 성공')
+      next()
+  })
+  ```
+
+  > 로그인한 사용자인지를 확인할 떄 위와 같은 코드를 사용합니다.
+
+* 익스프레스에서 사용되는 미들웨어들
+
+  * `morgan` 
+
+    ```javascript
+    var logger = require('morgan')
+    ...
+    app.use(logger('dev'))
+    ```
+
+    * **GET / 200 51.267 ms - 170**  같이  요청에 대한 정보를 콘솔에 기록해줍니다.
+    * 함수의 인자로 `dev`, `short`, `common`, `combined` 등을 줄 수 있습니다.
+    * `dev` 의 경우 `HTTP요청 (GET) 주소(/) HTTP상태코드(200) 응답속도(51.267ms) - 응답바이트(170)`을 의미합니다.
+    * 보통 개발시 `dev`, `short`을 사용하고 배포시에는 `common`, `combined`를 사용합니다.
+    * 콘솔뿐 아니라 **파일이나 데이터베이스에** 로그를 남길 수도 있습니다. 그런데 이러한 작업은 morgan보다 `winston`모듈을 더 많이 사용합니다.
+
+  * `body-parser`
+
+    ```javascript
+    var bodyParser = require('body-parser')
+    ...
+    app.use(bodyParser.json())
+    app.user(bodyParser.urlencoded({ extended: false }))
+    ```
+
+    * 요청의 본문을 해석해주는 미들웨어입니다. 보통 폼 데이터나 AJAX 요청의 데이터를 처리합니다.
+    * **익스프레스  4.16. 0** 부터 body-parser의 일부 기능이 내장되어있기에 body-parser를 설치하지 않고 다음과 같이 사용합니다.
+
+    ```javascript
+    app.use(express.json())
+    app.use(express.urlencoded({ extended:false }))
+    ```
+
+    * 각각 JSON 형식의 데이터 전달 방식과 주소 형식으로 데이터를 보내는 방식입니다.
+
+      * 보통 폼 전송이 URL-encoded 방식을 주로 사용합니다.
+      * `{extended: }` 옵션이 **false**일 경우 노드의 querystring 모듈을 사용하여 쿼리스트리을 해석하고,  **true**일 경우 qs 모듈을 사용하여 쿼리스트링을 해석합니다. - qs는 내장 모듈이 아닌 npm 패키지이며 querystring 모듈의 기능을 조금 더 확장한 모듈입니다.
+
+    * body-parser는 JSON과 URL-encoded형식의 본문 외에도 Raw, Text 형식의 본문을 해석할 수 있습니다.
+
+      * Raw는 본문이 버퍼 데이터일 때, Text는 본문이 텍스트 데이터일 때 해석하는 미들웨어입니다.
+      * 이 두가지 기능은 익스프레스에 내장되어있지 않기 때문에 필요할 때 body-parser를 설치하고 아래와 같이 사용하면 됩니다.
+
+      ```javascript
+      app.use(bodyParser.raw())
+      app.use(bodyParser.text())
+      ```
+
+    * http 웹서버의 경우 POST, PUT 요청의 본문을 전달 받으려면 `req.on('data')`, `req.on('end')` 로 스트림을 사용해야했지만 body-parser를 사용하면 내부적으로 본문을 해석해 req.body에 추가해줍니다.
+
+      * 예를 들어 JSON 형식의 {name: 'ehwoo', book:'nodejs'}를 본문으로 보낸다면 req.body에 그대로 들어가며, URL-encoded 형식으로 name=ehwoo&book=nodejs를 본문으로 보낸다면 {name: 'ehwoo', book:'nodejs'} 가 들어갑니다.
+
+    * mutipart/form-data 같은 폼을 통해 전송된 데이터는 해석하지 못하여 다른 모듈을 사용해야합니다.
+
+  * `cookie-parser`
+
+    ```javascript
+    var cookieParser = require('cookie-parser')
+    ...
+    app.user(cookieParser())
+    ```
+
+    * 요청에 동봉된 쿠키를 해석해줍니다.
+    * 해석된 쿠키들은 req.cookies 객체에 들어깁니다.
+      * 예를들어 name=ehwoo 쿠키를 보냈다면 req.cookies는 {name: 'ehwoo'}가 됩니다
+
+    ```javascript
+    app.use(cookieParser('secret code'))
+    ```
+
+    *  위와 같이 첫 번째 인자로 문자열을 넣어줄 수 있습니다.
+    * 암호화된 쿠키가 있는 경우, 제공한 문자열을 키로 삼아 복호화할 수 있습니다.
+
+  * `static`
+
+    ```javascript
+    app.use(express.static(path.join(__dirname, 'public')))
+    ```
+
+    * 익스프레스 내장 모듈로, static 미들웨어는 정적인 파일들을 제공합니다
+    * 함수의 인자로 정적 파일들이 담겨 있는 폴더를 지정하면 됩니다.
+    * public으로 지정된 지금, public/stylesheets/style.css는 `http://localhost:3000/stylesheets/style.css`로 접근할 수 있습니다.
+      * 실제 서버의 폴더 경로에는 `public`이 있지만 요청  주소에는 `public`이 없습니다. 서버의 폴더 경로와 요청 경로가 다르므로 보안에 큰 도움이 됩니다.
+    * 정적 파일들을 알아서 제공해주므로 http 웹서버처럼 `fs.readFile`로 파일을 직접 읽어서 전송할 필요가 없습니다.
+
+    ```javascript
+    app.use('/img', express.static(path.join(__dirname, 'public')))
+    ```
+
+    * 위와 같이 정적 파일을 제공할 주소를 지정할 수도 있습니다.
+    * public 폴더 안에 abc.png가 있다고 가정하면 앞에 /img 경로를 붙인 `http://localhost:3000/img/abc.png` 주소로 접근할 수 있습니다.
+    * static 미들웨어는 요청에 부합하는 정적 파일을 발견하면 응답으로 해당파일을 전송합니다.
+    * 이 경우 응답을 보냈으므로 다음에 나오는 라우터가 실행되지 않으며, 파일을 찾지 못했다면 요청을 라우터로 넘깁니다.
+    * 정적 파일 라우터 기능을 수행하므로 **최대한 위쪽에 배치**하는 것이 좋습니다. 그래야 서버가 쓸데없는 미들웨어 작업을 하는 것을 막을 수 있습니다.
+    * 하지만 static 미들웨어를 morgan보다도 더 위로 올리면 정적 파일 요청이 기록되지 않기때문에 조심해야합니다
+    * **미들웨어들은 서비스에 따라 맞는 위치를 적절히 선정하여 작성해주어야 합니다**
+
+  * `express-session`
+
+    ```bash
+    $ npm i express-session
+    ```
+
+    ```javascript
+    var session = require('express-session')
+    ...
+    app.use(cookieParser('secret code'))
+    app.use(session({
+        resave: false,
+        saveUninitialized: false,
+        secret: 'secret code',
+        cookie: {
+            httpOnly: true,
+            secure: false,
+        },
+    }))
+    ```
+
+    * 세션 관리용 미들웨어입니다. 로그인 등의 이유로 세션을 구현할 떄 매우 유용합니다.
+    * 인자로 세션에 대한 설정을 받습니다.
+      * `resave` : 요청이 왔을 때 세션에 수정사항이 생기지 않더라도 세션을 다시 저장할지에 대한 설정
+      * `saveUninitialized` : 세션에 저장할 내역이 없더라도 세션을 저장할지에 대한 설정, **보통 방문자를 추적할 떄 사용됩니다.**
+      * `secret` : 필수항목으로 cookie-parser의 비밀 키와 같은 역할을 합니다.
+        * `express-session`은 세션 관리 시 클라이언트에 쿠키를 보냅니다. 이를 `세션 쿠키`라고 부릅니다. 안전하게 쿠키를 전송하려면 쿠키에 서명을 추가해야하고, 쿠키를 서명하는데 secret의 값이 필요한데 이는 cookie-parser의 secret과 같게 설정해야 합니다.
+      * `cookie` : 세션 쿠키에 대한 설정으로 `maxAge`, `domain`, `path`, `expires`, `sameSite`, `httpOnly`, `secure`등 일반적인 쿠키 옵션이 모두 제공됩니다.
+      * `store` 라는 옵션도 있습니다.
+        * 현재는 메모리에 세션을 저장하도록 되어있는데 문제는 서버를 재시작하면 메모리가 초기화되어 세션이 모두 사라진다는 것입니다.
+        * 따라서 배포 시에는 store에 데이터베이스를 연결하여 세션을 유지하는 것이 좋고 보통 `Redis`가 자주 쓰입니다.
+    * `express-session`은 req 객체 안에 req.session 객체를 만듭니다. 이 객체에 값을 대입하거나 삭제하여 세션을 변경할 수 있습니다.
+    * 세션을 한번에 삭제하려면 `req.session.destroy()` 메서드를 호출하면 됩니다.
+    * 현재 세션 아이디는 `req.sessionID`로 확인할 수 있습니다.
+
+  * `connect-flash`
+
+    ```bash
+    npm i connect-flash
+    ```
+
+    ```javascript
+    var flash = require('coonnect-flash')
+    ...
+    app.use(flash())
+    ```
+
+    > connect-flash 미들웨어는 cookie-parser와 express-session을 사용하므로 이들보다 뒤에 위치해야 합니다.
+
+    * 일회성 메시지들을 웹 브라우저에 나타낼 때 유용한 미들웨어입니다.
+    * flash 미들웨어는 req 객체에 req.flash 메서드를 추가합니다.
+    * `req.flash(키, 값)`으로 해당 키에 값을 설정하고, `req.flash(키)`로 해당 키에 대한 값을 불러옵니다.
+    * 일회성 메세지이므로 처음에는 보이지만 새로고침시에는 사라집니다. 로그인 에러나 회원가입 에러 같은 일회성 경고 메세지는 flash 미들웨어로 보내는게 좋습니다.
 
