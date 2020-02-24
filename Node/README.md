@@ -905,3 +905,219 @@ $ npm init
   * `res.render('템플릿 파일 경로', {변수})` : 템플릿 엔진을 렌더링할 때 사용합니다.
 
     > views 폴더 안 pug 확장자를 가지고 있는 파일들이 템플릿 엔진입니다. 
+
+## 템플릿 엔진
+
+> HTML로 여러개의 데이터를 표현하고 싶다면 직접 코딩해서 넣어줘야하지만 자바스크립트로 표현하면 반복문으로 간단하게 처리가 가능하다. 
+>
+> 템플릿 엔진은 자바스크립트를 사용해서 HTML을 렌더링할 수 있게 해줍니다. 
+>
+> 그렇기에 기본 HTML과 문법이 좀 다르고, 자바스크립트 문법이 섞여있기도 합니다.
+
+* 대표적인 템플릿 엔진인 Pug, EJS
+
+### Pug
+
+> 예전이름인 Jade로 더 유명하다. 문법이 Ruby와 비슷하고 간단하다. 하지만 HTML 문법과 많이 달라 호불호가 있다.
+
+```javascript
+// app.js
+app.set('views', path.join(__dirname, 'views')) // res.render가 이 경로에서 템플릿 엔진을 찾아 렌더링을 합니다
+app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
+```
+
+* HTMl 표현
+
+  * HTML과 다르게 열고 닫는 태그가 없습니다. (< > 가 없다.)
+    * 그렇기 때문에 태그 속성도 태그명 뒤에 소괄호로 묶어서 적어줍니다.
+  * 탭, 스페이스로만 태그의 부모, 자식 관계를 규명합니다.
+  * `doctype html` 은 `<!DOCTYPE html>`과 같습니다.
+
+  ```pug
+  doctype html
+  html
+    head
+      title= title
+        link(rel='stylesheet', href='/stylesheets/style.css')
+  ```
+
+  * 속성 중 아이디와 클래스가 있는 경우 다음과 같이 표현하며, div태그의 div문자는 생략 가능합니다.
+
+  ```pug
+  #login-button		// <div id="login-button"></div>
+  .post-image
+  span#highlight
+  p.hidden.full		// <p class="hidden full"></p>
+  ```
+
+  * HTML 텍스트는 다음과 같이 캐그 또는 속성 뒤에 한 칸을 띄고 입력하면 됩니다.
+
+  ```pug
+  p Welcome to Express		// <p>Welcome to Express</p>
+  button(type='submit')		// <button type="submit">전송</button>
+  ```
+
+  * 에디터에서 텍스트를 여러 줄 입력하고 싶다면 다음과 같이 파이프(|)를 넣어줍니다.HTML코드에서는 한 줄로 나옵니다.
+
+  ```pug
+  p							// <p>안녕하세요 여러줄을 입력합니다. <br/> 태그도 중간에 넣을 수 
+    | 안녕하세요.				//     있습니다. </p>
+    | 여러 줄을 입력합니다.
+    br
+    | 태그도 중간에 넣을 수 있습니다.
+  ```
+
+  * style이나 script 태그로 CSS 또는 자바스크립트 코드를 작성하고 싶다면 다음과 같이 태그 뒤에 `.`을 붙여줍니다.
+
+  ```pug
+  style.
+    h1 {
+    font-size: 30px;
+    }
+  script.
+    var message = 'Pug'
+    alert(message)
+  ```
+
+* 변수
+
+  * HTML과 다르게 자바스크립트 변수를 템플릿에서 렌더링할 수 있습니다.  `res.render` 호출 시 보내는 변수를 Pug가 처리해줍니다. 
+
+  ```javascript
+  router.get('/', function(req,res, next){
+      re.render('index', { title: 'Express' })
+  })
+  ```
+
+  * `res.render(템플릿, 변수 객체)` 는 익스프레스가 re 객체에 추가한 템플릿 렌더링을 위한 메서드입니다. index.pug를 HTML로 렌더링 하면서 { title: 'Express' }라는 객체를 변수로 집어 넣습니다. 그로인해 layout.pug와 index.pug의 title부분이 모두 Express로 치환됩니다. 
+  * res.render 메서드에 두 번째 인자로 변수 객체를 넣는 대신, app.js의 에러 처리 미들웨어처럼 `res.locals` 객체를 사용해서 변수를 넣을 수도 있습니다.
+
+  ```javascript
+  router.get('/', function(req, res, next) {
+      res.locals.title = 'Express'
+      res.render('index')
+  })
+  ```
+
+  * 위와 같이 현 템플릿 엔진이 res.locals 객체를 읽어서 변수에 집어 넣습니다.
+  * 이 방법의 장점은 현재 라우터뿐만 아니라 다른 미들웨어에서도 res.locals 객체에 접근할 수 있다는 것입니다.
+  * 변수 사용 방법
+
+  ```pug
+  h1=title								// <h1>Express</h1>
+  p Welcome to #{title}					// <p> Welcome to Express </p>
+  button(class=title, type='submit') 전송  
+  input(placeholder=title + '연습')		   // <input placeholder="Express 연습" />
+  ```
+
+  * 변수를 텍스트로 사용하고 싶다면 태그뒤에 `=` 붙인 후 변수 입력
+  * 속성에도 `=` 붙인 후 변수 입력
+  * 텍스트 중간에 변수를 넣으려면 `#{변수}`
+  * `#{}`의 내부와 `=` 기호 뒷부분은 자바스크립트로 해석하므로 마지막 줄 input처럼 자바스크립트 구문을 써도 됩니다.
+
+  ```pug
+  - var node = 'Node.js'
+  - var js = 'Javascript'
+  p #{node}와 #{js}  		// <p> Node.js와 Javascript</p>
+  ```
+
+  * 위와 같이 내부에 직접 변수를 선언할 수도 있습니다. `-`를 먼저 입력하면 뒤에 자바스크립트 구문을 작성할 수 있습니다.
+
+  ```pug
+  p='<strong>이스케이프</strong>'  //<p>&lt;strong&gt;이스케이프&lt;/string&gt;
+  p!='<strong>이스케이프 안함</strong>' // <p><strong>이스케이프 안함</strong></p>
+  ```
+
+  * Pug는 기본적으로 변수의 특수문자를 HTML 엔티티로 이스케이프합니다. 이스케이프를 원치않으면 `=`대신 `!=`를 사용하면 됩니다.!
+
+* 반복문
+
+  * `each`와 `for`를 이용하여 반복 가능한 변수에 대해 반복문을 사용할 수 있습니다.
+
+  ```pug
+  ul
+    each fruit in ['사과', '배', '오렌지', '바나나', '복숭아'] // each대신 for 사용 가능
+      li=fruit 
+  ```
+
+  * 반복문 사용시 인덱스도 가져올 수 있습니다.
+
+  ```pug
+  ul
+    each fruit, index in ['사과', '배', '오렌지', '바나나', '복숭아']
+      li= (index + 1) + '번째' + fruit
+  ```
+
+* 조건문
+
+  * `if`, `else if`, `else` 를 사용하여 조건문을 사용할 수 있습니다.
+
+  ```pug
+  if isLoggedIn			// isLoggedIn 이 true 일 때
+    div 로그인 되었습니다.   // <div>로그인 되었습니다.</div>
+  else 					// isLoggedIn 이 false 일 때
+    div 로그인이 필요합니다. // <div>로그인이 필요합니다.</div>
+  ```
+
+  * `case`문도 가능합니다.
+
+  ```pug
+  case fruit
+    when 'apple'
+      p 사과입니다.
+    when 'banana'
+      p 바나나입니다.
+    when 'orange'
+      p 오렌지입니다.
+    default
+      p 사과도 바나나도 오렌지도 아닙니다.
+  ```
+
+* 다른 Pug나 HTML 파일을 넣을 수 있습니다.
+
+  * 헤더나 푸터, 네비게이션처럼 웹 제작시 공통되는 부분을 따로 관리할 수 있어 매 페이지마다 동일한 HTMl넣어야하는 번거로움을 없애줍니다. `include` 파일 경로로 사용합니다.
+
+  ```pug
+  //header.pug
+  header
+    a(href='/') Home
+    a(href='/about') About
+  //footer.pug
+  footer
+    div 푸터입니다.
+  //main.pug
+  include header
+  main
+    h1 메인 파일
+    p 다른 파일을 include 할 수 있습니다.
+  include footer
+  ```
+
+* `extends`, `block` : 레이아웃을 정할 수 있어 공통되는 레이아웃 부분을 따로 관리할 수 있습니다. include와 함께 사용하곤 합니다. (장고에서의 그 block이네)
+
+  ```pug
+  //layout.pug
+  doctype html
+  html
+    head
+      title= title
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        block style
+      body
+        header 헤더입니다.
+        block content
+        footer 푸터입니다.
+        block javascript
+  //body.pug
+  extends layout
+  
+  block content
+    main
+      p 내용입니다.
+  block javascript
+    script(src='javascripts/main.js')
+  ```
+
+  * `block 블록명`으로 block을 선언하고, block이 되는 파일에서 extends키워드로 레이아웃 파일을 지정하고 block부분을 넣어줍니다. 
+  * 나중에 익스프레스에서 `res.render('body')`를 사용해 하나의 HTML로 합쳐 렌더링할 수 있습니다.
+  * Pug 확장자는 생략 가능합니다.

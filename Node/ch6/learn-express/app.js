@@ -11,8 +11,12 @@ var usersRouter = require('./routes/users');
 
 var app = express(); // express 패키지를 호출하여 app 변수 객체를 만들었습니다. 이 변수에 각종 기능을 연결하여 사용합니다.
 
+
+// app.set 메서드로 익스프레스 앱을 설정할 수 있습니다.
+
 // view engine setup
-app.set('views', path.join(__dirname, 'views')); // app.set 메서드로 익스프레스 앱을 설정할 수 있습니다.
+app.set('views', path.join(__dirname, 'views')); // views는 템플릿 파일들이 위치한 폴더를 지정하는 것입니다. res.render 메서드가 이 폴더 기준으로 템플릿 엔진을 찾아 렌더링 합니다.
+                                                 // res.render('index')이면 views/index.pug를 렌더링 하고, res.render('admin/main')이면 views/admin/main.pug 를 렌더링합니다.
 app.set('view engine', 'pug');
 
 // 커스텀 미들웨어
@@ -40,7 +44,7 @@ app.use(session({   // express-session 은 cookie-parser보다 뒤에 놓는 것
 app.use(flash())
 
 
-app.use('/', indexRouter); // 라우터도 미들웨어의 일종이기 떄문에 연결해주어야 합니다.
+app.use('/', indexRouter); // 라  우터도 미들웨어의 일종이기 떄문에 연결해주어야 합니다.
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
