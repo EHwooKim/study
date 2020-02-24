@@ -827,3 +827,81 @@ $ npm init
     * `req.flash(키, 값)`으로 해당 키에 값을 설정하고, `req.flash(키)`로 해당 키에 대한 값을 불러옵니다.
     * 일회성 메세지이므로 처음에는 보이지만 새로고침시에는 사라집니다. 로그인 에러나 회원가입 에러 같은 일회성 경고 메세지는 flash 미들웨어로 보내는게 좋습니다.
 
+## Router 객체로 라우팅 분리하기
+
+> 익스프레스의 Router 객체를 사용하면 http 웹 서버 떄처럼 if문으로 http 메서드별, 주소별로 분기처리를 하지 않아도 되는 장점이 있다. [index.js](./ch6/learn-express/routes/index.js), [users.js](./ch6/learn-express/routes/users.js)
+
+* 첫 번째 인자로 주소를 받아 특정 주소에 해당하는 요청이 들어왔을 떄만 미들웨어가 작동하게 할 수 있다.
+
+* app.js에서 라우터 연결시 `app.use` 대신 `get`, `post`, `put`, `patch`, `delete` 같은 HTTP 메서드를 사용할 수도 있다.
+
+* router 객체에서도 역시 HTTP 메서드를 사용할 수 있다.
+
+* `next()` 함수에는 라우터에서만 동작하는 특수 기능이 있습니다.
+
+  * `next('route')` : 라우터에 연결된 나머지 미들웨어들을 건너뛰고 싶을 떄 사용합니다.
+
+    ```javascript
+    router.get('/', function(req, res, next) {
+        next('route')
+    }, function(req, res, next) {
+        console.log('실행되지 않습니다.')
+        next()
+    }, function(req, res, next) {
+        console.log('실행되지 않습니다.')
+        next()
+    })
+    
+    router.get('/', function(req, res) {
+        console.log('실행됩니다')
+        res.render('index', { title: 'Express' })
+    })
+    ```
+
+    * 위의 두 라우터의 경우 첫 번째 라우터의 첫 번쨰 미들웨어에서 next('route')를 호출하여 두 번쨰, 세 번째 미들웨어는 실행되지 않습니다. 대신 **주소와 일치하는 다음 라우터로** 넘어가 아래의 라우터가 바로 실행되게 합니다.
+
+* 동적 라우팅도 당연히 가능합니다.
+
+  ```javascript
+  router.get('/users/:id', function(req, res) {
+      console.log(req.params, req.query)
+  })
+  ```
+  
+  * `:id`부분은 내가 알고있는 그 동적 라우팅.
+  
+  * 이때 `:id`에 해당하는 데이터는  `req.params` 객체 안에 들어있습니다.
+  
+    * `:id`  이면 `req.params.id`로, `:type` 이면 `req.params.type`으로 조회할 수 있습니다.
+  
+  * 주소에 쿼리스트링을 쓸 때도 있는데 쿼리스트링의 키-값 정보는 `req.query`객체 안에 들어있습니다.
+  
+    * `/users/123?limit=5&skip=10`이라는 주소의 요청이 들어오면, `req.params`와 `req.query` 객체는 다음과 같습니다.
+  
+      ```
+      { id: '123' } { limit: '5', skip: '10' }
+      ```
+  
+  * 이 동적 라우팅 패턴을 사용할 때의 :lipstick: 주의점으로는 일반 라우터보다 **뒤에 위치해야한다**는 것입니다.
+  
+* **요청에 대한 응답을 보내는 다양한 메서드들**
+
+  * `res.send(버퍼 또는 문자열 또는 HTML 또는 JSON)` : send는 만능 메서드로 버퍼, 문자열, HTML, JSON 데이터를 전송할 수 있습니다.
+
+  * `res.sendFile(파일 경로)` : 파일을 응답으로 보내주는 메서드입니다.
+
+  * `res.json(JSON데이터)` : JSON 데이터를 보내주는 메서드입니다.
+
+  * `res.redirect(주소)` : 응답을 다른 라우터로 보내버립니다. ( 로그인 후 홈으로 보내기 같은 기능)
+
+  * `res.render('템플릿 파일 경로', { 변수 })` :
+
+  * `res.status` :  `400대 에러 상태코드`나 `redirect 302 상태코드` 외에는 보통 `200 상태코드`로 응답하지만 직접 res.status를 사용하여 직접 바꿔줄 수 있습니다.
+
+    ```javascript
+    res.status(404).send('Not Found')
+    ```
+
+  * `res.render('템플릿 파일 경로', {변수})` : 템플릿 엔진을 렌더링할 때 사용합니다.
+
+    > views 폴더 안 pug 확장자를 가지고 있는 파일들이 템플릿 엔진입니다. 

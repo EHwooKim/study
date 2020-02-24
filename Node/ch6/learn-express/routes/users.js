@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) { // GET /users/ 요청시 처리
   res.send('respond with a resource');
 });
 
