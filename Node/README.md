@@ -1121,3 +1121,9 @@ app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
   * `block 블록명`으로 block을 선언하고, block이 되는 파일에서 extends키워드로 레이아웃 파일을 지정하고 block부분을 넣어줍니다. 
   * 나중에 익스프레스에서 `res.render('body')`를 사용해 하나의 HTML로 합쳐 렌더링할 수 있습니다.
   * Pug 확장자는 생략 가능합니다.
+
+# mysql
+
+## Sequelize
+
+> 
