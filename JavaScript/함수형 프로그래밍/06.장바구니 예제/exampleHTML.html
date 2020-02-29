@@ -38,18 +38,15 @@
           <th>수량</th>
           <th>총 가격</th>
         </tr>
-        ${go(products,
-          map(p => `
-            <tr>
-              <td>${p.name}</td>
-              <td>${p.price}</td>
-              <td><input type="number" value="${p.quantity}"></td></td>
-              <td>${p.price * p.quantity}</td>              
-            </tr>
-          `),
-          reduce(add), // map이 배열을 반환하므로 이부분이 없으면 뭔가 이상, add 함수로 문자열 더하기 해서 하나의 문자열로 만들어준다. 그리고 이 모양새가 sum과 동일하므로 sum을 사용하면 된다.
-          // console.log
-        )}
+        ${go(products, sum(p => `
+          <tr>
+            <td>${p.name}</td>
+            <td>${p.price}</td>
+            <td><input type="number" value="${p.quantity}"></td></td>
+            <td>${p.price * p.quantity}</td>              
+          </tr>
+        `))// map이 배열을 반환하므로 이부분이 없으면 뭔가 이상, add 함수로 문자열 더하기 해서 하나의 문자열로 만들어준다. 그리고 이 모양새가 sum과 동일하므로 sum을 사용하면 된다.
+        }
         <tr>
           <td colspan="2">합계</td>
           <td>${totalQuantity(products)}</td>
