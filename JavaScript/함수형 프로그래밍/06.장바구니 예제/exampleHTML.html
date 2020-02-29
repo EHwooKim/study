@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>장바구니 예제</title>
+  <script src='./fx.js'></script>
+</head>
+<body>
+  <div id="cart">
+
+  </div>
+
+  <script>
+    const products = [
+      { name: '반팔티', price: 15000, quantity: 1 },
+      { name: '긴팔티', price: 20000, quantity: 2 },
+      { name: '핸드폰케이스', price: 15000, quantity: 3 },
+      { name: '후드티', price: 30000, quantity: 4 },
+      { name: '바지', price: 25000, quantity: 5 },
+    ]
+
+    const add = (a, b) => a + b
+
+    const sum = curry((f, iter) => go(
+      iter,
+      map(f),
+      reduce(add)))
+
+    const totalQuantity = sum(p=> p.quantity)
+
+    const totalPrice = sum(p =>  p.price * p.quantity)
+
+    document.querySelector('#cart').innerHTML = `
+      <table>
+        <tr>
+          <th>상품 이름</th>
+          <th>가격</th>
+          <th>수량</th>
+          <th>총 가격</th>
+        </tr>
+        ${go(products,
+          map(p => `
+            <tr>
+              <td>${p.name}</td>
+              <td>${p.price}</td>
+              <td><input type="number" value="${p.quantity}"></td></td>
+              <td>${p.price * p.quantity}</td>              
+            </tr>
+          `),
+          reduce(add), // map이 배열을 반환하므로 이부분이 없으면 뭔가 이상, add 함수로 문자열 더하기 해서 하나의 문자열로 만들어준다. 그리고 이 모양새가 sum과 동일하므로 sum을 사용하면 된다.
+          // console.log
+        )}
+        <tr>
+          <td colspan="2">합계</td>
+          <td>${totalQuantity(products)}</td>
+          <td>${totalPrice(products)}</td>
+        </tr>
+      </table>
+    `
+  </script>
+</body>
+</html>
