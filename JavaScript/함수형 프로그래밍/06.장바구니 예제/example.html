@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>장바구니 예제</title>
+  <script src='./fx.js'></script>
+</head>
+<body>
+  <div id="cart">
+
+  </div>
+
+  <script>
+    const products = [
+      { name: '반팔티', price: 15000, quantity: 1 },
+      { name: '긴팔티', price: 20000, quantity: 2 },
+      { name: '핸드폰케이스', price: 15000, quantity: 3 },
+      { name: '후드티', price: 30000, quantity: 4 },
+      { name: '바지', price: 25000, quantity: 5 },
+    ]
+
+    const add = (a, b) => a + b
+    /*
+      01. 1차 구현
+    */
+    // 총 수량
+    console.log('=== 1차 구현 ===')
+
+    const totalQuantity = pipe(   // const totalQuantity = products => go(products, 였는데 products를 받아 바로 사용하니 pipe 함수 사용 가능하겠지.
+      map(p => p.quantity),
+      reduce(add))
+    console.log(totalQuantity(products))
+
+    // 합산 금액
+    const totalPrice = pipe(
+      map(p =>  p.price * p.quantity),
+      reduce(add))                      // reduce((a, b)=>a + b)) 였는데 이부분이 위, 아래 중복적으로 사용되니 따로 함수로 뺴서 중복 제거
+    console.log(totalPrice(products))
+
+    // map 부분을 제외하고 두 코드는 동일하니 이부분도 중복제거해보자.
+    const sum = (f, iter) => go(
+      iter,
+      map(f),
+      reduce(add))
+
+    console.log(sum(p => p.quantity, products))
+    console.log(sum(p =>  p.price * p.quantity, products))
+
+    /*
+      02. 2차 구현
+    */
+    console.log('=== 2차 구현 ===')
+
+    const totalQuantity2 = products => sum(p=> p.quantity, products)
+
+    console.log(totalQuantity2(products))
+
+    const totalPrice2 = products => sum(p =>  p.price * p.quantity, products)
+
+    console.log(totalPrice2(products))
+
+    /*
+     03. 3차 구현 (curry사용)
+    */
+    console.log('=== 3차 구현 ===')
+
+    const sum2 = curry((f, iter) => go(
+      iter,
+      map(f),
+      reduce(add)))
+
+    const totalQuantity3 = sum2(p=> p.quantity) //products => sum(p=> p.quantity)(products) 였는데 이는 products를 전달하는 역할만 하므로 다음과 같이 평가가 가능하다.
+
+    console.log(totalQuantity3(products))
+
+    const totalPrice3 = sum2(p =>  p.price * p.quantity)
+
+    console.log(totalPrice3(products))
+
+
+    // 이렇게 만든 sum 함수는 products에만 국한된 함수가 아니라 다양하게 사용할 수 있다.
+    console.log(sum(u => u.age, [ 
+      { age: 30 },
+      { age: 20 },
+      { age: 10 },
+    ]))
+  </script>
+</body>
+</html>
