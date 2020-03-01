@@ -1124,6 +1124,179 @@ app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
 
 # mysql
 
+> ch7 폴더
+
 ## Sequelize
 
-> 
+> 시퀄라이즈는 ORM(Object-relational Mapping)으로 분류된다. ORM은 자바스크립트 /객체와 데이터베이스의 릴레이션을 매핑해주는 도구입니다.
+
+* 프로젝트 생성
+
+  ```bash
+  // 프로젝트 생성
+  $ express learn-sequelize --view=pug
+  
+  $ cd learn-sequelize
+  $ npm i								// 폴더 이동 후 npm 설치
+  ```
+
+* sequelize 설치
+
+  ```bash
+  $ npm i sequelize mysql2	// sequelize, mysql2 패키지 설치
+  $ npm i -g sequelize-cli	// sequelize 커맨드 사용위한 전역설치
+  ```
+
+* 호출
+
+  ```bash
+  $ sequelize init // 이 명령어로 호출
+  ```
+
+  * `sequelize init` 명령어 호출 시 나오는 경고는 무시해도 된다..(?)
+
+  * `config`, `models`, `migrations`, `seeders` 폴더가 생성된다.
+
+  * `models/index.js` 파일을 수정해줍니다. (오류가 생기기도하고 필요한 것만 쓰기위해)
+
+    ```javascript
+    const path = require('path');
+    const Sequelize = require('sequelize');
+    
+    const env = process.env.NODE_ENV || 'development';
+    const config = require(path.join(__dirname, '..', 'config', 'config.json'))[env];
+    const db = {};
+    
+    const sequelize = new Sequelize(config.database, config.username, config.password, config)
+    
+    db.sequelize = sequelize
+    db.Sequelize = Sequelize
+    
+    module.exports = db
+    ```
+
+* 시퀄라이즈를 통해 익스프레스 앱과 MySQL 연결
+
+  ```java
+  // app.js
+  ...
+  var usersRouter = require('./routes/users');
+  var sequelize = require('./models').sequelize;
+  
+  var app = express();
+  sequelize.sync()
+  ...
+  ```
+
+  * `require('./models')`는 `require('./models/index.js')`와 같습니다.
+  * `sync` 메서드를 사용하여 서버 실행 시 알아서 MySQL과 연동됩니다.
+
+* 모델 정의하기
+
+  > MySQL에서 정의한 테이블을 시퀄라이즈에서도 정의해줘야 합니다.
+  >
+  > MySQL의 테이블은 시퀄라이즈의 모델과 대응됩니다.
+  >
+  > 시퀄라이즈는 모델과 MySQL의 테이블을 연결해주는 역할을 합니다.
+  >
+  > User와 Comment 모델을 만들어 users 테이블과 comments 테이블을 연결해봅시다.
+  >
+  > 시퀄라이즈는 기본적으로 모델 이름은 단수형, 테이블 이름은 복수형으로 사용합니다.	
+  
+  * models 폴더에 `user.js`, `comment.js` 파일 만들어 모델을 정의해줍니다.
+  * 시퀄라이즈는 알아서 `id`를 기본 키로 연결하므로 `id` 컬럼은 적어줄 필요가 없습니다.
+  * MySQL 테이블과 컬럼 내용이 일치해야 적확하게 대응됩니다.
+  * 시퀄라이즈 자료형은 MySQL의 자료형과 조금 다릅니다.
+    * VARCHAR => `STRING`
+    * INT => `INTEGER`
+      * `INTEGER.UNSIGNED`는 UNSIGNED 옵션이 적용된 INT를 의미하며 ZEROFILL 옵션을 사용하고싶다면 `INTEGER.UNSIGNED.ZEROFILL`을 적어줍니다.
+    * TINYINT => `BOOLEAN`
+    * DATETIME => `DATE`
+    * NOT NULL => `aloowNull`
+    * UNIQUE => `unique`
+    * `defaultValue`로 기본값 정의가 가능하며 `DataTypes.NOW`로 현재 시간을 기본값으로 사용할 수 있습니다. SQL의 now()와 같습니다.
+  * `define`메서드의 세 번째 인자는 테이블 옵션입니다.
+    * `timestamps` 속성이 true 이면 시퀄라이즈는 createdAt과 updatedAt 컬럼을 추가하여 로우가 생설될 때와 수정될 떄의 시간이 자동으로 입력됩니다. (예제에서는 직접 created_at 컬럼을 만들었으므로 false로 합니다.)
+  
+* 모델 정의 후 index.js 에서 db 객체에 모델을 담아준다.
+
+* config.json에서 database와 관련된 내용 수정한다.
+
+  ```json
+  // config/config.json
+    "development": {
+      "username": "root",
+      "password": "ehwoo2356",
+      "database": "nodejs",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "operatorsAliases": false
+    },
+  ```
+
+  * `operatorsAliases `는 보안에 취약한 연선자를 사용할지 여부를 설정하는 옵션으로 false를 입력.
+  * config/config.json 실행환경에 따라 다르게 환경을 설정할 수 있습니다.  위의 설정은 `process.env.NODE_ENV`가 `devvelopment`일 떄 적용된다.  나중에 배포할 떄는 process.env.NODE_ENV를 production으로 설정합니다. 따라서 배포환경을 위해 데이티베이스를 설정할 때는 config/config.json의 production 속성을 수정하면 되고, 테스트환경일 떄는 test 속성을 수정하면 됩니다.
+
+### 관계 정의하기
+
+> MySQL에서는 JOIN이라는 기능으로 여러 테이블 간의 관계를 파악해 결과를 도출합니다. 시퀄라이즈는 JOIN 기능도 알아서 구현해줍니다. 대신 시퀄라이즈에게 테이블 간에 어떠한 관계가 있는지 알려주어야 합니다.
+
+#### 1:N
+
+* 시퀄라이즈에서는 `1:N` 관게를 `hasMany` 메서드로 표현합니다. users 테이블의 로우 하나를 불러올 떄 연결된 comments 테이블의 로우들도 같이 불러올 수 있습니다. 반대로 `belongsTo` 메서드도 있습니다. comments 테이블의 로우를 불러올 떄 연결된 users 테이블의 로우를 가져옵니다. [index.js](./ch7/learn-sequelize/models/index.js)
+
+#### 1:1
+
+* `1:1` 관계에서는 hasMany 메서드 대신 `hasone` 메서드를 사용합니다.
+
+* 사용자 정보를 담고있는 Info 모델이 있다고 가정하면
+
+  ```js
+  db.User.hasOne(db.Info, { foreignKey: 'user_id', sourceKey: 'id' })
+  db.Info.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'id'}) 
+  ```
+
+#### N:M
+
+* `N:M` 관계는 `belongsToMany` 메서드를 사용합니다. 게시글 정보를 담고 있는 Post 모델과 해시태그 정보를 담고 있는 Hashtag 모델이 있다고 가정하면
+
+  ```js
+  db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag' })
+  db.Hashtag.belongsToMany(db.Post, { through: 'PostHashtag' }) 
+  ```
+
+* N:M 관계 특성상 새로운 모델이 생성되며 trough 속성에 그 이름을 적어주면 새로 생성된 PostHashtagㅇ 모델에 게시글과 해시태그의 아이디가 저장됩니다.
+
+* N:M 관계의 데이터를 조회하는 과정을 편하게 하도록 시퀄라이즈는 몇가지 메서드를 지원합니다.
+
+  ```javascript
+  async (req, res, next) => {
+      const tag = await Hashtag.findOne({ where: { title: '노드' } })
+      const posts = await tag.getPosts()
+  }
+  ```
+
+  * 해시태그를 찾으면 그 해시태그에서 바로 getPosts 메서드를 사용할 수 있습니다 `get +모델이름의 복수형`입니다.
+
+  ```javascript
+  HashTag.findOne({ where: 'title' })
+  	.then(tag => tag.getPosts())
+  	.then(posts => console.log(poasts))
+  ```
+
+  > 프로미스 형태
+
+  * `add + 모델 이름의 복수형` 메서드도 있습니다.  두 테이블 간 N:M 관계를 추가해줍니다.
+
+    ```javascript
+    async (req, res, next) => {
+        const tag = await Hashtag.findOne({ where: { title: '노드' }})
+        await tag.addPosts(3)
+    }
+    ```
+
+    > title이 노드인 해시태그와 게시글 아이디가 3인 게시글을 연결하는 코드
+
+### 쿼리 알아보기
+
+> 자바스크립트로 SQL문을 생성하여 database를 다룹니다. 쿼리는 프로미스를 반환하므로 then을 붙여 결괏값을 받을 수 있고, async/await 문법을 사용할 수도 있습니다.
