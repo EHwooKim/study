@@ -1300,3 +1300,206 @@ app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
 ### 쿼리 알아보기
 
 > 자바스크립트로 SQL문을 생성하여 database를 다룹니다. 쿼리는 프로미스를 반환하므로 then을 붙여 결괏값을 받을 수 있고, async/await 문법을 사용할 수도 있습니다.
+
+* 생성
+
+  > SQL
+
+  ```mysql
+  INSERT INTO nodejs.users (name, age, married, comment) VALUES ('zero', 24, 0, '자기소개1');
+  ```
+
+  > sequelize
+
+  ```javascript
+  const { User } = require('../models')
+  User.create({
+      name: 'zero',
+      age:24,
+      married: false,
+      comment: '자기소개1'
+  })
+  ```
+
+  * :lipstick: 데이터를 넣을 때 MySQL의 자료형이 아니라 시퀄라이즈 모델에 정의한 자료현대로 넣어야 합니다. 그래서 married가 0이 아닌 false로 작성해야합니다.
+
+* 조회
+
+  * 모든 테이플 조회
+
+  > SQL
+
+  ```mysql
+  SELECT * FROM nodejs.users;
+  ```
+
+  > sequelize
+
+  ```javascript
+  const { User } = require('../models')
+  User.findAll({})
+  ```
+
+  * 데이터 하나 조회
+
+  > SQL
+
+  ```mysql
+  SELECT * FROM nodejs.users LIMIT 1;
+  ```
+
+  > sequelize
+
+  ```javascript
+  const { User } = require('../models')
+  User.findOne({})
+  ```
+
+  * 원하는 컬럼만 조회
+
+  > SQL
+
+  ```mysql
+  SELECT name, married FROM nodejs.users;
+  ```
+
+  > sequelize
+
+  ```javascript
+  const { User } = require('../models')
+  User.findAll({
+      attributes: ['name', 'married']  // attributes 옵션으로 원하는 컬럼 조회
+  })
+  ```
+
+  * 조건에 따른 컬럼 조회
+
+  > SQL
+
+  ```mysql
+  SELECT name, age FROM nodejs.users WHERE married = 1 AND age > 30;
+  ```
+
+  > sequelize
+
+  ```javascript
+  const { User, Sequelize: { Op } } = require('../models')
+  User.findAll({
+      attributes: ['name', 'age'],
+      where: {
+          married: 1,
+          age: { [Op.gt: 30]}
+      }
+  })
+  // 시퀄라이즈는 자바스크립트 객체를 사용해서 쿼리를 생성해야 하므로 Op.gt 같은 특수한 연산자들이 사용됩니다. Sequelize 객체 내부의 Op객체를 불러와 사용합니다.
+  // Op.gt(초과), Op.gte(이상), Op.li(미만), Op.lte(이하), Op.ne(같지 않음), Op.or(또는), Op.in(배열 요소 중 하나), Op.notIn(배열 요소와 모두 다름)
+  ```
+
+  > SQL
+
+  ```mysql
+  SELECT id, name FROm users WHERE married = 0 OR age > 30;
+  ```
+
+  > sequelize
+
+  ```javascript
+  const { User, Sequelize: { Op } } = require('../models')
+  User.findAll({
+      attributes: ['id', 'name'],
+      where: {
+          [Op.or]: [{ married: 0 }, { age: { [Op.gt: 30] } }]
+      }
+  })
+  ```
+
+  * 정렬 조건
+
+  > SQL
+
+  ```mysql
+  SELECT id, name FROM users ORDER BY age DESC;
+  ```
+
+  > sequelize
+
+  ```javascript
+  User.findAll({
+      attributes: ['id', 'name'],
+      order: [['age', 'DESC']]
+  })
+  ```
+
+  * 개수 제한
+
+  > SQL
+
+  ```mysql
+  SELECT id, name FROM users ORDER BY age DESC LIMIT 1;
+  ```
+
+  > sequelize
+
+  ```javascript
+  User.findAll({
+      attributes: ['id', 'name'],
+      order: ['age', 'DESC'],
+      limit: 1  // fineOne메서드를 사용해도 되지만 이런 방법도 있다.
+  })
+  ```
+
+  * offset 옵션
+
+  > SQL
+
+  ```mysql
+  SELECT id, name FROM users ORDER BY age DESC LIMIT 1 OFFSET 1;
+  ```
+
+  > sequelize
+
+  ```javascript
+  User.findAll({
+      attributes: ['id', 'name'],
+      order: ['age', 'DESC'],
+      limit: 1,
+      offset: 1
+  })
+  ```
+
+  * 로우 수정 쿼리
+
+  > SQL
+
+  ```mysql
+  UPDATE nodejs.users SET comment = '바꿀 내용' WHERE id = 2;
+  ```
+
+  > sequelize
+
+  ```javascript
+  User.update({
+      comment: '바꿀 내용' // 첫 번째 인자는 수정할 내용
+  }, {
+      where: {id: 2}	    // 두 번째 인자는 수정 대상 로우 찾는 조건
+  })
+  ```
+
+  * 삭제
+
+  > SQL
+
+  ```mysql
+  DELETE FROM nodejs.users WHERE id = 2;
+  ```
+
+  > sequelize
+
+  ```javascript
+  User.dsetroy({
+      where: { id: 2 }
+  })
+  ```
+
+  
+
