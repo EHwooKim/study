@@ -19,10 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: false, 
-      defaultVlue: DataTypes.NOW,
+      allowNull: false,
+      defaultValue: sequelize.literal('now()'),
     },
   }, {
-    timestamps: false, 
-  })
-}
+    timestamps: false,
+  });
+};
