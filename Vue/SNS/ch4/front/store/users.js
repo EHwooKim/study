@@ -53,7 +53,7 @@ export const mutations = { // 단순 동기 작업
 
 export const actions = {
   signUp({ commit, state }, payload) {
-    this.$axios.post('/user', {
+    this.$axios.post('http://localhost:3085/user', { // '/user'였는데 이건 그냥 front 페이지에 요청을 보내는거고, 백 서버에 보내야 db 적용이 되겠지
       email: payload.email,
       nickname: payload.nickname,
       password: payload.password,

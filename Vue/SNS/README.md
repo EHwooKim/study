@@ -301,3 +301,48 @@ npm i -D nodemon
 * 설치 후 `package.json` - `scripts` 에서 `"dev": "nodemon app.js"` 으로 수정해주면 된다.
 * 서버 재실행은 필요없지만 새로고침은 필요하다 ㅋ
 
+### db 생성
+
+* 모델등을 다 정의하고 db를 생성하는 방법
+  1. mysql에서 직접 만들어 준다.
+  2. `npx sequelize db:craete` 명령어를 입력한다.
+
+### CORS 에러! (악명높은..)
+
+* ajax 요청이 다른 포트(서버)에서 오게되면 요청을 막아버린다. 서버쪽에서 주소를 허용해줘야 해결된다..
+
+```bash
+$ npm i cors
+```
+
+ ```javascript
+//app.js
+const cors require('cors')
+...
+app.use(cors()) // 모든 요청 다 허용하는 코드, 하지만 실무에서 이렇게하면 절대 안돼
+
+app.use(cors('http://localhost:3000'))  // 실무에서는 이렇게 요청 주소 정확히 적어라
+ ```
+
+### 비밀번호 암호화
+
+* `bcrypt`
+* `scrypt`
+* `pbkdf2`
+
+> 중에 한가지 쓰면 웬만하면 안털려, 이번엔 bcrypt 사용
+
+```bash
+npm i bcrypt
+```
+
+> 그런데 bcrypt는 자바스크립트로 만들시 속도문제 떄문에 다른 언어로 만들어졌다. 그렇다보니 설치과정에서 오류가 뜨니 공식문서 참고해가며 설치하자.
+
+또는 아래의 명령어를 먼저 입력하고, `bcrypt`를 설치하자.
+
+```bash
+npm install --global --productio n windows-build-tools 
+```
+
+
+
