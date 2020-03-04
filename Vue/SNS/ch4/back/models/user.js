@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => { // node에서는 각 파일이 modu
     email: {
       type: DataTypes.STRING(40),
       allowNull: false,
+      unique: true, // 중복금지 back단에서 방지
     },
     nickname: {
       type: DataTypes.STRING(20),

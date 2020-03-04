@@ -344,5 +344,24 @@ npm i bcrypt
 npm install --global --productio n windows-build-tools 
 ```
 
+### 중복가입 방지
 
+* back에서 해당 이메일이 이미 있는지 체크하고 거절코드를 보내는 방법
+
+* db에서 중복을 원치않는 모델에 unique:true 옵션을 추가하는 방법
+
+  * 그런데 db, 스키마를 변경하면 그게 자동으로 반영되지 않는다. 마이그레이션을 해주거나 workbanch에서 옵션을 바꾸거나 등등 해줘야한다.
+
+  * 개발시에는 간단하게
+
+    ```javascript
+    // app.js
+    ...
+    db.sequelize.sync({ force: true })
+    ...
+    ```
+
+    > 이렇게 하면되는데, 서버 재시작 때마다 기존 데이터를 싹 날리고 다시 만드는거라 실무에서는 절대 쓰지말자..
+
+    
 
