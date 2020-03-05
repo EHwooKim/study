@@ -363,5 +363,73 @@ npm install --global --productio n windows-build-tools
 
     > 이렇게 하면되는데, 서버 재시작 때마다 기존 데이터를 싹 날리고 다시 만드는거라 실무에서는 절대 쓰지말자..
 
-    
+
+### 로그인 - passport
+
+* 프론트에서 로그인 요청이 오 면 백에서는 당연히 그 요청을 받아줘야하고(route생성)
+* `로그인 상태`라는 것이 딱 정해져있는 것이 아니다. 서비스에서 정하기 나름.
+  * 이번에는 로그인 요청한 사용자가 있다면 서버에서 세션(메모리)을 만들어서 거기에 사용자 정보(권한, 게시글수, 팔로잉 등)를 담아 그 다음 요청시마다 세션을 먼저 검사하여 권한 등을 검사를 하게 하겠다.
+  * 세션 구현도 구현 나 름이긴한데... 실무에 맞게 하자면 `passport` 모듈을 많이 사용한다.
+
+```bash
+$ npm i passport passport-local
+```
+
+> passport : 로그인 도와주는거
+>
+> passport-local : 로그인의 종류도 일반로그인 세션로그인 등 다양한데 일반 로그인만 할거면 local 다른 소셜 로그인을 하려면 passport-kakao 등 설치
+>
+> jwt 로그인 또한 passport-jwt 사용하면 된다.
+
+* `passport` 폴더 생성, `index.js`생성 및 작성
+* `app.js`에 연결할거 하고 session도 쓸거니까 설치
+
+```bash
+$ npm i express-session 
+```
+
+* app.js에서 연결 및 설정
+* session을 쓰면!? `cookie`도 쓴다!  쿠키 해석을 위해 설치
+
+```bash
+$ npm i cookie-parser
+```
+
+* 설치한 김에
+
+```bash
+$ npm i morgan
+```
+
+> 요청이 들어오면 기록을 해준다.
+
+#### 쿠키 세션
+
+세션이 메모리라 그랬지, js에서 객체같은 것을 만드는 것도 js 힙이라는 곳에 메모리로 존재하는데 예를 들어 세션이 아래와 같이 보통 저장되는데
+
+```ja
+const user = {
+  'asdasgsdxfgvxdcv': {
+    nickname: 'ehwoo',
+    emaile:: 'ehwoo@naver.com'
+  },
+  'aasdafaewfsdasgsdxfgvxdcv': {
+    nickname: 'ehwoo2',
+    emaile:: 'ehwoo2@naver.com'
+  },
+  'ppojoigasdafaewfsdasgsdxfgvxdcv': {
+    nickname: 'ehwoo3',
+    emaile:: 'ehwoo3@naver.com'
+  },
+}
+```
+
+프론트에서 요청을 보낼 때 key `asdasgsdxfgvxdcv`를 같이 백엔드로 보내준다. 그러면 백엔드는 `express-session`에서 이 key를 찾는데! 이 key가 바로 `cookie`다. (저 key를 보통 `cookie`에 넣어서 보내준다.) 그 쿠키를 기반으로 사용자가 누군지 찾는다. 사용자가 로그인 요청을 하고 인증이 성공하면 프론트에 쿠키를 프론트에 심어놓고 서버에 요청할 떄마다 그 쿠키를 헤더에 넣어서 같이 보내주고 백엔드는 요청에서 해당 쿠키를 `req.cookie.[connect.sid]` 에서  꺼내 해석하여 요청보낸 사람을 판단한다.
+
+* 로그인 과정을 간단하게 정리해보면
+  1. db에서 email, password 검사를 하고
+  2. 일치한다면 세션에 쿠키랑(쿠키를 key로 삼아서) 객체(정보) 저장
+  3. 프론트에 쿠키 내려보내주기 
+
+
 
