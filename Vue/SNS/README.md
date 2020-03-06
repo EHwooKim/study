@@ -431,5 +431,23 @@ const user = {
   2. 일치한다면 세션에 쿠키랑(쿠키를 key로 삼아서) 객체(정보) 저장
   3. 프론트에 쿠키 내려보내주기 
 
+### passport
+
+* `전략(Strategy) ` - sns별로 로그인할 수 있는 방법이 많은데 그것을 전략이라는 틀을 만들어서 어떤 로그인이든 이 틀만 맞춰주면 되게끔 해주는 것 (passport/local.js)
 
 
+* 세션 저장시 저 위에 처럼 모든 정보를 있는 그대로 저장하면 이용자가 늘었을 때 서버가 터진다.. 그래서 다음과같이 user.id만 따로 저장하는 방식을 쓴다.
+
+```javascript
+const user = {
+  'asdasgsdxfgvxdcv': 1,
+  'aasdafaewfsdasgsdxfgvxdcv': 2,
+  'ppojoigasdafaewfsdasgsdxfgvxdcv': 3,
+}
+```
+
+* 이렇게 user.id만 따로 저장하는 것을 해주는 것이 `passport.serializeUser`
+
+### 로그인 순서 정리
+
+프론트에서 이메일, 비밀번호 담아서 `/user/login` 주소로 post요청 **=>** `req.body.email`, `req.body.password`에 해당 정보 담겨있는데 그 이유는 `app.use(express.json())`, `app.use(express.urlencoded({ extended: false }))`에서 `req.body`를 만들어주기 떄문이다.  **=>** 받은 정보를 `passport.LocalStrategy`에 보낸다 **=>** 받은 정보를  전략(Strategy)에서 검사를 하여 `에러`, `성공(유저 정보포함)`, `실패` 등 정보를 다시 이전 콜백함수(passport.authenticate)로 보낸다 **=>** `req.login`을 통해 세션에 사용자 정보(id만 - serializeUser가 해준다) 저장하고, 프론트에 `header`에는 쿠키를, `body`에는 사용자 정보를 담아서 보낸다.

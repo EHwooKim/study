@@ -42,7 +42,9 @@ app.post('/user', async (req, res, next) => {
   try{  // async await는 try catch감싸야하고,
     const hash = await bcrypt.hash(req.body.password, 12) // 비밀번호 암호화
     const exUser = await db.User.findOne({ // 중복 아이디 방지 
-      email: req.body.email
+      where: { // findOne 같이 db에서 찾을 떄 조건은 where안에 적어준다.
+        email: req.body.email
+      }
     })
     if (exUser) { // 이미 회원가입되어이으면 에러도 성공도아닌 거절을 해야겠지 400대 코드
       return res.status(403).json({   //.send('이미회원가입되어있습니다.') 로 간단하게 보내줘도 되지만 실무에선 .json으로 자세한 데이터를 보낸다. // return 필수!
@@ -71,10 +73,28 @@ app.post('/user', async (req, res, next) => {
 
 
 // 로그인
-app.post('/user/login', (req, res) => {
+app.post('/user/login', (req, res) => { // 검사를 위해 LocalStrategy를 써야하는데 local.js에서뿐 아니라 여기에서도 실행을 시켜줘야겠지, passport.authenticate에 local을 적으면 LocalStrategy가 실행된다.
+  passport.authenticate('local', (err, user, info) => {  // 매개변수 err, user, info는 뭘까? LocalStrategy를 실행히야 결과로 done(에러, 성공, 실패)가 올건데 그것과 딱 들어맞지
+    if (err) { // 에러가 있으면
+      console.error(err)// 에러 출력해주고
+      return next(err) // 에러처리하도록 넘겨준다
+    }
+    if (info) { // info는 실패에 대한 이유가 객체로 들어있지
+      return res.status(401).send(info.reason) // 서버에서 거절.
+    }
+    return req.login(user, async (err) => { // 성공시에는 req.login에 user정보 넣어준다. req.login은 원래 있던게 아니라! 저 위에 passport.initialize()가 만들어준거야, 세션에 사용자 정보(db에서 가져온 유저정보인 exUser)를 넣는다. 
+      if (err) {                            // 그런데 세션에 어떻게 저장하느냐! 는 이때 이제 passport/index.js 에 있는 serializeUser가 필요하다.
+        console.error(err)                  // 사용자 정보 세션에 까지 저장되면 마지막으로 프론트에 쿠키 내려보내줘야지 (프론트 쿠키 역시 req.login이 알아서 내려보내준다.)
+        return next(err)                    // 그 쿠키 이름이 connect.sid
+      }                                     // 쿠키를 header에 내려보내주면서 body에 추가적인 정보를 보낼 수 있는데 그게 아랫줄 코드
+      return res.json(user) // 그러고 프론트로 사용자정보 넘겨주기 (body에 정보담기)
+    }) 
+
+  })(req, res, next) 
+  
   req.body.email
   req.body.password
-  // 1. db에서 email, password 검사를 하고
+  // 1. db에서 email, password 검사를 하고 - 이 검사가 바로 local.js(LocalStrategy에서 이루어진다.)
   await db.User.findOne()
   // 2. 일치한다면 세션에 쿠키랑(쿠키를 key로 삼아서) 객체(정보) 저장
   user[cookie] = '유저정보'
