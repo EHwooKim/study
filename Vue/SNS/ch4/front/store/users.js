@@ -57,12 +57,30 @@ export const actions = {
       email: payload.email,
       nickname: payload.nickname,
       password: payload.password,
-    }) // this.$axios 같은 접근은 nuxt.config.js에서 연결했기 떄문에 가능하다.
-
-    commit('setMe', payload)
+    }, {
+      withCredentials: true,
+    })
+      .then((data) => { // this.$axios 같은 접근은 nuxt.config.js에서 연결했기 떄문에 가능하다.
+        console.log(data) // 비동기 회원가입에 대한 응답이 data에 담겨있다.
+        commit('setMe', payload)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   },
   logIn({ commit }, payload) {
-    commit('setMe', payload)
+    this.$axios.post('http://localhost:3085/user/login', {
+      email: payload.email,
+      password: payload.password
+    }, {
+      withCredentials: true, // 이 코드 없을 때 백에서 프론트로 쿠키를 안줬어..(백, 프론트 주소가 달라서)
+    })
+      .then((data) => {
+       commit('setMe', payload)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   },
   logOut({ commit }, payload) {
     commit('setMe', null)

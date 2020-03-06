@@ -54,7 +54,7 @@
         if (this.$refs.form.validate()) {
           this.$store.dispatch('users/logIn', { // actions은 비동기라고 했잖아
             email: this.email,
-            nickname: 'EHwooKim'
+            password: this.password
           })
           .then(() => {           // 이거 처리해주거나 signup.vue에서 me를 watch해서 메인페이지로 이동하는 처리.
             this.$router.push({
