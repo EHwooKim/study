@@ -452,6 +452,10 @@ const user = {
 
 프론트에서 이메일, 비밀번호 담아서 `/user/login` 주소로 post요청 **=>** `req.body.email`, `req.body.password`에 해당 정보 담겨있는데 그 이유는 `app.use(express.json())`, `app.use(express.urlencoded({ extended: false }))`에서 `req.body`를 만들어주기 떄문이다.  **=>** 받은 정보를 `passport.LocalStrategy`에 보낸다 **=>** 받은 정보를  전략(Strategy)에서 검사를 하여 `에러`, `성공(유저 정보포함)`, `실패` 등 정보를 다시 이전 콜백함수(passport.authenticate)로 보낸다 **=>** `req.login`을 통해 세션에 사용자 정보(id만 - serializeUser가 해준다) 저장하고, 프론트에 `header`에는 쿠키를, `body`에는 사용자 정보를 담아서 보낸다.
 
+
+
+* 로그인 후에이제 매번 deserializeUser가 실행되는데, 요청 떄마다 결국 db에 접속하는거니 좋지않다. 그래서 실무에서는 캐싱처리를 하는데 그 떄 보조 db로 `redis`를 주로 사용하고, deserializeUser요청 역시 메인 db가 아닌 redis쪽으로 요청을 바꿔주면 된다.
+
 ### 로그인 - 프론트
 
 * 쿠키가 왜 안들어올까.. => 지금 백, 프론트 주소가 서로 다른데 그럴 경우에 쿠키가 안들어올수가 있다.
@@ -475,3 +479,16 @@ const user = {
   * 이렇게 쿠키가 한번 심어지게 되면 connect.sid가 req.cookie에 요청시마다 들어가게 된다.
 
   * 현재 쿠키에는 user.id만 들어있잖아(serializeUser에 의해) 그런데 우리가 원하는 것은 사용자의 정보.
+
+
+
+### 로그아웃
+
+* 로그아웃은 굉장히 간단하다. `req.logout()`만 해주면 끝.
+
+### 라우터 분리
+
+* 지금 `app.js` 코드에 유저 등록('/user'), 로그인('/user/login'), 로그아웃('user/logout') 이 모두 공통적으로 `/user`를 가지고 있고 `app.js` 코드가 너무 길어졌다. => **라우터 분리 필요**
+* `routes` 폴더 생성
+  * users 파일 생성 후  유저관련 코드 복붙 => `app.post` 등을 `router.post`로 바꾸고, 라우터명인 user를 요청 주소에서 뺴준다.
+  * 라우터도 모듈, 미들웨어 이므로 app.js에서 연결 해준다.

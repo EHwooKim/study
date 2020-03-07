@@ -60,9 +60,9 @@ export const actions = {
     }, {
       withCredentials: true,
     })
-      .then((data) => { // this.$axios 같은 접근은 nuxt.config.js에서 연결했기 떄문에 가능하다.
+      .then((res) => { // this.$axios 같은 접근은 nuxt.config.js에서 연결했기 떄문에 가능하다.
         console.log(data) // 비동기 회원가입에 대한 응답이 data에 담겨있다.
-        commit('setMe', payload)
+        commit('setMe', res.data)
       })
       .catch((err) => {
         console.log(err)
@@ -75,15 +75,23 @@ export const actions = {
     }, {
       withCredentials: true, // 이 코드 없을 때 백에서 프론트로 쿠키를 안줬어..(백, 프론트 주소가 달라서)
     })
-      .then((data) => {
-       commit('setMe', payload)
+      .then((res) => {
+        commit('setMe', res.data)
       })
       .catch((err) => {
         console.error(err)
       })
   },
   logOut({ commit }, payload) {
-    commit('setMe', null)
+    this.$axios.post('http://localhost:3085/user/logout', {}, { // 넘길 데이터 없으면 두번째 인자로 빈 객체 넘겨줘야한다
+        withCredentials: true, // 다른서버로 요청이니 세번쨰인자로 이거 꼭 필요합니다.
+      }) 
+      .then((data) => {
+        commit('setMe', null)
+      })
+      .catch((err) => {
+        console.error(err)
+      })    
   },
   changeNickname({ commit }, payload) {
     commit('changeNickname', payload)
