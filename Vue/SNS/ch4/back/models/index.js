@@ -8,8 +8,8 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 db.User = require('./user')(sequelize, Sequelize) // 만든 User 모델을 불러온다.코드 순서 중요. 
 
 Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+  if (db[modelName].associate) {  // associate가 있으면
+    db[modelName].associate(db);  // db를 넣어주는거 각 models로 간다.
   }
 });
 

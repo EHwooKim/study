@@ -492,3 +492,7 @@ const user = {
 * `routes` 폴더 생성
   * users 파일 생성 후  유저관련 코드 복붙 => `app.post` 등을 `router.post`로 바꾸고, 라우터명인 user를 요청 주소에서 뺴준다.
   * 라우터도 모듈, 미들웨어 이므로 app.js에서 연결 해준다.
+
+### 1 : N 관계
+
+* `model` 을 정의 할 떄 `associate` 에 모델들 간의 관계를 정의해 줄 수 있다.

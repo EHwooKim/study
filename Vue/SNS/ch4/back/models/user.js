@@ -21,8 +21,9 @@ module.exports = (sequelize, DataTypes) => { // node에서는 각 파일이 modu
     collate: 'utf8_general_ci' 
   })
 
-  User.associate = (db) => {
-
+  User.associate = (db) => { // 모델 간의 관계 정의
+    db.User.hasMany(db.Post) // 사용자 한명이 여러 게시글 작성이 가능하니
+    db.User.hasMany(db.Comment)
   }
   return User
 }
