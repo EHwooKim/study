@@ -6,6 +6,11 @@ const db = {};
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 db.User = require('./user')(sequelize, Sequelize) // 만든 User 모델을 불러온다.코드 순서 중요. 
+db.Post = require('./post')(sequelize, Sequelize)
+db.Comment = require('./comment')(sequelize, Sequelize)
+db.Hashtag = require('./hashtag')(sequelize, Sequelize)
+db.Image = require('./image')(sequelize, Sequelize)
+
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {  // associate가 있으면

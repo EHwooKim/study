@@ -11,7 +11,7 @@ const passportConfig = require('./passport') // 설치한 passport와 헷갈리�
 const userRouter = require('./routes/user')
 const app = express()
 
-db.sequelize.sync() // db를 실행하는 코드.
+db.sequelize.sync({ force: true }) // db를 실행하는 코드. // force: true => 새로 지웠다가 만들어주는 명령어 (꼬였을 경우를 대비해 쓰긴했는데 필수는 아니라 상황에따라 쓰자)
 // db.sequelize.sync({ force: true }) // 서버 실행할 때마다 db 날리고 다시 만드는 옵션
 passportConfig()  // 서버 실행시 passPort도 연결
 

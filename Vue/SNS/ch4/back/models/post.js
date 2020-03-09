@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     // belongsTo(db.User) => 사람을 통해 게시글 불러오기
     // hasMany(db.Comment) => 게시글을 통해 댓글 가져오기  
     db.User.hasMany(db.Image)
+    db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag'}) // 다대다 관계를 설정해주기 위한 중간테이블인 PostHashtag.
   }
   return Post
 }
