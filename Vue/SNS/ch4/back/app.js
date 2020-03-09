@@ -9,6 +9,7 @@ const morgan = require('morgan')
 const db = require('./models') // models 폴더의 index 파일에서 exports한 db를 불러오겠지
 const passportConfig = require('./passport') // 설치한 passport와 헷갈리지않게 passportConfig로 명명
 const userRouter = require('./routes/user')
+const postRouter = require('./routes/post')
 const app = express()
 
 db.sequelize.sync({ force: true }) // db를 실행하는 코드. // force: true => 새로 지웠다가 만들어주는 명령어 (꼬였을 경우를 대비해 쓰긴했는데 필수는 아니라 상황에따라 쓰자)
@@ -41,6 +42,7 @@ app.use(passport.initialize()) // initialize는 요청에 로그인과 로그아
 app.use(passport.session())    // session은 메모리라 그랬지, 사용자 정보를 기록할 수 있는 세션을 만들어 준다.
 
 app.use('/user', userRouter) // user 라우터 연결
+app.use('/post', postRouter)
 
 app.get('/', (req, res) => { // 'localhost:3080/' 생략된 주소 '/' 
   res.send('안녕 EHwoo') // res.status(200).send('안녕 백엔드') 가 원래 모양.

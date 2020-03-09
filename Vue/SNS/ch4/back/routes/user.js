@@ -2,10 +2,12 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const db = require('../models')
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares')
 
 const router = express.Router()  // 반드시 이렇게 써야해 대문자 조심!!
 
-router.post('/', async (req, res, next) => {
+
+router.post('/', isNotLoggedIn, async (req, res, next) => { // 회원가입은 로그인 안한 사람만 해야하니
   try{  // async await는 try catch감싸야하고,
     const hash = await bcrypt.hash(req.body.password, 12) // 비밀번호 암호화
     const exUser = await db.User.findOne({ // 중복 아이디 방지 
@@ -61,7 +63,7 @@ router.post('/', async (req, res, next) => {
     2. 일치한다면 세션에 쿠키랑(쿠키를 key로 삼아서) 객체(정보) 저장
     3. 프론트에 쿠키 내려보내주기  
 */
-router.post('/login', (req, res, next) => { // 검사를 위해 LocalStrategy를 써야하는데 local.js에서뿐 아니라 여기에서도 실행을 시켜줘야겠지, passport.authenticate에 local을 적으면 LocalStrategy가 실행된다.
+router.post('/login', isNotLoggedIn, (req, res, next) => { // 검사를 위해 LocalStrategy를 써야하는데 local.js에서뿐 아니라 여기에서도 실행을 시켜줘야겠지, passport.authenticate에 local을 적으면 LocalStrategy가 실행된다.
   passport.authenticate('local', (err, user, info) => {  // 매개변수 err, user, info는 뭘까? LocalStrategy를 실행히야 결과로 done(에러, 성공, 실패)가 올건데 그것과 딱 들어맞지
     if (err) { // 에러가 있으면
       console.error(err)// 에러 출력해주고
@@ -80,7 +82,7 @@ router.post('/login', (req, res, next) => { // 검사를 위해 LocalStrategy를
   })(req, res, next) 
 })
   
-router.post('/logout', (req, res) => {
+router.post('/logout', isLoggedIn, (req, res) => {
   if (req.isAuthenticated()) {
     req.logout()
     req.session.destroy() // 세션 없애기(선택), 왜냐하면 세션에 사용자정보말고 다른 정보도 있을 수 있기떄문에.

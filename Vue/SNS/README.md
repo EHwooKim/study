@@ -533,3 +533,85 @@ const user = {
 > ( 하지만 배포 전까지는 못 써서 .. 일단은 db에 저장하다가 fs로 넘어가겠다.)
 
 * db 서버에 저장하기엔 용량이 크니 일단 `백엔드 서버`에 저장해 놓고 해당 주소를 db에 저장하는 방식을 우선 사용하겠다.
+
+### 미들웨어 추가 - 로그인 검증
+
+```javascript
+  if (req.isAuthenticated()) { 
+
+  }
+```
+
+> 이 코드를 통해 로그인한 사용자인지 등을 체크 할 수 있는데 굉장히 자주 사용되어 중복이 심하다
+
+**=>미들웨어로 뺴줄 수가 있다**
+
+* router자체도 미들웨어지만 (routes 폴더에서 사용한 그 router), 미들웨어에서 다른 미들웨어 사용도 가능하다.
+
+* routes 폴더에 `middlewares.js` 생성
+
+  ```javascript
+  exports.isLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated()) {
+      return next()
+    }
+    return res.status(401).send('로그인이 필요합니다.')
+  }
+  ```
+
+  > 위와 같이 미들웨어 작성 후
+
+  ```javascript
+  // routes/post.js
+  ...
+  
+  router.post('/images', (req, res) => {
+    if (req.isAuthenticated()) { 
+  
+    }     
+  })
+  // 위의 코드를 아래와 같이 미들웨어 처리하면 된다.
+  const { isLoggedIn } = require('./middlewares')
+  ...
+  router.post('/images', isLoggedIn, (req, res) => {
+  
+  })
+  ```
+
+
+
+### exports, module.exports
+
+* node에서는 기본적으로 `require`, `modeule.exports`를 사용하여 보통 `module.exports`로 대표적인 것들을 exports한다. 
+
+* 다른 방법으로 ` exports.something` 이 있는데 이것은 무언가를 대표하지는 않지ㅏㅁㄴ 비슷한 것들(?)을 만들 때 사용한다. 
+
+  * 이는 'exports'가 객체이기때문에 (exports === {}) 그래서 exports의 속성값을 추가하는 것이다
+
+  ```javascript
+  exports.isLoggedIn = (req, res, next) => { //그래서 이 코드는
+  }
+  exports = { // 이 코드와 같은 코드이다.
+    isLoggedIn: (req, res, next) => {}
+  }
+  ```
+
+  * 그렇기 때문에 `require`를 통해 불러올 떄도 `module.exports`와는 다르게
+
+  ```javascript
+  // 객체를 구조분해하여 아래와 같이 불러오는 것이다
+  const { isLoggedIn } = require('./middlewares')
+  ```
+
+* 이때 주의할 것 :lipstick:
+
+  *  `exports.something` 보다 `modules.exports` 가 우선시 되기 때문에 두개를 같이 쓰면  **exports.something 의 코드는 없는 것이 되어버리기 떄문에 둘 중 하나만 써야한다.**
+  * 만약 `module.exports`만을 이용하여 코드를 짜고싶다면 아래와 같이 사용하면 된다.
+
+  ```javascript
+  module.exports = {
+    isLoggedIn: (req, res, next) => {},
+    isLoggedOut: (req, res, next) => {},
+  }
+  ```
+
