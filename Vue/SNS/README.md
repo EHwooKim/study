@@ -615,3 +615,55 @@ const user = {
   }
   ```
 
+### 이미지 업로드
+
+* 이미지 따로, 게시글 따로 올려서 나중에 합치는 방법을 사용합니다. (이미지 하나로 길게 작성한 글이 날아가거나 그럴 수 있기도하고 이미지는 압축도 필요한데 압축하고 fs에 저장하고 불러오고 하는 등의 시간이 오래 걸릴 수 있으므로 따로 올린다.)
+
+#### Form data에 대한 이해 필요
+
+* `type="file"` input에 이미지를 선택하여 저장하면 아래와 같은 meta data만 나온다.
+
+  ```
+  FileList {0: File, 1: File, length: 2}
+      0: File
+          lastModified: 1572518611654
+          lastModifiedDate: Thu Oct 31 2019 19:43:31 GMT+0900 (한국 표준시) {}
+          name: "KakaoTalk_20191031_192037148_14.jpg"
+          size: 106910
+          type: "image/jpeg"
+          webkitRelativePath: ""
+          __proto__: File
+      1: File
+          lastModified: 1572518614694
+          lastModifiedDate: Thu Oct 31 2019 19:43:34 GMT+0900 (한국 표준시) {}
+          name: "KakaoTalk_20191031_192037148_15.jpg"
+          size: 112755
+          type: "image/jpeg"
+          webkitRelativePath: ""
+          __proto__: File
+          length: 2
+          __proto__: FileList
+  ```
+
+* 이미지는 json이 아니고 바이트인데, 지금까지의 요청들은 json 데이터를 보내왔잖아 (로그인 회원가입 등). 그래서 보통 이미지 업로드 때는 formdata를 사용한다.
+
+  ```javascript
+  const imageFormData = new FormData()
+  ```
+
+  ```
+  // 이런 FormData 형태로 오는데 이거를 해석하기 어렵거든.. 그래서 패키지의 도움을 받자.
+  ------WebKitFormBoundaryl8wANn2BjUPAcTJZ
+  Content-Disposition: form-data; name="image"; filename="KakaoTalk_20191031_192037148_11.jpg"
+  Content-Type: image/jpeg
+  ```
+
+### multer - 이미지 업로드
+
+* 설치
+
+  ```bash
+  $npm i multer
+  ```
+
+* FormData 해석을 도와주는 패키지.

@@ -15,7 +15,8 @@
           @input="onChangeTextarea"
         />
         <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
-        <v-btn>이미지 업로드</v-btn>
+        <input type="file" ref="imageInput" multiple hidden @change="onChangeImages"> <!--이미지 업로드에 필요한 type="file", 여러장 올릴 수 있게 multiple, 숨겨져있다가 업로드 버튼 누르면 실행되게 만들기 위해 hidden-->
+        <v-btn type="button" @click="onClickImageUpload" >이미지 업로드</v-btn> <!--form 안의 버튼 중 submit을위한 버튼 외에는 type="button"을 해줘야한다. 그렇지 않으면 기본으로 form을 submit하기에 원하는대로 동작을 안한다.-->
       </v-form>
     </v-container>
   </v-card>
@@ -68,6 +69,17 @@
           })
         }
       },
+      onClickImageUpload() {
+        this.$refs.imageInput.click() // input태그에 ref 설정하고, this.$refs로 접근하여 업로드 버튼을 클릭하면 input을 클릭한 것과 같은 효과를 주는 것.
+      },
+      onChangeImages(e) { // 파일 선택창이 떠서 파일을 선택하면 change이벤트가 실행되어 이 change이벤트에서 이미지 업로드 요청을 보낸다.
+        console.log(e.target.files) // e.target.files안에 사진정보 존재.
+        const imageFormData = new FormData();
+        [].forEach.call(e.target.files, (f) => { // e.target.files가 유사배열이라 forEach를 사용못해서 이와같은 코드 사용 
+          imageFormData.append('image', f) // FormData에 추가 => imageFormData는 {image: [file1, file2]} 대충 이런 모양
+        })
+        this.$store.dispatch('posts/uploadImages', imageFormData)
+      }
     }
   }
 </script>

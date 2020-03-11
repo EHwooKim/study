@@ -53,5 +53,16 @@ export const state = () => ({
       if (state.hasMorePost) {  // 쓸데없는 요청으로 해커가 되지않게 위한 코드...
         commit('loadPosts')
       }
+    },
+    uploadImages({ commit }, payload) {
+      this.$axios.post('http://localhost:3085/post/images', payload, {
+        withCredentials: true, // 로그인한 사용자만.
+      }) 
+        .then(() => {
+
+        })
+        .catch(() => {
+          
+        })
     }
   }
