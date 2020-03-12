@@ -17,6 +17,14 @@
         <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
         <input type="file" ref="imageInput" multiple hidden @change="onChangeImages"> <!--이미지 업로드에 필요한 type="file", 여러장 올릴 수 있게 multiple, 숨겨져있다가 업로드 버튼 누르면 실행되게 만들기 위해 hidden-->
         <v-btn type="button" @click="onClickImageUpload" >이미지 업로드</v-btn> <!--form 안의 버튼 중 submit을위한 버튼 외에는 type="button"을 해줘야한다. 그렇지 않으면 기본으로 form을 submit하기에 원하는대로 동작을 안한다.-->
+        <div>
+          <div v-for="(p, i) in imagePaths" :key="p" style="display:inline-block">
+            <img :src="`http://localhost:3085/${p}`" :alt="p" style="width: 200px">
+            <div>
+              <button @click="onRemoveImage(i)" type="button">제거</button>
+            </div>
+          </div>
+        </div>
       </v-form>
     </v-container>
   </v-card>
@@ -36,7 +44,8 @@
       }
     },
     computed: {
-      ...mapState('users', ['me'])   // return 방식 말고 이 방법도 있다고 그랬지?
+      ...mapState('users', ['me']),   // return 방식 말고 이 방법도 있다고 그랬지?
+      ...mapState('posts', ['imagePaths'])
     },
     methods : {
       onChangeTextarea(value) {        // 한글자라도 치면 밑에 작은 부분을 없애주기 위한 코드. 왜? 다음 게시글 작성 후 다음 게시글 작성시 이전 상태 초기화를 위해.
@@ -79,6 +88,9 @@
           imageFormData.append('image', f) // FormData에 추가 => imageFormData는 {image: [file1, file2]} 대충 이런 모양
         })
         this.$store.dispatch('posts/uploadImages', imageFormData)
+      },
+      onRemoveImage(index) {
+        this.$store.commit('posts/removeImagePath', index)
       }
     }
   }

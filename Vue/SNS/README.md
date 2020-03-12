@@ -667,3 +667,26 @@ const user = {
   ```
 
 * FormData 해석을 도와주는 패키지.
+
+```javascript
+router.post('/images', upload.__method__ ,aisLoggedIn, (req, res) => {
+})
+```
+
+* upload 메소드
+  * `upload.single` :  파일 하나 업로드
+  * `upload.array` : 같은 키로 여러개 업로드 (image라는 키로 여러개)
+  * `upload.fields` : 다른 키로 여러개 (image1, image2 로 여러개)
+  * `upload.none` : 파일 업로드 안한다.
+
+* multer의 역할
+
+  1. `multer의 역할은 formdata 해석 후 uploads 폴더에 저장을 해주고`
+
+  2.  `req.files 안에 업도르한 파일의 정보를 배열로 넣어준다.`
+
+     ```
+     req.files = [{ filename:'웃는얼굴20200202.png' }, { filename:'메가폰20200202.png' }]
+     ```
+
+     > 이것을 프론트로 filename만 뽑아서 보내줘야한다.
