@@ -16,7 +16,7 @@ const upload = multer({ // multer require한게 함수라 함수 실행하면서
       // 다른 사람들이 같은 이름으로 이미지 업로시 덮어씌워지니 이런거 고려해야지. 그래서 업로드 시간 붙여주는게 가장 편하다.
       const ext = path.extname(file.originalname) // file의 originalname(이름)에서 extname(확장자) 가져오기.
       const basename = path.basename(file.originalname, ext) // ehwoo.png 이면 basename = ehwoo, ext = .png. 이제 이 둘 사이에 시간초를 넣으면 되겠지
-      done(null, base + Date.now() + ext) 
+      done(null, basename + Date.now() + ext) 
     },
   }),
   limit: { fileSize: 20 * 1024 * 1024 }, // 20MB로 파일 사이즈 제한, 바이트 단위라 메가파이트*키로바이트*메가바이트

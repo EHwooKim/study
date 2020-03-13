@@ -62,7 +62,7 @@ export const state = () => ({
     },
     uploadImages({ commit }, payload) {
       this.$axios.post('http://localhost:3085/post/images', payload, {
-        withCredentials: true, // 로그인한 사용자만.
+        withCredentials: true, // 로그인한 사용자만..?
       }) 
         .then((res) => {
           commit('concatImagePaths', res.data) //res.data에 웃는얼굴.png 메가폰.png 파일에 대한 정보(정확히는 주소)

@@ -25,6 +25,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 })) 
+app.use('/', express.static('uploads')) // 이미지와 같은 정적인 파일을 불러오기 위한 미들웨어. uploads 폴더에 있는 것들 기본주소 '/'로 불러올수 있게도 바꿔준거. '/uploads'로 적어주면 uploads 폴더안에있는 것을 uploads로 가져오기 인데, 프론트랑 백을 주소 다르게 해주는게 좋다. 왜냐하면 프론트에서 백의 폴더 구조를 알게되면 보안상의 문제가 있기떄문에!
 app.use(express.json()) // express는 기본적으로 json을 body로 못받기 때문에 필요한 코드!
 app.use(express.urlencoded({ extended: false })) // form을 통해서 전송할 떄 해당 데이터를 해석해서 req.body에 넣어주는 코드
 app.use(cookie('cookiesecret')) // session 사용하면!? 쿠키도 사용하니 쿠키 해석을 위해 미들웨어 연걸 // cookiesecret 값은 session에 넣은것과 같게 넣어줘야한다.
