@@ -61,7 +61,7 @@ export const actions = {
       withCredentials: true,
     })
       .then((res) => { // this.$axios 같은 접근은 nuxt.config.js에서 연결했기 떄문에 가능하다.
-        console.log(data) // 비동기 회원가입에 대한 응답이 data에 담겨있다.
+        console.log('res.data',res.data) // 비동기 회원가입에 대한 응답이 data에 담겨있다.
         commit('setMe', res.data)
       })
       .catch((err) => {

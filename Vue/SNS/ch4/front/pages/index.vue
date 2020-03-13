@@ -1,6 +1,6 @@
 <template>
   <v-container>
-      <post-form  /> <!--v-if="me" 있었는데 잠시 뺸다..-->
+      <post-form v-if="me" />
     <div>
       <post-card v-for="post in mainPosts" :key="post.id" :post="post"/>
     </div>
