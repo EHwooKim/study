@@ -11,6 +11,7 @@ export const state = () => ({
   export const mutations = {
     addMainPost(state, payload) {
       state.mainPosts.unshift(payload)  // push는 맨 뒤에 추가, unshift는 맨 앞에 추가.
+      state.imagePaths = []
     },
     removeMainPost(state, payload) {
       const index = state.mainPosts.findIndex(v => v.id === payload.id) // 이 코드 뭘까..
@@ -45,8 +46,20 @@ export const state = () => ({
   }
 
   export const actions = {
-    add({ commit }, payload) {  // 비동기 작업이라 여기 한번 더..?가 아니라 서버에 등록하고, 보여지는 vue에도 등록해야 하니까
+    add({ commit, state }, payload) {  // 비동기 작업이라 여기 한번 더..?가 아니라 서버에 등록하고, 보여지는 vue에도 등록해야 하니까
       // 서버에 게시글 등록 요청 보내는 코드!!
+      this.$axios.post('http://localhost:3085/post', {
+        content: payload.content,
+        imagePaths: state.imagePaths, // 프론트에서 유저정보를 같이 안보내는 이유는 중간에서 가로채서 위조를 할 가능성이 있기 떄문이다. 누가 등록했는지는 서버에서 판단한다
+      }, { 
+        withCredentials: true, 
+      })
+        .then(() => {
+          commit('addMainPost', res.data)
+        })
+        .catch(() => {
+
+        })
       commit('addMainPost', payload)
     },
     remove({ commit }, payload) {

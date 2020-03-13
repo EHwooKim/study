@@ -59,13 +59,6 @@
         if (this.$refs.form.validate()) {
           this.$store.dispatch('posts/add',{
             content: this.content,  // 게시글 내용 외에도 아래와 같은 정보가 필요하겠지.
-            User: {
-              nickname: this.me.nickname
-            },
-            Comments: [],
-            Images: [],
-            id: Date.now(),
-            createdAt: Date.now(),
           })
           .then(() => {
             this.content = ''

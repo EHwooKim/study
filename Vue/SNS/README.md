@@ -522,6 +522,15 @@ const user = {
 
   > PostHashtag 테이블.
 
+```tex
+그리고 이렇게 sequelize로 관계를 설정해주면
+post.addImage, post.getImage, post.setImage, post.removeImage 등 뒤에 모델명이 붙은 메서드를 알아서 만들어준다.
+그렇다고 이 자동으로 만들어진 메서드를 남용하면.. 나중에 db명령어 복잡해졌을 떄 안될때가 있어서..
+db.sequelize.query('SELECT * FROM') 같이 쓸수있는데 이렇게 직접 쿼리를 날려주는 것도 방법이다.
+```
+
+
+
 ### image
 
 * 이미지를 db에 직접 하나씩 넣는 방법도 있지만,  **보통 db에 넣지는 않는다**
