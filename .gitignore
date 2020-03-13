@@ -2,6 +2,8 @@
 # Created by https://www.gitignore.io/api/vue,node,nuxt,vuejs,nuxtjs,visualstudio
 # Edit at https://www.gitignore.io/?templates=vue,node,nuxt,vuejs,nuxtjs,visualstudio
 
+./Vue/SNS/ch4/back/uploads
+
 ### Node ###
 # Logs
 logs
