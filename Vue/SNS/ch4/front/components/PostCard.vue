@@ -83,6 +83,11 @@ export default {
 
     },
     onToggleComment() {
+      if (!this.commentOpened) { // 닫혀있을 때 해야겠지
+        this.$store.dispatch(`posts/loadComments`, {
+          postId: this.post.id
+        })
+      }
       this.commentOpened = !this.commentOpened;
     }
   }

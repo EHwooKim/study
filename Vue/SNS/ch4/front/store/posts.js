@@ -18,11 +18,16 @@ export const state = () => ({
       console.log(index)
       state.mainPosts.splice(index, 1)
     },
+    loadComments(state, payload) {
+      const index = state.mainPosts.findIndex(v => v.id === payload.postId)
+      state.mainPosts[index].Comments = payload
+    },
     addComment(state, payload) {
       const index = state.mainPosts.findIndex(v => v.id === payload.postId);
       state.mainPosts[index].Comments.unshift(payload);
     },
-    loadPosts(state) {
+    loadPosts(state, payload) {
+      /* 무한 스크롤 더미데이터
       const diff = totalPosts - state.mainPosts.length; // 아직 안불러온 게시글 수 
       const fakePosts = Array(diff > limit ? limit : diff).fill().map(v => ({ // 아직 백엔드가 없어서 fakePosts로, Array().fill()이 빈배열 만드는 거고 map을 적용하여 더미데이터 생성
         id: Math.random().toString(),
@@ -36,6 +41,9 @@ export const state = () => ({
       }))
       state.mainPosts = state.mainPosts.concat(fakePosts) // 위에서 만든 배열 합치는거
       state.hasMorePost = fakePosts.length === limit   // 불러온 게시글이 개수가 limit과 같으면 계속 불러오는 거고 아니면 false로 멈추기
+      */
+      state.mainPosts = state.mainPosts.concat(payload)
+      state.hasMorePost = payload.length === limit
     },
     concatImagePaths(state, payload) {
       state.imagePaths = state.imagePaths.concat(payload) // 누군가 이미지를 하나만 올렸다가 두개를 더 업로드 하는 경우가 있어서 기존 업로드된것과 추가 업로드한 것을concoat으로 배열을 합쳐준다
@@ -66,10 +74,38 @@ export const state = () => ({
       commit('removeMainPost', payload)
     },
     addComment({ commit }, payload) {
+      this.$axios.post(`http://localhost:3085/post/${payload.postId}/comment`, {
+        content: payload.content
+      }, {
+        withCredentials: true
+      })
+        .then((res) => {
+          commit('addComment', res.data)
+        })
+        .catch(() => {
+
+        })
       commit('addComment', payload);
+    },
+    loadComment({ commit, payload }) {
+      this.$axios.get(`http://localhost:3085/post/${payload.postId}/comments`)
+        .then((res) => {
+          commit('loadComments', res.data)
+        })
+        .catch(() => {
+
+        })
     },
     loadPosts({ commit, state }, payload) {
       if (state.hasMorePost) {  // 쓸데없는 요청으로 해커가 되지않게 위한 코드...
+        this.$axios.get(`http://localhost:3085/posts?offset=${state.mainPosts.length}$limit=10`) // 지금까지 가져온 posts들(mainposts)는 건너뛰고 10개 가져오기
+          // 로그인 필요 없으니 withCredentials 필요 없지
+          .then((res) => {
+            commit('loadPosts', res.data)
+          })
+          .catch(() => {
+            // 게시글 로드 실패하면 어떻게 보여줄래?
+          })
         commit('loadPosts')
       }
     },
