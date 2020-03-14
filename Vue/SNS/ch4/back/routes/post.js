@@ -32,8 +32,6 @@ router.post('/images', isLoggedIn, upload.array('image'), (req, res) => { // 로
 
 router.post('/', isLoggedIn, async (req, res) => { // POST '/post' 게시글 작성
   try {
-    req.body.content
-    req.body.imagePaths
     const hashtags = req.body.content.match(/#[^\s#]+/g)
     const newPost = await db.Post.create({
       content: req.body.content, // 이 안에 hashTag들이 들어있다.
@@ -64,6 +62,60 @@ router.post('/', isLoggedIn, async (req, res) => { // POST '/post' 게시글 작
     console.error(err)
     next(err)
   }
+})
+
+// 댓글 가져오기 - 이건 위에 Get post에서 include에 댓글까지 포함시켜 불러와도 된다. 하나의 게시글에 댓글이 엄-청 많이 달리면, 사람들은 게시글만 보고 넘어가려했는데도 그 많은 댓글을 다 가져와서 비효율적이니 따로 뺴주는게 좋다.
+router.get('/:id/comments', async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({ where: {id: req.params.id }})
+    if (!post) {
+      return res.status(404).send('포스트가 존재하지 않습니다.')
+    }
+    const comments = await db.Comment.findAll({
+      where: {
+        PostId: req.params.id,
+      },
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname']
+      }],
+      order: [['createdAt', 'ASC']], // !!!! 왜 2차원 배열이지..? 1차원 배열로 하는 실수를 많이 하는데, 정렬 기준이 여러개일 경우 조건을 여러개 적어야 하거든. 조건 한개라고 1차원 배열이라고 생각하지 말자
+    })
+    res.json(comments)
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+}) 
+
+// 댓글 작성
+router.post('/:id/comment', isLoggedIn, async (req, res, next) => { // POST /post/:id/comment
+  try {
+    const post = await db.Post.findOne({ where: { id: req.params.id }}) // params는 req.params.id로 접근 가능
+    if (!post) {
+      return res.status(404).send('포스트가 존재하지 않습니다.') // 에러처리 잘해야합니다!!! 에러나면 서버 바로 죽어요
+    }
+    const newComment = await db.Comment.create({
+      PostId: post.id, // 이부분을 아래의 addComments가 해주는거야, 그런데 addComments 방법은 쿼리를 두번 날리는거라 대규모 서비스에는 적합하지 않아, addComments를 지우고 이 코드를 살리는 것도 좋은 방법
+      UserId: req.user.id,
+      content: req.body.content,
+    })
+    // await post.addComments(newComment.id) 
+    const comment = await db.Comment.findOne({  // 등록한 댓글을 이제 프론트로 보내줘야지
+      where: {
+        id: newComment.id
+      },
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname'],
+      }]
+    })
+    return res.json(comment)
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+
 })
 
 module.exports = router

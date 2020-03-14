@@ -50,11 +50,11 @@ app.get('/', (req, res) => { // 'localhost:3080/' 생략된 주소 '/'
 })
 
 
-app.post('/post', (req, res) => {
-  if (req.isAuthenticated()) { // 로그인 되었다면! deserializeUser에 의해 사용가능해졌다.
+// app.post('/post', (req, res) => {
+//   if (req.isAuthenticated()) { // 로그인 되었다면! deserializeUser에 의해 사용가능해졌다.
 
-  } 
-})
+//   } 
+// })
 
 app.listen(3085, () => { // 실제 배포시 포트 숫자는 안보이잖아, http면 80, https면 443 이렇게 바꾸고 뭔가 해주면 된다.
     console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`)
