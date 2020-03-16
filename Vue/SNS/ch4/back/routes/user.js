@@ -6,6 +6,10 @@ const { isLoggedIn, isNotLoggedIn } = require('./middlewares')
 
 const router = express.Router()  // 반드시 이렇게 써야해 대문자 조심!!
 
+router.get('/', isLoggedIn, async (req, res, next) => { // 사용자 정보 가져오기 (백단에서는로그인 상태인데 프론트에서 로그인 풀려있어..)
+  const user = req.user // 이렇게도 할 수 있지만. 여기에는 password가 들어있어, req.user를 만드는게 desirialize니까 그부분에서 좀 고치자.
+  res.json(user)
+})
 
 router.post('/', isNotLoggedIn, async (req, res, next) => { // 회원가입은 로그인 안한 사람만 해야하니
   try{  // async await는 try catch감싸야하고,
@@ -32,7 +36,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => { // 회원가입은 �
     })
     // 회원가입 후 로그인 시키기 위해 logIn코드 복붙
     passport.authenticate('local', (err, user, info) => {  
-      if (err) { 
+      if (err) { ,
         console.error(err)
         return next(err) 
       }

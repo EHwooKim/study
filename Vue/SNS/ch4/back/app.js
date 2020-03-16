@@ -45,7 +45,7 @@ app.use(passport.session())    // session은 메모리라 그랬지, 사용자 �
 
 app.use('/user', userRouter) // user 라우터 연결
 app.use('/post', postRouter)
-app.user('/posts', postsRouter)
+app.use('/posts', postsRouter)
 
 app.get('/', (req, res) => { // 'localhost:3080/' 생략된 주소 '/' 
   res.send('안녕 EHwoo') // res.status(200).send('안녕 백엔드') 가 원래 모양.

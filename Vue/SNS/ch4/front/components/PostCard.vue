@@ -76,11 +76,11 @@ export default {
   methods: {
     onRemovePost() {
       this.$store.dispatch('posts/remove', {
-        id: this.post.id,
+        postId: this.post.id,
       })
     },
     onEditPost() {
-
+      //숙제
     },
     onToggleComment() {
       if (!this.commentOpened) { // 닫혀있을 때 해야겠지

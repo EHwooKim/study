@@ -52,6 +52,9 @@
         hashtag: '',
       }
     },
+    fetch() { // 화면이 보여지기 전에, store를 채우는 역할을 하는 fetch
+      store.dispatch('users/loadUser')
+    },
     methods: {
       onSearchHashtag() {
         this.$router.push({

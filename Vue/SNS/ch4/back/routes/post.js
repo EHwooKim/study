@@ -64,6 +64,22 @@ router.post('/', isLoggedIn, async (req, res) => { // POST '/post' 게시글 작
   }
 })
 
+// 수정 만들어보자. router.put(''):전체수정 patch:부분수정
+
+router.delete('/:id', async (req, res, next) => {
+  try {
+    await db.Post.destroy({
+      where: {
+        id: req.params.id,
+      }
+    })
+    res.send('삭제했습니다')
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+})
+
 // 댓글 가져오기 - 이건 위에 Get post에서 include에 댓글까지 포함시켜 불러와도 된다. 하나의 게시글에 댓글이 엄-청 많이 달리면, 사람들은 게시글만 보고 넘어가려했는데도 그 많은 댓글을 다 가져와서 비효율적이니 따로 뺴주는게 좋다.
 router.get('/:id/comments', async (req, res, next) => {
   try {

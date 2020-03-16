@@ -14,7 +14,7 @@ export const state = () => ({
       state.imagePaths = []
     },
     removeMainPost(state, payload) {
-      const index = state.mainPosts.findIndex(v => v.id === payload.id) // 이 코드 뭘까..
+      const index = state.mainPosts.findIndex(v => v.id === payload.postId) // 이 코드 뭘까..
       console.log(index)
       state.mainPosts.splice(index, 1)
     },
@@ -71,7 +71,15 @@ export const state = () => ({
       commit('addMainPost', payload)
     },
     remove({ commit }, payload) {
-      commit('removeMainPost', payload)
+      this.$axios.delete(`http://localhost:3085/post/${payload.postId}`, { // 삭제는 데이터가 따로 필요 없으니 두번쨰에 바로 withcredentials 넣어준다.
+        withCredentials: true,
+      })
+        .then(() => {
+          commit('removeMainPost', payload)
+        })
+        .catch(() => {
+
+        })
     },
     addComment({ commit }, payload) {
       this.$axios.post(`http://localhost:3085/post/${payload.postId}/comment`, {
