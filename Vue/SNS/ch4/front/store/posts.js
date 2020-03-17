@@ -58,7 +58,7 @@ export const state = () => ({
       // 서버에 게시글 등록 요청 보내는 코드!!
       this.$axios.post('http://localhost:3085/post', {
         content: payload.content,
-        imagePaths: state.imagePaths, // 프론트에서 유저정보를 같이 안보내는 이유는 중간에서 가로채서 위조를 할 가능성이 있기 떄문이다. 누가 등록했는지는 서버에서 판단한다
+        image: state.imagePaths, // 프론트에서 유저정보를 같이 안보내는 이유는 중간에서 가로채서 위조를 할 가능성이 있기 떄문이다. 누가 등록했는지는 서버에서 판단한다
       }, { 
         withCredentials: true, 
       })

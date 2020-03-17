@@ -50,11 +50,23 @@ router.post('/', isLoggedIn, async (req, res) => { // POST '/post' 게시글 작
         db.sequelize.query('SELECT * FROM') 같이 쓸수있는데 이렇게 직접 쿼리를 날려주는 것도 방법이다.
       */
     }
+    if (req.body.image) { // express에서 req.body.image  이 부분을 파싱할 때, 이미지가 하나여도 배열로 보내줘야하는데 가끔 일반 문자열로 처리할 떄가 있어서 아래줄에서 배열인지 구분하는 코드가 한번 더 필요하다
+      if (Array.isArray(req.body.image)) {
+        await Promise.all(req.body.image.map((image) => {
+          return db.Image.create({ src: iamge, PostId: newPost.id }) //await이 붙고 안붙은 경우를 잘 구분해야한다. 지금 안붙어있으니 Promise다, Promise이고 map이 들어있으니 Promise.all로 처리를 해줘야한다.
+          // newPost.addImages(images)와 같이 만들어진 것을 이용해서도 관게설정을 할 수 있는데 이건 결국 db요청을 두번하게 되는거라 위와같이 해줬다.
+        }))
+      } else { // 이미지가 하나일 경우 
+        await db.Image.create({ src: req.body.image, PostId: newPost.id})
+      }
+    }
     const fullPost = await db.Post.findOne({
       where: { id: newPost.id },
       include: [{ // 이게 또 sequelize의 좋은점인데, model간 관계가 있는데 이런 관계의 정보를 자동으로 포함해준다.
         model: db.User, // 사용자가 게시글을 작성하는 관계잖아, 그것을 이렇게만 적어줘도 이 게시글 작성한 사람 정보를 가져오라는 거구나로 해석하고 가져온다. 
         attributes: ['id', 'nickname'] // 그런데 모든 정보를 다 가져오기 때문에 필요한 정보만 가져오게.
+      }, {
+        model: db.Image, // 이 게시글에 딸린 이미지도 sequelize가 알아서 합쳐줘서 return 해준다
       }],
     })
     return res.json(fullPost) // newPost에는 글의 내용과 user.id만 들어있기에 user.id만으로는 그게 누군지 프론트에서 알수가없다. 그래서 유저 정보도 같이 보내야한다.
