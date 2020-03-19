@@ -711,3 +711,40 @@ router.post('/images', upload.__method__ ,aisLoggedIn, (req, res) => {
     ```
 
     > 이미지와 같은 정적인 파일을 불러오기 위한 미들웨어. uploads 폴더에 있는 것들 기본주소 '/'로 불러올수 있게도 바꿔준거. '/uploads'로 적어주면 uploads 폴더안에있는 것을 uploads로 가져오기 인데, 프론트랑 백을 주소 다르게 해주는게 좋다. 왜냐하면 프론트에서 백의 폴더 구조를 알게되면 보안상의 문제가 있기떄문에!
+
+### 서버사이드에서 데이터 가져오기
+
+* 로그인 유지, 게시글 불러오기 등 화면이 그려지기전에 실행되고 싶은코드는 `nuxtServerInit` 혹은 `fetch`를 통해 불러온다.
+  * `nuxtServerInit`의 경우 모든 페이지에서 실행되는 코드이기 때문에 공통적인 코드를 적고 (store/index.js)
+  * `fetch`는 특정 페이지에서 실행되기를 바라는 코드를 적는다. (profile.vue 등..)
+  * :lipstick:이때 `주의`해야할 것은 해당 코드가 Promise인 경우 **return**을 꼭 붙여줘야한다.
+
+### 기타 설정들
+
+* Nuxt의 포트번호의 경우
+
+  ```javascript
+  // package.json에 아래 코드를 통해 포트 프론트 서버 포트 변경 가능
+  "config": {
+      "nuxt": {
+        "port": "3080"
+      }
+    }
+  ```
+
+* 백서버에 요청을 보낼 때마다 localhost주소를 적어줬었는데 그 부분을 nuxt axios에서 이 설정을 지원해준다.
+
+  ```javascript
+  // nuxt.config.js
+      axios: {
+          browserVaseURL: 'http://localhost:3085', //클라이언트에서 요청 보낼 떄
+          baseURL: 'http://localhost:3085' // 서버에서 요청 보낼 때
+          https: false, // 주소가 https가 되면 true로 바꿔주면 되겠지
+      }
+  ```
+
+  > 이 설정 이후에는 .get('http://localhost:3085/post')가 아닌 .get('/post')만 써도 된다.
+
+#### fetch vs asyncData
+
+* fetch는 store의 데이터를 비동기 처리할 떄 사용하고, store가 아닌 컴포넌트의 data를 비동기 처리할 떄는 asyncData를 사용한다.

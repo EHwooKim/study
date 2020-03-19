@@ -56,7 +56,7 @@ export const state = () => ({
   export const actions = {
     add({ commit, state }, payload) {  // 비동기 작업이라 여기 한번 더..?가 아니라 서버에 등록하고, 보여지는 vue에도 등록해야 하니까
       // 서버에 게시글 등록 요청 보내는 코드!!
-      this.$axios.post('http://localhost:3085/post', {
+      this.$axios.post('/post', {
         content: payload.content,
         image: state.imagePaths, // 프론트에서 유저정보를 같이 안보내는 이유는 중간에서 가로채서 위조를 할 가능성이 있기 떄문이다. 누가 등록했는지는 서버에서 판단한다
       }, { 
@@ -71,7 +71,7 @@ export const state = () => ({
       commit('addMainPost', payload)
     },
     remove({ commit }, payload) {
-      this.$axios.delete(`http://localhost:3085/post/${payload.postId}`, { // 삭제는 데이터가 따로 필요 없으니 두번쨰에 바로 withcredentials 넣어준다.
+      this.$axios.delete(`/post/${payload.postId}`, { // 삭제는 데이터가 따로 필요 없으니 두번쨰에 바로 withcredentials 넣어준다.
         withCredentials: true,
       })
         .then(() => {
@@ -82,7 +82,7 @@ export const state = () => ({
         })
     },
     addComment({ commit }, payload) {
-      this.$axios.post(`http://localhost:3085/post/${payload.postId}/comment`, {
+      this.$axios.post(`/post/${payload.postId}/comment`, {
         content: payload.content
       }, {
         withCredentials: true
@@ -96,7 +96,7 @@ export const state = () => ({
       commit('addComment', payload);
     },
     loadComment({ commit, payload }) {
-      this.$axios.get(`http://localhost:3085/post/${payload.postId}/comments`)
+      this.$axios.get(`/post/${payload.postId}/comments`)
         .then((res) => {
           commit('loadComments', res.data)
         })
@@ -106,7 +106,7 @@ export const state = () => ({
     },
     loadPosts({ commit, state }, payload) {
       if (state.hasMorePost) {  // 쓸데없는 요청으로 해커가 되지않게 위한 코드...
-        this.$axios.get(`http://localhost:3085/posts?offset=${state.mainPosts.length}$limit=10`) // 지금까지 가져온 posts들(mainposts)는 건너뛰고 10개 가져오기
+        this.$axios.get(`/posts?offset=${state.mainPosts.length}$limit=10`) // 지금까지 가져온 posts들(mainposts)는 건너뛰고 10개 가져오기
           // 로그인 필요 없으니 withCredentials 필요 없지
           .then((res) => {
             commit('loadPosts', res.data)
@@ -118,7 +118,7 @@ export const state = () => ({
       }
     },
     uploadImages({ commit }, payload) {
-      this.$axios.post('http://localhost:3085/post/images', payload, {
+      this.$axios.post('/post/images', payload, {
         withCredentials: true, // 로그인한 사용자만..?
       }) 
         .then((res) => {

@@ -33,7 +33,10 @@
       }
     },
     fetch({ store }) { // 처음 시작시 데이터를 넣어주는 역할, 컴포넌트가 마운트 되기 전에 스토어에 비동기적으로 데이터를 넣을 떄 사용한다.
-      store.dispatch('posts/loadPosts') // 화면이 뜨기 전에 미리 게시글을 가져온다.
+      return store.dispatch('posts/loadPosts') // 화면이 뜨기 전에 미리 게시글을 가져온다. return 없으면 안된다. 프로미스이기 떄문에 <= 서버사이드 렌더링에서 중요!
+    },
+    asyncData() { // 이것도 화면 그려지기 비동기 작업을 하는데, 이때 리턴하는 것은 위의 data랑 합쳐진다. 원래 vue의data로는 비동기 작업을 못하기에 비동기 작업을 위한 것이 asyncData이다
+      return {}
     },
     mounted() { // mounted가 화면에 붙었을 때인데 화면에 붙기 전에 window나 document에 접근하면 안되니 window는 created가 아닌 mounted에서 쓸 수 있다.
       window.addEventListener('scroll', this.onScroll) // window는 created에서 못쓴다.

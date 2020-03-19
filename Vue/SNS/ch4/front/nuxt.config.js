@@ -13,5 +13,10 @@ module.exports = {
     plugins: [],
     vuetify : {             // 연결 후 연결한 라이브러리에 대한 설정을 또 해줄 수 있다.
 
+    },
+    axios: {
+        browserVaseURL: 'http://localhost:3085',
+        baseURL: 'http://localhost:3085',
+        https: false,
     }
 }

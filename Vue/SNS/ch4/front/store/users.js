@@ -52,19 +52,21 @@ export const mutations = { // 단순 동기 작업
 }
 
 export const actions = {
-  loadUser({ commit }) {  // 유저정보 가져오는건데, 호출하는 위치가 중요하다. 모든 페이지에서 사람들이 새로고침 할수있잖아. 그떄마다 프론트 로그인상태 유지를 해야하니 layout이 제일 적절한 것같다. (모든 페이지의 공통부분) 하지만 layout에서는 fetch를 사용할 수 없습니다.....
-    this.$axios.get('http://localhost:3085/user', { 
-      withCredentials: true  // 로그인된 사람의 정보를 가져오는거니 이부분 필수 (쿠키 반드시 넘겨줘야한다)
-    })
-      .then((res) => {
-        commit('setMe', res.data) 
+  async loadUser({ state, commit }) {  // 유저정보 가져오는건데, 호출하는 위치가 중요하다. 모든 페이지에서 사람들이 새로고침 할수있잖아. 그떄마다 프론트 로그인상태 유지를 해야하니 layout이 제일 적절한 것같다. (모든 페이지의 공통부분) 하지만 layout에서는 fetch를 사용할 수 없습니다.....
+    console.log('loadUser')
+    try {
+      const res = await this.$axios.get('/user', { 
+        withCredentials: true  // 로그인된 사람의 정보를 가져오는거니 이부분 필수 (쿠키 반드시 넘겨줘야한다)
       })
-      .catch(() => {
-
-      })
+      console.log(res.data)
+      commit('setMe', res.data) 
+      console.log(state)
+    } catch (err) {
+      console.error(err)
+    }
   },
   signUp({ commit, state }, payload) {
-    this.$axios.post('http://localhost:3085/user', { // '/user'였는데 이건 그냥 front 페이지에 요청을 보내는거고, 백 서버에 보내야 db 적용이 되겠지
+    this.$axios.post('/user', { // '/user'였는데 이건 그냥 front 페이지에 요청을 보내는거고, 백 서버에 보내야 db 적용이 되겠지
       email: payload.email,
       nickname: payload.nickname,
       password: payload.password,
@@ -80,7 +82,7 @@ export const actions = {
       })
   },
   logIn({ commit }, payload) {
-    this.$axios.post('http://localhost:3085/user/login', {
+    this.$axios.post('/user/login', {
       email: payload.email,
       password: payload.password
     }, {
@@ -94,7 +96,7 @@ export const actions = {
       })
   },
   logOut({ commit }, payload) {
-    this.$axios.post('http://localhost:3085/user/logout', {}, { // 넘길 데이터 없으면 두번째 인자로 빈 객체 넘겨줘야한다
+    this.$axios.post('/user/logout', {}, { // 넘길 데이터 없으면 두번째 인자로 빈 객체 넘겨줘야한다
         withCredentials: true, // 다른서버로 요청이니 세번쨰인자로 이거 꼭 필요합니다.
       }) 
       .then((data) => {
