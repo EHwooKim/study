@@ -32,6 +32,7 @@
         return this.$store.state.posts.hasMorePost
       }
     },
+    // fetch는 store의 데이터를 비동기 처리할 떄 사용하고, store가 아닌 컴포넌트의 data를 비동기 처리할 떄는 asyncData를 사용한다.
     fetch({ store }) { // 처음 시작시 데이터를 넣어주는 역할, 컴포넌트가 마운트 되기 전에 스토어에 비동기적으로 데이터를 넣을 떄 사용한다.
       return store.dispatch('posts/loadPosts') // 화면이 뜨기 전에 미리 게시글을 가져온다. return 없으면 안된다. 프로미스이기 떄문에 <= 서버사이드 렌더링에서 중요!
     },

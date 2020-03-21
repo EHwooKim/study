@@ -42,8 +42,10 @@ export const state = () => ({
       state.mainPosts = state.mainPosts.concat(fakePosts) // 위에서 만든 배열 합치는거
       state.hasMorePost = fakePosts.length === limit   // 불러온 게시글이 개수가 limit과 같으면 계속 불러오는 거고 아니면 false로 멈추기
       */
-      state.mainPosts = state.mainPosts.concat(payload)
-      state.hasMorePost = payload.length === limit
+
+      // state.mainPosts = state.mainPosts.concat(payload)
+      // state.hasMorePost = payload.data.length === limit
+
     },
     concatImagePaths(state, payload) {
       state.imagePaths = state.imagePaths.concat(payload) // 누군가 이미지를 하나만 올렸다가 두개를 더 업로드 하는 경우가 있어서 기존 업로드된것과 추가 업로드한 것을concoat으로 배열을 합쳐준다

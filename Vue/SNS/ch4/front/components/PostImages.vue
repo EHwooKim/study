@@ -45,7 +45,7 @@
 </template>
 
 <script>
-  import ImageZoom from './ImagezZoom'
+  import ImageZoom from './ImageZoom'
   
   export default {
     data() {

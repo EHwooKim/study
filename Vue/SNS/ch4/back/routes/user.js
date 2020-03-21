@@ -36,7 +36,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => { // 회원가입은 �
     })
     // 회원가입 후 로그인 시키기 위해 logIn코드 복붙
     passport.authenticate('local', (err, user, info) => {  
-      if (err) { ,
+      if (err) {
         console.error(err)
         return next(err) 
       }

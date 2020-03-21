@@ -23,7 +23,7 @@ app.use(morgan('dev')) // morgan은 제일 위에, 요청이 들어오면 요청
 // 사용방법은 공식문서 보면서 하면 되니까 외우지않아도 된다. 다만 라이브러리간에 어떻게 연결해주고 어떻게 동작하는지는 알고 쓰자!
 // app.use 를 통해 req와 res를 조작할 수 있어 express middleware라 부른다, app.get, app.post들도 사실 다 middleware들이다.
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:3080',
   credentials: true,
 })) 
 app.use('/', express.static('uploads')) // 이미지와 같은 정적인 파일을 불러오기 위한 미들웨어. uploads 폴더에 있는 것들 기본주소 '/'로 불러올수 있게도 바꿔준거. '/uploads'로 적어주면 uploads 폴더안에있는 것을 uploads로 가져오기 인데, 프론트랑 백을 주소 다르게 해주는게 좋다. 왜냐하면 프론트에서 백의 폴더 구조를 알게되면 보안상의 문제가 있기떄문에!
