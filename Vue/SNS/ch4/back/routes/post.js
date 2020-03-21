@@ -145,8 +145,85 @@ router.post('/:id/comment', isLoggedIn, async (req, res, next) => { // POST /pos
   }
 })
 
-router.post('/:id/retweet', (req, res, next) {
-  
+router.post('/:id/retweet', isLoggedIn, (req, res, next) {
+  try {
+    const post = await db.Post.findOne({
+      where: { id: req.params.id },
+      inlcude: [{ // 리트윗한 글을 한번더 리트윗하는 것은 원본 게시글을 리트윗 하는 것이므로 
+        model: db.Post, 
+        as: 'Retweet', // 리트윗한 게시글이면 원본 게시글까지 가져온다.
+      }]
+    })
+    if (!post) {
+      return res.status(404).send('포스트가 존재하지 않습니다.')
+    }
+    if (req.user.id === post.UserId || (post.Retweet && post.UserId === req.user.id)) {
+      return res.status(403).send('자신의 글은 리트윗할 수 없습니다.')
+    }
+    const retweetTargetId = post.Retweet || post.id // 원본이 있으면 그것, 없으면 타겟 게시글 id
+    const exPost = await db.Post.findOne({ // 이리 리트위한 글인지 확인
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      }
+    })
+    if (exPost) {
+      return res.status(403).send('이미 리트윗했습니다.')
+    }
+    const retweet = await db.Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId, // 원본 아이디
+      content: 'retweet', // content가 필수라 일단 넣어둠
+    })
+    const retweetWithPrevPost = await db.Post.findOne({ // 프론트로 보낼 때 create된 retweet을 바로 보내면 안되고 항상 findOne해서 보내자
+      where: { id: retweet.id },
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname'],
+      }, {
+        model: db.Post,
+        as: 'Retweet',
+        include: [{ //  include 안에 include형태, 그런데 include가 계속 중첩되면... 쿼리문으로 직접 최적화 해줘야한다. 
+          model: db.User,
+          attributes: ['id', 'nickname'],
+        }, {
+          model: db.Image
+        }]
+      }]
+    })
+    res.join(retweetWithPrevPost)
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+})
+
+router.post('/:id/like', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({ where: {id: req.params.id }})
+    if (!post) {
+      return res.status(404).send('포스트가 존재하지 않습니다.')
+    }
+    await post.addLiker(req.user.id) // 게시글에 좋아요 
+    res.json({ userId: req.user.id })
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+})
+
+router.post('/:id/like', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({ where: {id: req.params.id }})
+    if (!post) {
+      return res.status(404).send('포스트가 존재하지 않습니다.')
+    }
+    await post.removeLiker(req.user.id) // 게시글의 좋아요 누른사람에서 뺸다.
+    res.json({ userId: req.user.id })
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
 })
 
 module.exports = router

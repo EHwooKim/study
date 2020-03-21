@@ -67,8 +67,8 @@ export const state = () => ({
         .then(() => {
           commit('addMainPost', res.data)
         })
-        .catch(() => {
-
+        .catch((err) => {
+          console.error(err)
         })
       commit('addMainPost', payload)
     },
@@ -79,8 +79,8 @@ export const state = () => ({
         .then(() => {
           commit('removeMainPost', payload)
         })
-        .catch(() => {
-
+        .catch((err) => {
+          console.error(err)
         })
     },
     addComment({ commit }, payload) {
@@ -92,8 +92,8 @@ export const state = () => ({
         .then((res) => {
           commit('addComment', res.data)
         })
-        .catch(() => {
-
+        .catch((err) => {
+          console.error(err)
         })
       commit('addComment', payload);
     },
@@ -102,8 +102,8 @@ export const state = () => ({
         .then((res) => {
           commit('loadComments', res.data)
         })
-        .catch(() => {
-
+        .catch((err) => {
+          console.error(err)
         })
     },
     loadPosts({ commit, state }, payload) {
@@ -113,7 +113,8 @@ export const state = () => ({
           .then((res) => {
             commit('loadPosts', res.data)
           })
-          .catch(() => {
+          .catch((err) => {
+            console.error(err)
             // 게시글 로드 실패하면 어떻게 보여줄래?
           })
         commit('loadPosts')
@@ -126,8 +127,8 @@ export const state = () => ({
         .then((res) => {
           commit('concatImagePaths', res.data) //res.data에 웃는얼굴.png 메가폰.png 파일에 대한 정보(정확히는 주소)
         })
-        .catch(() => {
-          
+        .catch((err) => {
+          console.error(err)
         })
     }
   }
