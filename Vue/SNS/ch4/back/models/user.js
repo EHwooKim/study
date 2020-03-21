@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => { // node에서는 각 파일이 modu
   User.associate = (db) => { // 모델 간의 관계 정의
     db.User.hasMany(db.Post) // 사용자 한명이 여러 게시글 작성이 가능하니
     db.User.hasMany(db.Comment)
+    db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liked'}) // 좋아요, 이미 위에 User-Post관계가 하나 있잖아 그래서 as로 명시.
+    db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followers', foreignKey: 'followingId'}) // 자신과 자신의 다대다 관계. 다대다 관계는 중간 테이블이 필요하다 그랬잖아,
+    db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followings', foreignKey: 'followerId'})   // 그런데 이 경우 User와 User의 관계니 중간 테이블이 좀 헷갈리겠지 그래서 followerId, followingId같이 직접 구분해주겠다
+    // following - follower 의 관계.. 헷갈렸던 그거지
   }
   return User
 }

@@ -143,7 +143,10 @@ router.post('/:id/comment', isLoggedIn, async (req, res, next) => { // POST /pos
     console.error(err)
     next(err)
   }
+})
 
+router.post('/:id/retweet', (req, res, next) {
+  
 })
 
 module.exports = router

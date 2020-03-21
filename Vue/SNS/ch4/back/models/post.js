@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     // belongsTo(db.User) => 사람을 통해 게시글 불러오기
     // hasMany(db.Comment) => 게시글을 통해 댓글 가져오기  
     db.User.hasMany(db.Image)
+    db.Post.belongsToMany(db.User, { through: 'Like', as: 'Likers' })
     db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag'}) // 다대다 관계를 설정해주기 위한 중간테이블인 PostHashtag.
+    // 지금까지는 게시글-댓글, 게시글-사용자와 같은 관계였는데 리트윗은 게시글-게시글의 관계이다.
+    db.Post.belongsTo(db.Post, { as: 'Retweet'}) //belongTo(db.User) 하면 UserId가 자동으로 생긴다 했는데 이번 경우에는 RetweetId를 원하잖아 그래서 { as: 'Retweet' }
   }
   return Post
 }
