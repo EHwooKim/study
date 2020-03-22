@@ -5,8 +5,8 @@ export const state = () => ({
   })
   
   // 서버에 몇개의 데이터가 있는지 모른다는 가정하에 일단 코딩을 하기 위해 state가 아닌 이곳에 잠시 값을들 놓고 해보자.
-  const totalPosts = 51 // 지금은 더미데이터니까 게시글이 서버에 101개가 있다고 가정.
-  const limit = 10;    // 무한 스크롤링 글 불러오는 개수
+  // const totalPosts = 51 // 지금은 더미데이터니까 게시글이 서버에 101개가 있다고 가정.
+  // const limit = 10;    // 무한 스크롤링 글 불러오는 개수
 
   export const mutations = {
     addMainPost(state, payload) {
@@ -44,7 +44,7 @@ export const state = () => ({
       */
 
       // state.mainPosts = state.mainPosts.concat(payload)
-      // state.hasMorePost = payload.data.length === limit
+      // state.hasMorePost = payload.length === 10
 
     },
     concatImagePaths(state, payload) {
@@ -52,6 +52,17 @@ export const state = () => ({
     },
     removeImagePath(state, payload) { //payload에 삭제하고픈 사진의 index가 들어간다.
       state.imagePaths.splice(payload, 1) 
+    },
+    unlikePost(state, payload) {
+      const index = state.mainPosts.findIndex(v => v.id === payload.postId)
+      const userIndex = state.mainPosts[index].Likers.findIndex(v => v.id === payload.userId)
+      state.mainPosts[index].Likers.splice(userIndex, 1)
+    },
+    likePost(state, payload) {
+      const index = state.mainPosts.findIndex(v => v.id === payload.postId)
+      state.mainPosts[index].Likers.push({ // 이 Likers는 언제 생겼을까?
+        id: payload.userId
+      })
     }
   }
 
@@ -126,6 +137,45 @@ export const state = () => ({
       }) 
         .then((res) => {
           commit('concatImagePaths', res.data) //res.data에 웃는얼굴.png 메가폰.png 파일에 대한 정보(정확히는 주소)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    retweet({ commit }, payload) {
+      this.$axios.post(`/post/${payload.postId}/retweet`, {}, {
+        withCredentials: true
+      })
+        .then((res) => {
+          commit('addMainPost', res.data)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    likePost({ commit }, payload) {
+      this.$axios.post(`/post/${payload.postId}/like`, {}, {
+        withCredentials: true
+      })
+        .then((res) => {
+          commit('likePost', {
+            userId: res.data.userId,
+            postId: payload.postId
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    unlikePost({ commit }, payload) {
+      this.$axios.delete(`/post/${payload.postId}/like`, { // delete는 넘겨주는 데이터가 없어서 두번째 인자 지워야한다!
+        withCredentials: true
+      })
+        .then((res) => {
+          commit('unlikePost', {
+            userId: res.data.userId,
+            postId: payload.postId
+          })
         })
         .catch((err) => {
           console.error(err)

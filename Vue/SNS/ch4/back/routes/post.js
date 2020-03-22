@@ -67,6 +67,10 @@ router.post('/', isLoggedIn, async (req, res) => { // POST '/post' 게시글 작
         attributes: ['id', 'nickname'] // 그런데 모든 정보를 다 가져오기 때문에 필요한 정보만 가져오게.
       }, {
         model: db.Image, // 이 게시글에 딸린 이미지도 sequelize가 알아서 합쳐줘서 return 해준다
+      }, {
+        model: db.User,
+        as: 'Likers',
+        attributes: ['id'],
       }],
     })
     return res.json(fullPost) // newPost에는 글의 내용과 user.id만 들어있기에 user.id만으로는 그게 누군지 프론트에서 알수가없다. 그래서 유저 정보도 같이 보내야한다.
@@ -180,6 +184,10 @@ router.post('/:id/retweet', isLoggedIn, (req, res, next) {
       include: [{
         model: db.User,
         attributes: ['id', 'nickname'],
+      }, {
+        model: db.User,
+        as: 'Likers',
+        attributes: ['id']
       }, {
         model: db.Post,
         as: 'Retweet',

@@ -12,6 +12,19 @@ router.get('/', async (req, res, next) => { // GET /posts?offset=10&limit=10 같
         attributes: ['id', 'nickname']
       }, {
         model: db.Image,
+      }, {
+        model: db.User,
+        as: 'Likers', // 이걸 추가해야 게시글 불러올 때 좋아요 목록까지 불러온다.
+        attributes: ['id'],
+      }, {
+        model: db.Post, // 리트윗글이면 원본글, 작성자, 이미지까지 불러온다.
+        as: 'Retweet',
+        include: [{
+          model: db.User,
+          attributes: ['id', 'nickname'],
+        }, {
+          model: db.Image,
+        }]
       }],
       order: [['createdAt', 'DESC']],
       offset: parseInt(req.query.offset, 10) || 0, // 10개씩 가져올 떄 필요한거, offset이 10씩 높아지면서 다음거 가져올 떄 쓰고
