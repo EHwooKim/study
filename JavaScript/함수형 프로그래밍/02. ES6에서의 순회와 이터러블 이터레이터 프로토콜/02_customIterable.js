@@ -29,7 +29,7 @@ for (const a of iterable) console.log(a) // iterable은 Symbol.iterator가 구�
 // let iter2 = arr2[Symbol.iterator]()
 // iter2.next()                          // 이렇게 한단계를 진행시키고
 // console.log(iter2[Symbol.iterator] )      // iter2도 Symbol.iterator를 가지고 있고, 그것을 실행시킨 값은 자기 자신이다. 이렇게 이터레이터가 자기자신을 반환하는 Symbol.iterator를 메서드를 가지고 있을 때 잘 정의된 이터러블, 이터레이터라고 할 수 있다.
-// for (const a of arr2) console.log(a)  // 다음 단계부터 이어서 진행이 가능하다.
+// for (const a of iter2) console.log(a)  // 다음 단계부터 이어서 진행이 가능하다.
 
 
 

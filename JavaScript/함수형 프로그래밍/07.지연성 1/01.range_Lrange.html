@@ -1,0 +1,62 @@
+<script src='fx.js'></script>
+<script>
+  const add = (a, b) => a + b
+  /*
+    ## range  (간단한 버전)
+    - 숫자 하나를 받고 숫자의 크기만한 배열을 리턴하는 함수
+  */
+
+  const range = l => {
+    let i = -1
+    let res = []
+    while (++i < l) {
+      log(i, 'range')
+      res.push(i)
+    }
+    return res
+  }
+
+  // range함수로 만들어진 배열의 모든 값을 더해보자.
+
+  var list = range(5) // [0, 1, 2, 3, 4]
+  log(list)
+  log(reduce(add, list))
+
+  // 위의 행동을 다른 방법으로 똑같이 해보자 (느긋한 range)
+  
+  /*
+    느긋한 range
+  */
+  const L = {}
+  L.range = function *(l) { // 제너레이터 함수를 이용해 이터레이터 생성
+    console.log('실행이 되는가?') // 실행 안된다. 언제 처음 이 코드가 평가될까?
+    let i = -1
+    while (++i < l) {
+      log(i, 'L.range') // 이렇게 찍어보면 위의 range와 어떻게 다른지 알 수 있다.
+      yield i
+    }
+  }
+  
+  var list = L.range(5)  
+  log(list) // L.range {<suspended>}  <= 이부분이 다르지 이터레이터인거야.
+  list.next() // 이렇게 이터레이터가 순회할 때 그 내부 코드가 평가된다.
+  log(reduce(add, list)) // 결과는 동일, reduce 함수가 이터러블을 받기 떄문에 가능.
+  
+
+
+  /*
+    range의 경우 "var list = range(4)" 코드 실행시(range가 실행시) 이미 값이 리스트로 평가가 된다.
+    L.range의 경우 "var list = L.range(4)" 까지 실행했을 때는 아직 어떤 코드도 평가되않다가 해당 이터레이터가 순회를 할 때(reduce 실행시) 함수 내부 코드가 평가된다.
+  */
+  /*
+    합을 구할 때 arr = [1, 2, 3] 선언 하고 나서 reduce를 하는데, 사실 reduce 실행 전까지 저 arr값은 필요가 없는 값인거잖아?
+    L.range같은 경우 배열 형태가 아닌채로, 평가가 완벽히 되지 않은 상태로 기다리다가 reduce 실행시, 필요해졌을 때 값을 꺼내게 된다.
+  */
+  /*
+    range는 배열을 다 만들고난 후 해당 배열이 전달이 되어 동작을 하고
+    L.range는 배열을 만들지 않고 하나씩 값을 꺼내기만 한다.
+    사실 range에서 reduce를 하는 과정도 reduce 함수내부적으로 iter를 이터레이터로 만들고 나서 순회를 하게 짜여져있는거 알지?
+    그러니 이미 만들어진 iterator로 순회하는 L.range가 조금 더 효율적이라고 할 수 있지.
+  */
+
+</script>
