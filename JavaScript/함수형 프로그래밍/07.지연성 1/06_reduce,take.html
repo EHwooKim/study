@@ -26,9 +26,42 @@
     map(([k, v]) => `${k}=${v}`), // 값을 변경하고 
     reduce((a, b) => `${a}&${b}`) // reduce로 축약하여 결과를 완성짓는다.
   )
-
   log(queryStr({ limit: 10, offset: 10, type: 'notice' }))
   
+  // 그런데 이런 형태는 Array의 join함수와 비슷한데 Arrray에만 적용 가능한 join과 달리 이터러블 값에 모두 적용 가능하다.
+  const join = curry((sep = ',', iter) => 
+    reduce((a, b) => `${a}${sep}${b}`, iter)) 
+
+  const queryStr2 = pipe(
+    Object.entries, 
+    map(([k, v]) => `${k}=${v}`),
+    join('&')
+  )
+  log(queryStr2({ limit: 10, offset: 10, type: 'notice' }))
+
+  function *a() {
+    yield 10
+    yield 11
+    yield 12
+    yield 13
+  }
+  // log(a().join(',')) // Array가 아니라 불가능.
+  log(join(' - ', a())) // 우리가 정의한 join은 가능.
+
+  /* 
+    join의 경우 reduce를 통해 축약했기 때문에 이터러블 프로토콜을 따르고 있다는 이야기이고
+    이터러벌 프로토콜을 따르고 있다는 이야기는 join에게 가기 전에 만들어진 값을 지연할 수 있다는 이야기가 된다.
+  */
+  L.entries = function *(obj) {
+    for (const k in obj) yield [k, obj[k]]
+  }
+
+  const queryStr3 = pipe(
+    L.entries, // Object.entries 또한 지연성을 가지게 만들 수 있고
+    L.map(([k, v]) => `${k}=${v}`),  // 지연성을 가진 L.map이어도 정상작동 한다.
+    join('&')
+  )
+  log(queryStr3({ limit: 10, offset: 10, type: 'notice' }))
 
 
 
