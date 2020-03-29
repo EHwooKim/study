@@ -1,0 +1,152 @@
+<script>
+  const log = console.log
+
+  const curry = f =>
+    (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
+
+  const go = (...args) => reduce((a, f) => f(a), args);
+
+  const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
+</script>
+
+<script>
+  // 아래 둘의 차이를 보고, 평가 순서가 상관없는 함수형 프로그래밍의 이점을 살펴보자
+</script>
+<script>
+  /*
+    ### range, map, filter, take, reduce 중첩 사용
+    - 코드가 어떻게 실행되는지 알기 위해 코드 수정
+  */
+  const range = l => {
+    let i = -1;
+    let res = [];
+    while (++i < l) {
+      res.push(i);
+    }
+    return res;
+  };
+
+  const map = curry((f, iter) => {
+    let res = [];
+    // for (const a of iter) {} 와 같은 동작을 하는 아래 4줄
+    iter = iter[Symbol.iterator]();
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      res.push(f(a));
+    }
+    return res;
+  });
+
+  const filter = curry((f, iter) => {
+    let res = [];
+    iter = iter[Symbol.iterator]();
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      if (f(a)) res.push(a);
+    }
+    return res;
+  });
+
+  const take = curry((l, iter) => {
+    let res = [];
+    iter = iter[Symbol.iterator]();
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      res.push(a);
+      if (res.length == l) return res;
+    }
+    return res;
+  });
+
+  const reduce = curry((f, acc, iter) => {
+    if (!iter) {
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    } else {
+      iter = iter[Symbol.iterator]();
+    }
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      acc = f(acc, a);
+    }
+    return acc;
+  });
+  
+  console.time('');
+  go(range(100000),
+    map(n => n + 10),
+    filter(n => n % 2),
+    take(10),
+    log);
+  console.timeEnd('');
+  /*
+    각 과정에서 배열을 받고, 해당 배열의 이터레이터를 생성하고, 다시 배열을 만들어 다음으로 전달하고의 반복
+  */
+</script>
+
+### L.range, L.map, L.filter, take, reduce 중첩 사용
+
+<script>
+  const L = {}
+  L.range = function* (l) {
+    let i = -1;
+    while (++i < l) {
+      yield i;
+    }
+  };
+
+  L.map = curry(function* (f, iter) {
+    iter = iter[Symbol.iterator]();
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      yield f(a);
+    }
+  });
+
+  L.filter = curry(function* (f, iter) {
+    iter = iter[Symbol.iterator]();
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      if (f(a)) {
+        yield a;
+      }
+    }
+  });
+
+
+
+  console.time('L');
+  go(L.range(Infinity),
+    L.map(n => n + 10),
+    L.filter(n => n % 2),
+    take(10),
+    log);
+  console.timeEnd('L');
+  /*
+    위 코드의 실행 순서를 한번 생각해보자.. 각 함수별로 breakPoint를 주고 실행시켜보니~? L.range도 L.map도 아닌 take 함수에 가장 먼저 들어가게 된다!
+    take 함수가 이터레이터를 받아서 먼저 실행이 된다. (잘 정의된 이터레이터는 본인이 이터레이터이면서 Symbol.iterator를 가지고 있고 그것을 실행시키면 자기자신을 실행시키니 코드상 문제는 없다)
+    그런데 iter.next() 처음 실행시 바로 filter로 들어갔다. 이렇게 순서가 반대로 가는 이유는 
+    L.range의 결과가 평가를 미루는 제너레이터가 L.map으로 들어가고, L.map, L.filter 역시 평가를 미루는 이터레이터를 리턴하기에 take까지 가서야 filter가 리턴한 이터레이터를 받아 처음 next()를 했을 때 filter함수 안쪽에서 평가가 시작되기 때문이다.
+    L.filter에서 next()호출 시 해당iter는 map에서 넘어온 것이기에 map함수가 실행되게 된다.
+    결국 모양새가 코드가 가로가 아닌 세로로 진행되는 모양새가 된다.
+
+    - range -
+    [0, 1, 2, 3, 4, 5, 6, 7, 8...]
+    [10, 11, 12, ...]
+    [11, 13, 15 ..]
+    [11, 13]
+    
+    - L.range -
+    [0    [1
+    10     11
+    false]  true]
+  */
+
+  
+</script>
