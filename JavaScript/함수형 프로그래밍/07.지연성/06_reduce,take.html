@@ -64,10 +64,67 @@
   log(queryStr3({ limit: 10, offset: 10, type: 'notice' }))
 
 
-
+  // join은 reduce 계열의 함수이다. 다음으로 take 계열의 함수인 find를 만들어보자
+</script>
+<script>
   /*
     ### take
     - 약속한 개수만큼 값을 yield하는 식으로 지연성을 줄 수도 있지만.
     - 임의의 개수의 배열에서 특정 개수의 배열로 완성지어버리는 성질을 가지고 있기에 take로 지연성을 가지기보다 take를 하는 시점에 연산에 이루어지는 것이 좋다.
   */
+  const users = [ // 이 users에서 특정 조건을 만족하는, 해당 객체를 뽑아내는 find함수
+    { age: 32 },
+    { age: 31 },
+    { age: 37 },
+    { age: 28 },
+    { age: 25 },
+    { age: 32 },
+    { age: 31 },
+    { age: 37 },
+  ]
+
+  const find = (f, iter) => go(
+    iter,
+    filter(f),  // 여기까지가 원하는 조건 설정
+    take(1),    // find는 하나만 꺼내고 싶으니.
+    ([a]) => a  // 결과값이 배열이라 배열을 꺠도록.
+  )
+  log(find(u => u.age <30, users)) // '처음 만난' 30세 미만의 객체
+  // 여기까지 구현한 find가 좀 아쉬운 것이 있는데
+
+  log('모든 배열값을 다 도는 것이 아래에 보이네')
+  const find2 = (f, iter) => go(
+    iter,
+    filter(a => (console.log(a), f(a))), //  이렇게 찍어보니 내가 원하는건 한개임에도 불구하고 결국 모든 배열값에 대해 함수가 실행되는 것을 볼 수 있다.
+    a => (console.log(a), a), // 위에서 모든 배열에 대해 다 연산 후 여기를 보니 두 객체를 만들어서 리턴하고있다.
+    take(1),
+    ([a]) => a
+  )
+  log(find2(u => u.age <30, users))
+  
+  log('평가를 미루어보자')
+  const find3 = (f, iter) => go(
+    iter,
+    L.filter(a => (console.log(a), f(a))),
+    a => (console.log(a), a),  // 평가를 미루는 Generator {<suspended>}를 전달하여 위의 코드에서 이제 하나씩 꺼내보며 조건을 확인하게 된다.
+    take(1),
+    ([a]) => a
+  )
+  log(find3(u => u.age <30, users))
+
+  // 최종코드
+  const find4 = curry((f, iter) => go(
+    iter,
+    L.filter(f),
+    take(1),
+    ([a]) => a))
+    
+  log(find4(u => u.age < 30)(users))
+  
+  // 결국 find는 take를 통해 이터러블값을 함수로 받기에 
+  go(users,
+    L.map(u => u.age),
+    find4(n => n < 30),
+    log)
+  
 </script>
