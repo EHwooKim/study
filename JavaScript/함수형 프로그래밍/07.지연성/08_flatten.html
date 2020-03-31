@@ -1,0 +1,39 @@
+<script src="fx3.js"></script>
+<script>
+  /*
+    ## L.flatten
+  */
+  log([1, 2], 3, 4, [5, 6], [7, 8, 9]) // 이와같은 배열이 있을 때
+  log(...[1, 2], 3, 4, ...[5, 6], ...[7, 8, 9]) // 이렇게 모두 펼쳐서 하나의 배열로 만드는 것과 같은 효과를 주면서 평가를 지연시키는 함수.
+ 
+  const isIterable = a => a && a[Symbol.iterator] // nullable한 값이 올 수도 있기에 안전하게 앞에 'a &&' 을 써주었다
+
+  L.flatten = function *(iter) {
+    for (const a of iter) { 
+      if (isIterable(a)) {  // a 가 이터러블이면 펼쳐서 yield를 시켜주는 방식
+        for (const b of a) yield b 
+      } else yield a
+    }
+  }
+  
+  
+  var it = L.flatten([[1, 2], 3, 4, [5, 6], [7, 8, 9]]) // 이제 개발자가 직접 필요한 부분에 ...을 수동적으로 붙이지 않고 동적으로 알아서 펼쳐진다.
+
+  log(it.next()) // 지연성을 주었기에 바로 모두 평가되지 않고 원하는 만큼만 평가시킬 수 있다.
+  log(it.next())
+  log(it.next())
+
+  log(take(4, L.flatten([[1, 2], 3, 4, [5, 6], [7, 8, 9]])))
+
+  /*
+    ## flatten
+    - L.flatten을 이용해 값이 바로 평가되는 flatten 생성
+  */
+  const flatten = pipe(
+    L.flatten,
+    takeAll
+  )
+
+  log(flatten([[1, 2], 3, 4, [5, 6], [7, 8, 9]])) 
+
+</script>
