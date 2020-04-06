@@ -1,0 +1,59 @@
+<script src="fx4.js"></script>
+<script>
+  /*
+    ## L.flatMap
+    - map과 flatten을 동시에 하는 함수.
+    - 최신 자바스크립트에 이 flatMap이 들어갔는데 자바스크립트가 기본적으로 지연적으로 동작하지 않기때문에 flatMap이 있다
+    - 무슨말이냐하면 지연적으로 동작하는 flatten이 있다면 지연적으동작하는 L.map을 한 후에 flatten을 할 경우 마치 두가지를 동시에 하는 flatMap과 동일하게 동작한다 (동일한 시간복잡도)
+  */
+
+  log([[1, 2], [3, 4], [5, 6, 7], 8, 9, [10]].flatMap(a => a)) // 기본적으로 이미 있다.
+  log([[1, 2], [3, 4], [5, 6, 7]].flatMap(a => a.map(a => a * a))) // 이런식으로도 가능하고, 이는 아래와 같은 코드이다.
+
+  log(flatten([[1, 2], [3, 4], [5, 6, 7]].map(a => a.map(a => a * a)))) // == .flat()
+  /*
+    그런데 flatMap이 있는 이유는 map과 flat이 비효율적으로 동작하기떄문인데,
+    위 코드에서 flatten 전에, 처음 map실행시 안의 모든값에 대해 새로운 배열을 만들게 되고
+    그 배열에 대해 다시 한번 전체를 순회하며 배열에 또 담고 그것을 flatten 하는 방식이기에 비효율적이다.
+    그래서 그것을 한번에 하는 코드를 통해 더 효율적으로 동작하기 위해 필요한 것이 flatMap인데, 
+    이게 또 flatMap 한번 사용한 것과 flatten([].map()) 한 것과 시간복잡도면에서 차이가 없다. (순회할 것들을 결국 모두 순회하기 때문에.)
+    그래서 지연성을 가지면서 다형성이 높은 L.flatMap을 만들어보자
+  */ 
+  
+  // 구현된 flatten을 활용.
+  L.flatMap = curry(pipe(L.map, L.flatten))
+
+
+  var it = L.flatMap(map(a => a * a), [[1, 2], [3, 4], [5, 6, 7]])
+  // log(it.next())
+  // log(it.next())
+  // log(it.next())
+  // log(it.next())
+  log([...it])
+
+  var it2 = L.flatMap(a => a, [[1, 2], [3, 4], [5, 6, 7]])
+  log([...it2])
+
+  // L.flatMap 활용하여 flatMap 구현
+  // const flatMap = pipe(L.flatMap, takeAll)
+  // 또는
+  // const flatMap = curry(L.map, L.flatten, takeAll)
+  // 또는
+  const flatMap = curry(pipe(L.map, flatten))
+  log(flatMap(a => a, [[1, 2], [3, 4], [5, 6, 7]]))
+
+  // flatMap 응용
+  log(flatMap(L.range, [1, 2, 3])) // [0, 0, 1, 0, 1, 2]
+  log(map(range, [1, 2, 3])) // [[0], [0, 1], [0, 1, 2]]
+
+  log(flatMap(range, map(a => a + 1, [1, 2, 3])))
+  log(...L.flatMap(L.range, map(a => a + 1, [1, 2, 3])))
+  log(flatMap(L.range, map(a => a + 1, [1, 2, 3])))
+
+  var it3 = L.flatMap(L.range, map(a => a + 1, [1, 2, 3]))
+  log(it3.next())
+  log(it3.next())
+  log(it3.next()) // 필요한 만큼만 순회
+
+  log(take(3, L.flatMap(L.range, map(a => a + 1, [1, 2, 3]))))
+</script>
