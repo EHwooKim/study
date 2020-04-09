@@ -8,7 +8,7 @@
 <script>
   // callback 패턴
   function add10(a, callback) {
-    setTimeout(() => callback(a + 10), 500)
+    setTimeout(() => callback(a + 10), 100)
   }
   add10(5, res => {
     log(res)
@@ -24,7 +24,7 @@
 
   // Promise 활용
   function add20(a) { // 프로미스의 경우 이 함수에서 사용하 인자 하나만 받는다
-    return new Promise(resolve => setTimeout(() => resolve(a + 20), 500)) // resolve를 받아 setTimeout을 하고 계산 후 resolve가 실행하면서 프로미스가 끝났음을 알린다.
+    return new Promise(resolve => setTimeout(() => resolve(a + 20), 100)) // resolve를 받아 setTimeout을 하고 계산 후 resolve가 실행하면서 프로미스가 끝났음을 알린다.
     // add10과 큰 차이 중 하나인 return!! add20은 promise를 만들어서 return 해주는데 이것이 굉장히 중요하다.
   }
   add20(5)
@@ -65,5 +65,4 @@
   add20(5, _=>_) // Promise {<pending>} 가 즉시 리턴되고 그 이후 내가 원하는 일을 다룰 수 있다
   var c = add20(5, _=>_) // 이렇게 return값을 받아놓고 그 이후에내가 하고싶은 일을 할 수 있다.
   c.then(a => a - 5).then(log) // 비동기로 일어난 상황에 대해 값으로 다룰 수 있고 값으로 다룰 수 있다는 것은 "일급"이라는 것이다.
-  
 </script>
