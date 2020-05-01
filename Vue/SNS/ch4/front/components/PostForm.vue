@@ -73,7 +73,7 @@
       },
       onClickImageUpload() {
         this.$refs.imageInput.click() // input태그에 ref 설정하고, this.$refs로 접근하여 업로드 버튼을 클릭하면 input을 클릭한 것과 같은 효과를 주는 것.
-      },
+      }, 
       onChangeImages(e) { // 파일 선택창이 떠서 파일을 선택하면 change이벤트가 실행되어 이 change이벤트에서 이미지 업로드 요청을 보낸다.
         console.log(e.target.files) // e.target.files안에 사진정보 존재.
         const imageFormData = new FormData();

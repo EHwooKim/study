@@ -149,7 +149,7 @@ router.post('/:id/comment', isLoggedIn, async (req, res, next) => { // POST /pos
   }
 })
 
-router.post('/:id/retweet', isLoggedIn, (req, res, next) {
+router.post('/:id/retweet', isLoggedIn, (req, res, next) => {
   try {
     const post = await db.Post.findOne({
       where: { id: req.params.id },
