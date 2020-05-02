@@ -95,6 +95,69 @@ var square = fnction(number) {
 
 이러한 `호이스팅 문제`와  `변수 객체에 너무 많은 변수 저장시 응답속도를 떨어뜨리는 문제`떄문에 **함수 표현식**을 사용할 것을 권고한다.
 
+## 03. 생성자 함수
+
+* 자바스크립트에서 `함수`는 재사용 가능한 코드를 생성하는 것 외에도 **객체를 생성하기 위한 방법**으로도 사용된다.
+* 이떄, 직접 객체를 `return`해도 되지만 `new` 키워드와 함께 함수를 호출하면 **`retuen` 없이도 새로운 객체가 반환되며 이를 `생성자함수`라 합니다.**
+* :lipstick: 생성자 함수를 만들 때 `화살표 함수`를 사용할 수 **없습니다.**:lipstick:
+
+* 모든 객체는 `contructor` 속성을 가지며 이 속성은 객체를 만든 `생성자 함수`를 가르킵니다.
+
+> [생성자 함수](./생성자함수.js)
+
+### 1. 생성자 함수 동작 방식
+
+```
+1. 빈 객체 생성
+2. 생선된 객체에 this 할당
+3. 생성자 함수의 코드를 실행 (thos에 속성 및 메소드 추가)
+4. 만든 빈 객체의 __proto__에 생성자 함수의 prototype 속성을 대입
+5. this를 생성자의 반환값으로 변환.
+```
+
+### 2. 객체 리터럴 방식과의 차이
+
+```javascript
+// 객체 리터럴 방식
+var foo = {
+    name: 'jyg',
+    gender: 'male'
+}
+console.dir(foo) // { name: 'jyg', gender: 'male' }
+
+// 생성자 함수 방식
+function Person(name, gender) {
+    this.name = name
+    this.gender = gender
+}
+var me = new Person('Kim', 'male')
+console.dir(me) // Person { name: 'Kim', gender: 'male' }
+```
+
+* `객체 리터럴 방식`과 `생성자 함수 방식`의 차이는 **프로토타입 객체([[Prototype]])**
+  * `객체 리터럴 방식`의 경우, 생성된 객체의 프로토타입 객체는 `Object.prototype`이다.
+  * `생성자 함수 방식`의 경우, 생성된 객체의 프로토타입 객체는 `Person.prototype`이다.
+
+### 3. 생성자 함수 보완하기
+
+* `arguments.callee`를 활용하여 `new` 키워드 없이 사용된 생성자 함수를 보완한다.
+  * `callee`  : `arguments`객체의 프로퍼티로서 함수 바디 내에서 현재 실행중인 함수를 참조할 떄 사용한다. 즉, **현재 실행중인 함수의 이름을 반환한다.**
+  * `this` 가 호출된 함수(callee)의 인스턴스가 아니면 `new` 연산자를 사용하지 않은 것이므로 `new`와 함께 생성자함수를 호출하여 인스턴스를 반환하는 방법으로 `생성자 함수`를 보완한다.
+
+```javascript
+function Person(name, age) {
+    if (!(this instanceof arguments.callee)) {
+        return new arguments.callee(name, age)
+    }
+    this.name = name
+    this.age = age
+}
+let k = new Person('k', 30)
+let j = Person('j', 27)
+console.log(k.name) // k
+console.log(j.name) // j
+```
+
 # this
 
 `this`는 함수가 선언될 떄가 아닌 **함수가 호출 될 때**에 따라 바인딩할 객체가 동적으로 결정된다.
