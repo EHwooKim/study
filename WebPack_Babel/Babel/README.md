@@ -27,11 +27,11 @@ $npx babel app.js // app.js - 변환시킬 코드가 담긴 파일
 
 ## 플러그인
 
-* 바벨은 코드를 받아 코드를 반환하는데 `파싱`과 `출력`만 담당할뿐, `변환` 작업은 **`플러그인`**이 담당한다.
+* 바벨은 코드를 받아 코드를 반환하는데 `파싱`과 `출력`만 담당할뿐, `변환` 작업은 **플러그인**이 담당한다.
 
 ### 커스텀 플러그인
 
-* [커스텀 플러그인](./my-bable-plugin.js)을 만들 떄는 `visitor`객체를 가진 객체를 반환해줘야한다.
+* [커스텀 플러그인](./my-babel-plugin.js)을 만들 떄는 `visitor`객체를 가진 객체를 반환해줘야한다.
 
 * 커스텀 플러그인 실행
 
@@ -51,9 +51,9 @@ $npx babel app.js // app.js - 변환시킬 코드가 담긴 파일
 
 ### 플러그인 사용하기
 
->  위에서 직접 만들어본 플러그인은 바벨에서 제공하는 [block-scoping 플러그인](https://babeljs.io/docs/en/babel-plugin-transform-block-scoping)이다.
-
-* 커스텀 플러그인 말고 위의 플러그인으로 바벨을 실행해보자.
+> 위에서 직접 만들어본 플러그인은 바벨에서 제공하는 [block-scoping 플러그인](https://babeljs.io/docs/en/babel-plugin-transform-block-scoping)과 동일하다.
+>
+> 커스텀 플러그인 말고 위의 플러그인으로 바벨을 실행해보자.
 
 * 패키지 설치
 
@@ -132,5 +132,58 @@ module.exports = {
 }
 ```
 
+### 프리셋 사용하기
 
+> 바벨은 목적에 따라 몇가지 프리셋을 제공한다.
+
+* `preset-env`, `preset-react`, `preset-typescript` 등...
+
+#### preset-env
+
+* `ES6+`를 변환할 떄 사용한다. (연도별로 나뉘어져 있던 것이 지금은 env하나로 합쳐졌다.)
+* 익스플로러 호환을 위해 이를 한번 사용해보자
+
+```bash
+$npm i @babel/preset-env
+```
+
+```javascript
+// babel.config.js
+module.exports = {
+    presets: [
+        '@babel/preset-env'
+    ]
+}
+```
+
+```bash
+$npx babel app.js
+```
+
+* 일반적으로 실무에서는 직접 플러그인과 프리셋을 만들어 쓰기보다 위와 같이 만들어진 `preset`을 다운받아 쓰고, `env` 프리셋을 가장많이 사용한다.
+
+#### 타겟 브라우저
+
+* 해당 프리셋이 특정 브라우저를 지원도록 지정해줄 수 있다.
+
+  ```javascript
+  // babel.config.js
+  module.exports = {
+      presets: [
+          ['@babel/preset-env',{
+              targets: {
+                  chrome: '79' // 크롬 79까지 지원하는 코드를 만든다.
+              }
+          }]
+      ]
+  }
+  ```
+
+* 현재 예제 코드는 chrome에서 정상작동 하는 코드이기 떄문에 변화가 없다.
+
+  ![SmartSelectImage_2020-05-03-01-33-17](https://user-images.githubusercontent.com/52653793/80869929-20414c00-8cde-11ea-9c0a-71fe0143b98c.png)
+
+* `const`와 `arrow func`이 IE에서 작동하지 않기 때문에 `targets`에 `IE: '11'`을 추가하면 아래와 같이 코드가 변하는 것을 확인할 수 있다.
+
+  ![SmartSelectImage_2020-05-03-01-35-20](https://user-images.githubusercontent.com/52653793/80869969-5e3e7000-8cde-11ea-8c2d-fe58b24f038d.png)
 
