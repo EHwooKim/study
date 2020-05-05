@@ -89,7 +89,7 @@ $npx babel app.js // app.js - 변환시킬 코드가 담긴 파일
 
   ![SmartSelectImage_2020-05-03-00-47-27](https://user-images.githubusercontent.com/52653793/80869423-487b7b80-8cdb-11ea-8c0d-3914f200c487.png)
 
-* 플러그인이 길어지면 실행 명령어 또한 길어지게 된다. `babel.config.js` 파일로 이를 관리할 수 있다.
+* 사용하는 플러그인이 많아지면 실행 명령어가 길어지게 된다. `babel.config.js` 파일로 이를 관리할 수 있다.
 
   ```javascript
   // babel.config.js

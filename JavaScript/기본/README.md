@@ -161,3 +161,126 @@ console.log(j.name) // j
 # this
 
 `this`는 함수가 선언될 떄가 아닌 **함수가 호출 될 때**에 따라 바인딩할 객체가 동적으로 결정된다.
+
+> 함수가 어디에 선언되었는지에 따라 스코프가 결정되는 렉시컬 스코프와 헷갈리지 말자 (자바스크립트는 렉시컬 스코프를 따른다)
+
+* `전역 객체`는 `전역 스코프`를 갖는 `전역 변수`를 프로퍼티로 소유한다. 글로벌 영역에서 선언한 함수는 전역객체의  프로퍼티로 접근할 수 있는 **전역 변수의 메소드**이다.
+
+```javascript
+const foo = () => {
+    console.log('invoked')
+}
+window.foo(); // 전역객체 window의 프로퍼티로 접근.
+```
+
+## 01. 함수 호출
+
+* 기본적으로 `this`는 **전역 객체에 바인딩** 된다. 전역함수는 물론이고 **내부함수**의 경우도 `this`는 외부 함수가 아닌 **전역객체에 바인딩된다.**
+
+```javascript
+const foo = () => {
+    console.log(this) // window
+    const bar = () => {
+        console.log(this) // window
+    }
+    bar()
+}
+foo()
+```
+
+* **메소드의 내부함수**일 경우에도 `this`는 **전역객체에 바인딩 된다**
+
+```javascript
+var value = 1
+var obj = {
+    value: 100,
+    foo: function() {
+        console.log(this, this.value)  // obj, 100
+        function bar() {
+            console.log(this, this,value) // window, 1
+        }
+        bar()
+    }
+}
+obj.foo()
+```
+
+* **콜백함수**의 경우에도 `this`는 **전역객체에 바인딩 된다.**
+
+```javascript
+var value = 1
+var obj = {
+    value: 100,
+    foo: function() {
+        setTimeout(function() {
+            console.log(this, this.value) // window, 1
+        }, 100)
+    }
+}
+obj.foo()
+```
+
+<hr/>
+
+**내부함수는 일반 함수, 메소드, 콜백함수 어디에서 선언되었든 관계없이 this는 전역객체를 바인딩한다.**
+
+내부함수의 `this`가 전역객체를 참조하는 것을 회피하는 방법은 아래와 같다. ( that 변수 생성 )
+
+```javascript
+var value = 1
+var obj = {
+    value: 100,
+    foo: function() {
+        var that = this
+        console.log(this, this.value) // obj, 100
+        function bar() {
+            console.log(this, this.value)  // window, 1
+            console.log(that, that.value)  // obj, 1
+        }
+        bar()
+    }
+}
+obj.foo()
+```
+
+## 02. 메소드 호출
+
+* 함수가 객체의 프로퍼티 값이면 `메소드`로서 호출된다. 이때 메소드 내부의 `this`는 **해당 메소드를 소유한 객체에 바인딩된다.**
+
+```javascript
+var obj1 = {
+    name: 'Joeng',
+    sayName: function() {
+        console.log(this.name)
+    }
+}
+var obj2 = {
+    name: 'Kim'
+}
+obj2.sayName = obj1.sayName
+obj1.sayName()  // Joeng
+obj2.sayName()  // Kim
+```
+
+* 프로토타입 객체도 메소드를 가질 수 있다. 프로토타입 객체 메소드 내부에서 사용된 `this`도 일반 메소드와 마찬가지로 **해당 메소드를 호출한 객체에 바인딩된다.**
+
+## 03. 생성자 함수의 this
+
+* `생성자 함수`는 **new 키워드 유무에 따라 생성자 함수, 일반 함수로 각각 호출된다.**
+  * **생성자 함수**로 호출 시 `this`는 **생성자 함수가 암묵적으로 생성한 빈 객체에 바인딩** 
+  * **일반 함수**로 호출 시 `this`는 **전역 객체**에 바인딩된다.
+
+```javascript
+function Teacher(name, age) {
+    this.name = name
+    this.age = age
+}
+const jay = new Teacher('jay', 30)
+console.log(jay) // Teacher {name: "jay", age: 30}
+console.log(jay.age) // 30
+
+const jay2 = Teacher('jay', 30)
+console.log(jay2) // undefined
+console.log(age) // 30
+```
+
