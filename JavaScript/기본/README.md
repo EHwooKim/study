@@ -284,3 +284,78 @@ console.log(jay2) // undefined
 console.log(age) // 30
 ```
 
+
+
+# Math
+
+## 01. Property
+
+### 1. PI
+
+* PI 값 반환.
+
+## 02. Method
+
+### 1. abs
+
+* 인수의 절대값을 반환한다.
+
+```javascript
+Math.abs(-1);       // 1
+Math.abs('-1');     // 1
+Math.abs('');       // 0
+Math.abs([]);       // 0
+Math.abs(null);     // 0
+Math.abs(undefined);// NaN
+Math.abs({});       // NaN
+Math.abs('string'); // NaN
+Math.abs();         // NaN
+```
+
+### 2. round, ceil, floor
+
+* `round` - **반올림**한 정수 반환
+
+```javascript
+Math.round(1.4);  // 1
+Math.round(-1.4); // -1
+```
+
+* `ceil` - **올림**한 정수를 반환
+
+```javascript
+Math.ceil(1.4);  // 2
+Math.ceil(-1.4); // -1
+```
+
+* `Math` - **내림**한 절수를 반환
+
+```javascript
+Math.floor(1.9);  // 1
+Math.floor(-1.9); // -2
+```
+
+### 3. max, min
+
+* `max` - **최대값**을 반환
+
+```javascript
+Math.max(1, 2, 3)
+// 배열 요소 중 최대값
+const arr = [1, 2, 3]
+const max = Math.max.apply(null, arr) // 3 
+// ES6 활용
+Math.max(...ar) // 3
+```
+
+* `min` - **최소값**을 반환
+
+```javascript
+Math.min(1, 2, 3); // 1
+// 배열 요소 중 최소값
+const arr = [1, 2, 3];
+const min = Math.min.apply(null, arr); // 1
+// ES6 Spread operator
+Math.min(...arr); // 1
+```
+
