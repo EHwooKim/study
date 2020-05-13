@@ -359,3 +359,28 @@ const min = Math.min.apply(null, arr); // 1
 Math.min(...arr); // 1
 ```
 
+### 4. pow, sqrt
+
+* `pow`  - **거듭제곱값**을  반환
+
+```javascript
+Math.pow(2, 8) //256
+Math.pow(2, -1) // 0.5
+```
+
+* `sqrt` - **제곱근**을 반환
+
+```javascript
+Math.sqrt(9) // 3
+Math.sqrt(-9) // NaN
+```
+
+## 03. 난수 생성
+
+```javascript
+const makeRandomNumber = (min, max) => {
+    return Math.floor(Math.random * (max - min + 1)) + min
+}
+```
+
+* `round`가 아닌 `floor`로 해야 0과 1까지도 나올 확률이 동일해진다.
