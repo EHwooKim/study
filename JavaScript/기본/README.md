@@ -384,3 +384,6 @@ const makeRandomNumber = (min, max) => {
 ```
 
 * `round`가 아닌 `floor`로 해야 0과 1까지도 나올 확률이 동일해진다.
+
+# 클래스
+
