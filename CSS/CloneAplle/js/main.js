@@ -1,4 +1,7 @@
 (() => {
+
+  let yOffset = 0 // window.pageYOffset (현재 스크롤 위치) 대신 쓸 변수
+
   const sceneInfo = [ // 각 씬에 대한 정보를 담을 배열
     { // 0
       type: 'sticky',
@@ -33,8 +36,7 @@
       }
     },
   ]
-  function setLayout() {
-    // 각 스크롤 섹션의 높이 세팅
+  function setLayout() { // 각 스크롤 섹션의 높이 세팅
     for (let i = 0; i < sceneInfo.length; i++) {
       sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight
       sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
@@ -42,6 +44,17 @@
     console.log(sceneInfo)
   }
 
+  
+  function scrollLoop() { // 현재 진행중인 section 판단하기
+      
+     
+  }
+
   window.addEventListener('resize', setLayout) // 브라우저 크기 변할 떄마다 높이 재설정을 위해
+  window.addEventListener('scroll', () => {
+    yOffset = window.pageYOffset 
+
+    scrollLoop()
+  })
   setLayout()
 })()
