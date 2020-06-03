@@ -1,6 +1,8 @@
 (() => {
 
   let yOffset = 0 // window.pageYOffset (현재 스크롤 위치) 대신 쓸 변수
+  let prevScrollHeight = 0 // 현재 스크롤 위치(yOffSet)보다 이전에 위차한 스크롤 섹션들의 스크롤 높이값의 합 
+  let currentScene = 0 // 현재 활성화된(눈 앞에 보고있는) 씬(scroll-section)
 
   const sceneInfo = [ // 각 씬에 대한 정보를 담을 배열
     { // 0
@@ -41,13 +43,24 @@
       sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight
       sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
     }
-    console.log(sceneInfo)
   }
 
   
-  function scrollLoop() { // 현재 진행중인 section 판단하기
-      
-     
+  function scrollLoop() { // 현재 진행중인 section 판단하기 
+    prevScrollHeight = 0
+    for (let i = 0; i < currentScene; i++) {
+      prevScrollHeight += sceneInfo[i].scrollHeight;
+    }
+
+    if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+      currentScene++
+
+    }
+    if (yOffset < prevScrollHeight) {
+      if (currentScene === 0) return // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지 (IOS 모바일)
+      currentScene--
+    }
+    console.log(currentScene)
   }
 
   window.addEventListener('resize', setLayout) // 브라우저 크기 변할 떄마다 높이 재설정을 위해
