@@ -38,11 +38,22 @@
       }
     },
   ]
-  function setLayout() { // 각 스크롤 섹션의 높이 세팅
-    for (let i = 0; i < sceneInfo.length; i++) {
+  function setLayout() { 
+    for (let i = 0; i < sceneInfo.length; i++) { // 각 스크롤 섹션의 높이 세팅
       sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight
       sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
     }
+
+    yOffset = window.pageYOffset 
+    let totalScrollHeight = 0
+    for (let i = 0; i < sceneInfo.length; i++) {
+      totalScrollHeight += sceneInfo[i].scrollHeight
+      if (totalScrollHeight >= yOffset) {
+        currentScene = i
+        break
+      }
+    }
+    document.body.setAttribute('id', `show-scene-${currentScene}`)
   }
 
   
@@ -54,20 +65,24 @@
 
     if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       currentScene++
-
+      document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
     if (yOffset < prevScrollHeight) {
       if (currentScene === 0) return // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지 (IOS 모바일)
       currentScene--
+      document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
-    console.log(currentScene)
+    // document.body.setAttribute('id', `show-scene-${currentScene}`) 처음에 이렇게 썼다가 새로고침시에도 currentScene 세팅되게 하는 코드 작성 후 스크롤 때마다 재할당되는 것이 아닌 currentScene이 바뀔때 실행되게 위에 작성함.
   }
 
-  window.addEventListener('resize', setLayout) // 브라우저 크기 변할 떄마다 높이 재설정을 위해
+  
   window.addEventListener('scroll', () => {
     yOffset = window.pageYOffset 
 
     scrollLoop()
   })
-  setLayout()
+  // window.addEventListener('DOMContentLoaded', setLayout) // 'DOMContentLoaded' - HTML 객체들, DOM구조만 로드되면 실행 (이미지등은 로드 안되어도 실행되기에 실행되는 시점이 load보다 빠르다)
+  window.addEventListener('load', setLayout) // 'load' - 웹 페이지의 이미지 등의 리소스가 모두 로딩이된 후 실행, 우리가 하는건 지금 이미지가 있어야 의미있으니 load쓰겠다
+  window.addEventListener('resize', setLayout) // 브라우저 크기 변할 떄마다 높이 재설정을 위해
+  
 })()
