@@ -12,16 +12,24 @@
   <div id="root"></div>
   <script type="text/babel">
     class GuGuDan extends React.Component {
-      constructor(props) {
-        super(props)
-        this.state = {
-          first: Math.ceil(Math.random() * 9),
-          second: Math.ceil(Math.random() * 9),
-          value: '',
-          result: '',
-        }
+      // constructor(props) {
+      //   super(props)
+      //   this.state = {
+      //     first: Math.ceil(Math.random() * 9),
+      //     second: Math.ceil(Math.random() * 9),
+      //     value: '',
+      //     result: '',
+      //   }
+      // }
+      // 위의 constructor가 뭔지 모르겠다면 다 빼버리고 아래와같이 써도 된다. 실무에서는 아래와같은 방식을 더 많이 쓴다.
+      state = {
+        first: Math.ceil(Math.random() * 9),
+        second: Math.ceil(Math.random() * 9),
+        value: '',
+        result: '',
       }
-      onSubmit = e => {
+
+      onSubmit = e => { // 이렇게 함수를 render 안에서가 아닌 메서드로 밖으로 뺐을 떄는 꼭 화살표 함수를 써야한다. 그렇지않으면 this의 대상이 바뀌기 때문에..
         e.preventDefault()
         if (parseInt(this.state.value) === this.state.first * this.state.second) {
           this.setState({
@@ -37,19 +45,20 @@
           })
         }
       }
-      onChange = (e) => {
+      onChange = e => {
         this.setState({ value: e.target.value })
       }
       render() {
         return ( // 코딩 스타일일뿐 의미는 없다
-          <div>
+        // vue 처럼 최상단을 div로 한번 감싸줬어야했는데 지금은 이 부분이 개선되어 <> 빈태그로 감싸주면되는데.. 지금처럼 바벨이 지원 안해줄 때는 React.Fragment로 감싸주면 된다.
+          <React.Fragment>
             <div>{this.state.first}곱하기{this.state.second}은?</div>
             <form onSubmit={this.onSubmit} >
               <input type="number" value={this.state.value} onChange={this.onChange} /> 
-              <button>입력!</button>
+              <button type="submit">입력!</button>
             </form>
             <div>{this.state.result}</div>
-          </div>
+          </React.Fragment>
         )
       }
     }
