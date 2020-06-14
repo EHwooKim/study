@@ -47,11 +47,16 @@
               value: '',
             }
           })
+          // document.querySelctor('input')과 동일한 코드이지만 리액트를 사용할 떄는 이렇게 document를 통한 접근을 최소화 하는 것이 좋다.
+          // 화면 조작은 리액트에게 맡기고 우리는 데이터만 조작한다는 생각으로 리액트를 사용해야한다. 그래서 사용한 방법이 아래와같이 ref를 활용한 DOM 접근 방법이다. 
+          console.log(this.input)
+          this.input.focus()
         } else {
           this.setState({
             result: '땡',
             value: '',
           })
+          this.input.focus()
         }
       }
       // setState는 비동기이기 때문에 예전값을 바꿀 때 return 하는 형태로 만들지 않으면 예상치못한 오류가 날 수 있다.
@@ -59,13 +64,19 @@
       onChange = e => {
         this.setState({ value: e.target.value })
       }
+
+      input; // ref에서 사용할 변수
+      onRefInput = (c) => {this.input = c} // input변수에 DOM 태그 담기
+
       render() {
+        console.log('렌더링') // - ReactDOM.render 실행시 처음 실행되고 setState시마다 render가 실행된다!!!! 그렇기 때문에 시간이 오래 걸리는 작업이 render에 포함되어있을 때 주의하여한다.
+        // 또한 render안에서 사용되는 함수들을 밖으로 빼내는 이유 중 state가 변경될 때마다 render가 실행되다보니 render안에 복잡한 함수가 있을 경우 쓸데없이 그 함수가 계속 만들어지는 것을 방지함도 있다.
         return ( // 코딩 스타일일뿐 의미는 없다
         // vue 처럼 최상단을 div로 한번 감싸줬어야했는데 지금은 이 부분이 개선되어 <> 빈태그로 감싸주면되는데.. 지금처럼 바벨이 지원 안해줄 때는 React.Fragment로 감싸주면 된다.
           <React.Fragment>
             <div>{this.state.first}곱하기{this.state.second}은?</div>
             <form onSubmit={this.onSubmit} >
-              <input type="number" value={this.state.value} onChange={this.onChange} /> 
+              <input ref={this.onRefInput} type="number" value={this.state.value} onChange={this.onChange} /> 
               <button type="submit">입력!</button>
             </form>
             <div>{this.state.result}</div>
