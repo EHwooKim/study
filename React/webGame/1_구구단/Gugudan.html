@@ -32,11 +32,20 @@
       onSubmit = e => { // 이렇게 함수를 render 안에서가 아닌 메서드로 밖으로 뺐을 떄는 꼭 화살표 함수를 써야한다. 그렇지않으면 this의 대상이 바뀌기 때문에..
         e.preventDefault()
         if (parseInt(this.state.value) === this.state.first * this.state.second) {
-          this.setState({
-            result: `${this.state.first * this.state.second} 정답`,
-            first: Math.ceil(Math.random() * 9),
-            second: Math.ceil(Math.random() * 9),
-            value: '',
+          // this.setState({
+          //   result: `정답: ${this.state.value}`,
+          //   first: Math.ceil(Math.random() * 9),
+          //   second: Math.ceil(Math.random() * 9),
+          //   value: '',
+          // })
+          // 위 상태는 현재 값과 미래값에 대한 구분이 헷갈릴 수도 있기 때문에 아래와같이
+          this.setState((prevState) =>{ // state를 return하는 함수를 만드는 형태로 많이 쓰고 인자로 prevState를 받음으로써 현재값과 미래값 구분을 명확히 해줄 수 있다.
+            return {
+              result: `정답: ${prevState.value}`,
+              first: Math.ceil(Math.random() * 9),
+              second: Math.ceil(Math.random() * 9),
+              value: '',
+            }
           })
         } else {
           this.setState({
@@ -45,6 +54,8 @@
           })
         }
       }
+      // setState는 비동기이기 때문에 예전값을 바꿀 때 return 하는 형태로 만들지 않으면 예상치못한 오류가 날 수 있다.
+      // 그러니 꼭 예전 state 값으로 새로운 state값을 만들 때는 return을 해주는 함수형태로 만들자. ( 즉, setState안에 this.state를 쓰게 되면 함수형태로 쓰자 )
       onChange = e => {
         this.setState({ value: e.target.value })
       }
