@@ -30,8 +30,10 @@
 
       const onSubmitForm = (e) => {
         e.preventDefault()
-        if (parseInt(this.state.value) === this.state.first * this.state.second) {
-          setResult('정답: ' + value)
+        if (parseInt(value) === first * second) {
+          setResult((prevResult) => { // 예전 값을 사용하는 경우 class 떄와 마찬가지로 이렇게 함수형으로 쓸 수 있다.
+            return '정답: ' + value
+          })
           setFirst(Math.ceil(Math.random() * 9))
           setSecond(Math.ceil(Math.random() * 9))
           setValue('')
@@ -43,6 +45,7 @@
         }
       }
 
+      console.log('렌더링') // state가 바뀌면 GuGuDan함수가 통째로 다시 실행되기에 class때보다 조금 느릴 수 있다.(class떄는 render부분만 재실행)
       return (
         <React.Fragment>
           <div>{first} 곱하기 {second}는?</div>
@@ -50,6 +53,7 @@
             <input ref={inputRef} onChange={onChnageInput} value={value} />
             <button>입력</button>
           </form>
+          <div id="result">{result}</div>
         </React.Fragment>
       )
     }
