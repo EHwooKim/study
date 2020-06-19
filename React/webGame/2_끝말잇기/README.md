@@ -32,3 +32,7 @@ const ReactDom = require('react-dom')
 ```
 
 > 이제 리액트를 script로 불러오는게 아닌 Node의 모듈 시스템을 통해 npm설치한 것을 불러올 수 있다.
+
+* 현재 `index.html`에서는 `app.js` 파일 한개만 읽을 수 있다. 그런데 지금까지 만들어진 파일만 해도 `client.jsx`, `WordRealy.jsx` 두개, 이 두개를 하나의 파일로 합쳐줘야하는데 그 역할을 해주는 것이 `웹팩(Webpack)`이다!
+
+  > webpack.config.js에서 해당 설정을 해준다.
