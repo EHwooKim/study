@@ -74,6 +74,7 @@ $ npm i @babel/core @babel/preset-env @babel/preset-react babel-loader
 # 빌드 자동화
 
 * 지금까지는 코드가 없데이트될 때마다 빌드를 해줬어야했는데 이제부터 자동으로 해보자.
+* [변경 사항 참고](https://github.com/EHwooKim/study/commit/0e2350f57f5c4a4cbe477a52140c643128c6dcf1)
 
 ```bash
 $ npm i -D react-hot-loader
