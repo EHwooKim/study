@@ -1,4 +1,5 @@
 const path = require('path') 
+const webpack = require('webpack')
 
 module.exports = {
   name: 'wordrelay-setting', // 필수는 아닌, 내가 원하는 이름 지어주면된다
@@ -19,12 +20,22 @@ module.exports = {
       test: /\.jsx?/,
       loader: 'babel-loader',
       options: {
-        presets: ['@babel/preset-env', '@babel/preset-react'],
+        presets: [
+          ['@babel/preset-env', { // 프리셋에 대한 설정도 하고싶다면 이와같이 프리셋을 배열로 바꾸고 두번째 요소로 옵션을 넣을 수 있다.
+            targets: {
+              browsers: ['> 1% in KR', 'last 2 chrome versions'],
+            },
+            debug: true,
+          }],
+          '@babel/preset-react'
+        ],
         plugins: ['@babel/plugin-proposal-class-properties'],
       }
     }]
   },
-
+  plugins: [
+    new webpack.LoaderOptionsPlugin({ debug: true }), // loader들의 optios에 debug:true 를 다 넣어주는 plugin
+  ],
   output: {
     // app.js 파일 하나로 출력하길 바라는거지
     path: path.join(__dirname, 'dist'), // 현재 폴더 안에 있는 dist폴더를 가르킨다
