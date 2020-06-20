@@ -55,3 +55,9 @@ $ npm i @babel/core @babel/preset-env @babel/preset-react babel-loader
 ![webpack-error](https://user-images.githubusercontent.com/52653793/85142096-ca6f3600-b282-11ea-9479-d82cddbde59e.png)
 
 > 에러 해결법에 나온대로 `@babel/pugin-proposal-class-properties` 설치
+
+# React에서 Form 다룰 때 많이 나오는 에러
+
+![react-form-error](https://user-images.githubusercontent.com/52653793/85193628-48742100-b305-11ea-89c5-2ea0727842f5.png)
+
+* input 태그 속성에 `value`를 넣을거면 `onChange`(또는 `defaultValue`)를 같이 넣어라. 라는 에러
