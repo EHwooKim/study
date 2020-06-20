@@ -29,7 +29,10 @@ module.exports = {
           }],
           '@babel/preset-react'
         ],
-        plugins: ['@babel/plugin-proposal-class-properties'],
+        plugins: [
+          '@babel/plugin-proposal-class-properties',
+          'react-hot-loader/babel'
+        ],
       }
     }]
   },
@@ -39,6 +42,7 @@ module.exports = {
   output: {
     // app.js 파일 하나로 출력하길 바라는거지
     path: path.join(__dirname, 'dist'), // 현재 폴더 안에 있는 dist폴더를 가르킨다
-    filename: 'app.js' // 원하는 파일 이름
+    filename: 'app.js', // 원하는 파일 이름
+    publicPath: '/dist/' // Node에서의 express.static와 같은 가상 경로
   }
 }

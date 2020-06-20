@@ -1,3 +1,12 @@
+# 목차
+
+* [React cli 없이 리액트 설치하기](#React cli 없이 리액트 설치하기)
+
+* [React에서 Form 다룰 때 많이 나오는 에러](#React에서 Form 다룰 때 많이 나오는 에러)
+* [빌드 자동화](#빌드 자동화)
+
+
+
 # React cli 없이 리액트 설치하기
 
 * 리액트 설치
@@ -61,3 +70,32 @@ $ npm i @babel/core @babel/preset-env @babel/preset-react babel-loader
 ![react-form-error](https://user-images.githubusercontent.com/52653793/85193628-48742100-b305-11ea-89c5-2ea0727842f5.png)
 
 * input 태그 속성에 `value`를 넣을거면 `onChange`(또는 `defaultValue`)를 같이 넣어라. 라는 에러
+
+# 빌드 자동화
+
+* 지금까지는 코드가 없데이트될 때마다 빌드를 해줬어야했는데 이제부터 자동으로 해보자.
+
+```bash
+$ npm i -D react-hot-loader
+$ npm i -D webpack-dev-server
+```
+
+```javascript
+// package.json
+scripts: {
+    ...
+	"dev": "webpack-dev-server --hot" // 으로 변경    
+}
+
+```
+
+* `webpack-dev-server`는 `webpack.config.js`를 읽어서 빌드를 해주고 서버로 유지를 시켜준다. (localhost 서버로 프론트 페이지가 열린다.)
+* `react-hot-loader`는 설치 후 `package.json`에서 명령어 변경, `client.jsx` 변경, `webpack.config.js`에서 plugins 추가 등을 해주면 코드 변경 사항을 자동으로 감지하여 적용시켜준다.
+* 그런데 다 적용해도 제대로 작동을 안한다. 왜냐하면 현재 `app.js`를 dist폴더에 있기 떄문에
+
+* :lipstick: `webpack-dev-server`를 하면 `dist` 폴더를 안쓴다. 
+  * `index.html`에서 app.js 경로를 `'./app.js'`로 바꾸거나
+  * `webpack.config.js`에서 publicPath 옵션을 추가해주면 된다. (가상 경로)
+
+
+
