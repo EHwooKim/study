@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = {
   name: 'wordrelay-setting', // 필수는 아닌, 내가 원하는 이름 지어주면된다
   mode: 'development', // 실서비스 때는 production으로 바꿔준다.
-  devtool: 'eval', // 빠르게 하겠다는 뜻
+  devtool: 'eval', // 빠르게 하겠다는 뜻,  실서비스 때는 hidden-source-map으로 바꿔준다.
   resolve: { // 확장자 관리
       extensions: ['.js', '.jsx']
   },
