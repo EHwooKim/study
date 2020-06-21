@@ -37,4 +37,17 @@ module.exports = hi
 
 * [지난 커밋 참고](https://github.com/EHwooKim/study/commit/90cbb9f0b41005f41292f91a4788623fcd73e93a)
 
-  
+
+# 불변성
+
+* React에서 state에 있는 배열에 값을 추가할 때 `push`를 쓰면 안된다. (리액트가 감지를 못해..)
+* 올바른 방법
+
+```javascript
+array = [1] // state에 있는 배열
+const array2 = [...array, 2] // 기존배열 분해하여 넣고, 새로운 값 넣기 
+
+// 이렇게 넣으면 array와 array2가 다르기 때문에 변화를 감지하고 render를 할 수 있다.
+// (예전 state === 현재 state) 했을 때 false가 나와야 변화를 감지할 수 있다.(참조가 바뀌어야한다.)
+```
+
