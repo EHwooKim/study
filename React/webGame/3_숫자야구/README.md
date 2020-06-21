@@ -29,3 +29,4 @@ module.exports = hi
 * 기본적으로 `Node`로 웹팩을 돌리기 때문에 **require를 주로 사용할 것이다.**
 * `babel`이 import를 require로 바꿔주기 때문에 import도 사용할 수 있기도 하다.
   * 그래서 `webpack.config.js`같이 Node로 돌아가는 파일은 `import`쓰면 에러가 나고, `client.jsx`같이 `babel`이 적용되는 파일은 `import`를 써도 에러가 안난다.
+

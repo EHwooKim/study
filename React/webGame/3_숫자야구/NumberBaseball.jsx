@@ -9,6 +9,17 @@ function getNumbers() { // 숫자 네 개를 중복없이 랜덤하게 뽑는 �
 }
 
 class NumberBaseball extends Component {
+  // constructor(props) { // 메서드를 화살표함수로 작성안할 시 이렇게 써줘야만한다.
+  //   super(props)
+  //   this.  state = {
+  //     result: '',
+  //     value: '',
+  //     answer: getNumbers(),
+  //     tries: [],
+  //   }
+  //   this.onSubmitForm = this.onSubmitForm.bind(this)
+  //   this.onChangeInput = this.onChangeInput.bind(this)
+  // }
   state = {
     result: '',
     value: '',
@@ -16,11 +27,20 @@ class NumberBaseball extends Component {
     tries: [],
   }
 
-  onSubmitForm = (e) => {
+  // onChangeInput = function(e) {
+  //   console.log(this)
+  //   this.setState({
+  //     value: e.target.value
+  //   })
+  // }  
 
+  onSubmitForm = (e) => {
+    e.preventDefault()
   }
   onChangeInput = (e) => {
-
+    this.setState({
+      value: e.target.value
+    })
   }
 
   fruits = [
@@ -33,6 +53,7 @@ class NumberBaseball extends Component {
   render() {
     return (
       <>
+      {/* jsx 주석 */}
         <h1>{this.state.result}</h1>
         <form onSubmit={this.onSubmitForm}>
           <input maxLength={4} value={this.state.value} onChange={this.onChangeInput} />
@@ -41,7 +62,7 @@ class NumberBaseball extends Component {
         <ul>
           {this.fruits.map((v, i) => {
             return (
-              <Try value={v} index={i} />
+              <Try key={v.fruit + v.taste} value={v} index={i} />
             )
           })}
         </ul>
