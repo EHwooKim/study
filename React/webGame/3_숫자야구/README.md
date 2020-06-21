@@ -1,6 +1,7 @@
 # 목차
 
 * [import vs require](#import-vs-require)
+* [반복문](#반복문)
 
 # import vs require
 
@@ -30,3 +31,10 @@ module.exports = hi
 * `babel`이 import를 require로 바꿔주기 때문에 import도 사용할 수 있기도 하다.
   * 그래서 `webpack.config.js`같이 Node로 돌아가는 파일은 `import`쓰면 에러가 나고, `client.jsx`같이 `babel`이 적용되는 파일은 `import`를 써도 에러가 안난다.
 
+# 반복문
+
+* JS의 map을 통해 반복문을 만들 수 있으며 `key`값을 반드시 써줘야한다.
+
+* [지난 커밋 참고](https://github.com/EHwooKim/study/commit/90cbb9f0b41005f41292f91a4788623fcd73e93a)
+
+  
