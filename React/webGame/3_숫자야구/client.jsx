@@ -4,6 +4,9 @@ const { hot } = require('react-hot-loader/root')
 
 const NumberBaseball = require('./NumberBaseball')
 
-const Hot = hot(NumberBaseball)
+import RenderTest from './RenderTest'
+
+// const Hot = hot(NumberBaseball)
+const Hot = hot(RenderTest)
 
 ReactDom.render(<Hot />, document.querySelector('#root')) 
