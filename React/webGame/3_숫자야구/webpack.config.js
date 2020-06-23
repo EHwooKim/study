@@ -1,9 +1,10 @@
 const path = require('path') 
 const webpack = require('webpack')
+// process.env.NODE_ENV = 'production' // 배포 시 설정해줘야하는 부분
 
 module.exports = {
   name: 'wordrelay-setting', 
-  mode: 'development', 
+  mode: 'development', // 배포 시 설정해줘야하는 부분
   devtool: 'eval', 
   resolve: { 
       extensions: ['.js', '.jsx']
