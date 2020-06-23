@@ -3,6 +3,7 @@
 * [import vs require](#import-vs-require)
 * [반복문](#반복문)
 * [불변성](#불변성)
+* [리액트 성능 향상](#리액트-성능-향상)
 
 # import vs require
 
