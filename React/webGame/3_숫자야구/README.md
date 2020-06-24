@@ -56,4 +56,14 @@ const array2 = [...array, 2] // 기존배열 분해하여 넣고, 새로운 값 
 # 리액트 성능 향상 
 
 * 현재 숫자야구 '시도'부분은 변하지 않는데도 props나 state가 변할 때마다 계속 랜더링된다. 이런게 쌓이다 보면 성능에 문제가 생기게 된다.
+
+## shouldComponentUpdate
+
 * `shouldComponentUpdate`를 통해 랜더링 조건을 설정하여 원하지 않을 때 컴포넌트가 랜더링 되는 것을 막아 성능을 향상시킬 수 있다.
+
+## PureComponent, memo
+
+* `shouldComponentUpdate`가 귀찮다면 `PureComponent`를 사용하면 된다. (이미 shouldComponentUpdate가 적용되어있어 편하다)
+* `Hooks`로 코드를 작성할 경우 `memo`를 사용하면 된다.
+* 웬만하면 자식 컴포넌트들에는 이런 설정을 해주는 것이 좋고, **모든 자식 컴포넌트에 이를 설정할 경우 부모 컴포넌트에도 적용이 가능하다**
+

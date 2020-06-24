@@ -1,6 +1,7 @@
 const React = require('react')
+const { memo } = require('react')
 const { useState } = require('react')
-const Try  = require('./TryClass')
+const Try  = require('./Try')
 
 function getNumbers() { 
   const candidate = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -12,7 +13,7 @@ function getNumbers() {
   return array
 }
 
-const NumberBaseball = () => {
+const NumberBaseball = memo(() => {
   const [result, setResult] = useState('')
   const [value, setValue] = useState('')
   const [answer, setAnswer] = useState(getNumbers())
@@ -82,6 +83,6 @@ const NumberBaseball = () => {
         </ol>
       </>    
   )
-}
+})
 
 module.exports = NumberBaseball

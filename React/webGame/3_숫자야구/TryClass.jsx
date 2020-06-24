@@ -1,8 +1,8 @@
 // import React, { Component } from 'react'
 const React = require('react')
-const { Component } = require('react')
+const { PureComponent } = require('react')
 
-class TryClass extends Component {
+class TryClass extends PureComponent {
   render() {
     const { tryInfo } = this.props
     return (

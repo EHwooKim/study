@@ -6,7 +6,7 @@ const NumberBaseball = require('./NumberBaseball')
 
 import RenderTest from './RenderTest'
 
-// const Hot = hot(NumberBaseball)
-const Hot = hot(RenderTest)
+const Hot = hot(NumberBaseball)
+// const Hot = hot(RenderTest)
 
 ReactDom.render(<Hot />, document.querySelector('#root')) 
