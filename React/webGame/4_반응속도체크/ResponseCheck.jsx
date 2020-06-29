@@ -43,12 +43,21 @@ class ResponseCheck extends Component {
     }
   }
 
+  onReset = () => {
+    this.setState({
+      result: []
+    })
+  }
+
   renderAverage = () => {
     const { result } = this.state
 
     return result.length === 0 
     ? null  // false, undefined, null은 jsx에서 태그없음을 의미한다.
-    : <div>평균시간: {result.reduce((a, c) => a + c) / result.length}ms</div> 
+    : <>
+      <div>평균시간: {result.reduce((a, c) => a + c) / result.length}ms</div> 
+      <button onClick={this.onReset}>리셋</button>  
+    </>
   }
 
   render() {
