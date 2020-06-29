@@ -1,5 +1,5 @@
 const React = require('react')
-const { Component, useEffect } = require('react')
+const { Component, useEffect, createRef } = require('react')
 const TryClass  = require('./TryClass')
 // import React, { Component } from 'react'
 // import Try from './Try'
@@ -68,6 +68,7 @@ class NumberBaseballClass extends Component {
         answer: getNumbers(),
         tries: [],
       })
+      this.inputRef.current.focus()
     } else { // 답이 아닐경우
       const answerArray = value.split('').map(v => parseInt(v))
       let strike = 0
@@ -82,6 +83,7 @@ class NumberBaseballClass extends Component {
           answer: getNumbers(),
           tries: [],
         })
+        this.inputRef.current.focus()
       } else {
         for (let i = 0; i < 4; i +=1 ) {
           if (answerArray[i] === answer[i]) {
@@ -98,6 +100,7 @@ class NumberBaseballClass extends Component {
             value: '',
           }
         })
+        this.inputRef.current.focus()
       }
     }
   }
@@ -107,14 +110,20 @@ class NumberBaseballClass extends Component {
     })
   }
 
+  // inputRef
+  // onInputRef = c => { this.inputRef = c } // 이 ref 설정법은 결국 함수형태가 추가적인 커스텀이 되는 장점이 있다.
+  inputRef = createRef() // 이렇게 이미 만들어진 것으로도 ref 설정이 가능하다.
+
   render() {
     const { result, value, answer, tries } = this.state
+    // render 안에서 this.setState 실행시키면 setState <-> render 무한반복 되겠지 (state가 바뀌면 render가 되니)
+    
     return (
       <>
       {/* jsx 주석 */}
         <h1>{result}</h1>
         <form onSubmit={this.onSubmitForm}>
-          <input maxLength={4} value={value} onChange={this.onChangeInput} />
+          <input ref={ this.inputRef } maxLength={4} value={value} onChange={this.onChangeInput} />
         </form>
         <div>시도: {tries.length}</div>
         <ol>

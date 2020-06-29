@@ -1,6 +1,6 @@
 const React = require('react')
 const { memo } = require('react')
-const { useState } = require('react')
+const { useRef, useState } = require('react')
 const Try  = require('./Try')
 
 function getNumbers() { 
@@ -18,6 +18,7 @@ const NumberBaseball = memo(() => {
   const [value, setValue] = useState('')
   const [answer, setAnswer] = useState(getNumbers())
   const [tries, setTries] = useState([])
+  const inputEl = useRef(null)
 
   const onSubmitForm = (e) => {
     e.preventDefault()
@@ -35,6 +36,7 @@ const NumberBaseball = memo(() => {
       setValue('')
       setAnswer(getNumbers())
       setTries([])
+      inputEl.current.focus()
     } else { 
       const answerArray = value.split('').map(v => parseInt(v))
       let strike = 0
@@ -45,6 +47,7 @@ const NumberBaseball = memo(() => {
         setValue('')
         setAnswer(getNumbers())
         setTries([])
+        inputEl.current.focus()
       } else {
         for (let i = 0; i < 4; i +=1 ) {
           if (answerArray[i] === answer[i]) {
@@ -59,6 +62,7 @@ const NumberBaseball = memo(() => {
           return [...prevTries, { try: value, result: `${strike}스트라이크, ${ball}볼입니다.`}]
         })
         setValue('')
+        inputEl.current.focus()
       }
     }
   }
