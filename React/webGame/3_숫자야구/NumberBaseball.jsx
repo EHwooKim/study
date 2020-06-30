@@ -85,6 +85,16 @@ const NumberBaseball = memo(() => {
             )
           })}
         </ol>
+        {/* for문 사용 (잘 안쓰이는 방법) */}
+        {/* <ol>
+          {(() => {
+            const array = []
+            for (let i = 0; i < tries.length; i++) {
+              array.push(<Try key={`${i + 1}차 시도 : `} tryInfo={v} />)
+            }
+            return array
+          })()}
+        </ol> */}
       </>    
   )
 })

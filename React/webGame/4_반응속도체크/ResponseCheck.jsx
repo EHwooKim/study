@@ -63,6 +63,36 @@ const ResponseCheck = () => {
       { renderAverage() }
     </>
   )
+  /*
+    # return 내부에 for, if쓰기
+    - jsx문법 안에 중괄호를 쓰면 그 안에 Javascript 문법 사용이 가능한 점을 이용한 방법
+    - 그리고 jsx에서는 못쓰지만, 함수안에서는 사용가능하다는 점을 이용한다.
+    - 즉시실행함수로 만든다.
+    - 반복문 예시는 NumberBaseball.jsx
+  */
+  /*
+  return (
+    <>
+      <div
+        id="screen"
+        className={state}
+        onClick={onClickScreen}
+      >
+        {message}  
+      </div>
+      {(() => {
+        if (result.length === 0) {
+          return null
+        } else {
+          return <>
+            <div>평균시간: {result.reduce((a, c) => a + c) / result.length}ms</div> 
+            <button onClick={onReset}>리셋</button>  
+          </>
+        }
+      })()}
+    </>
+  )
+  */
 
 }
 
