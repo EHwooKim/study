@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 const App = () => {
   const [value, setValue] = useState('')
-  const [todoList, setTodo] = useState(['할일1', '할일2'])
-
+  const [todoList, setTodoList] = useState(
+    JSON.parse(localStorage.getItem('todoList')) || []
+  )
 
   const onChnageInput = e => {
     setValue(e.target.value)
@@ -16,15 +17,21 @@ const App = () => {
       alert('내용을 입력해주세요')
       return
     }
-    setTodo(prevTodoList => {
+    setTodoList(prevTodoList => {
       return [...prevTodoList, value]
     })
     setValue('')
   }
   const deleteToto = i => () => {
-    console.log('삭제')
-    console.log(i)
+    setTodoList(prevTodoList => {
+      let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
+      array.splice(i, 1)
+      return array
+    })
   }
+  useEffect(() => {
+    localStorage.setItem('todoList', JSON.stringify(todoList)) // 추가, 삭제시 실행되도록. 처음에 JSON.stringfy-parse 안해서 타입오류 발생
+  }, [todoList])
 
   return (
     <div className="App">

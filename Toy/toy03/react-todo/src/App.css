@@ -101,3 +101,7 @@ ul {
   outline: none;
   cursor: pointer;
 }
+.delete-btn:hover {
+  background-color: #61dafb;
+  color: #282c34;
+}
