@@ -23,7 +23,7 @@ class Lotto extends Component {
 
   timeouts = []
 
-  componentDidMount() {
+  runTimeouts = () => {
     const { winNumbers } = this.state
     for (let i = 0; i < winNumbers.length - 1; i++) {
       this.timeouts[i] = setTimeout(() => {
@@ -41,11 +41,33 @@ class Lotto extends Component {
       })
     }, 7000)
   }
+
+  componentDidMount() {
+    this.runTimeouts()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.winBalls.length === 0) { // 변경 전 state는 prevState, 변겅 후 state는 this.state에 들어있는 것을 확실히 하자
+      // 위의 조건문이 componentDidUpdate에서는 중요하다. 원하는 상황을 잘 생각해서 써줘야한다.
+      this.runTimeouts()
+    }
+  }
   
   componentWillUnmount() {
     this.timeouts.forEach(v=> {
       clearTimeout(v)
     })
+  }
+
+  onClickRedo = () => {
+    this.setState({
+      winNumbers: getWinNumbers(),
+      winBalls: [],
+      bonus: null,
+      redo: false,
+    })
+    this.timeouts = []
+    
   }
 
   render() {

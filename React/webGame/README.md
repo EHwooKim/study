@@ -33,3 +33,4 @@
 
 # [로또추첨기](./6_로또추첨기)
 
+* componentDidUpdate
