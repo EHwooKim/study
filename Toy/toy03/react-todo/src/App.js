@@ -18,9 +18,23 @@ const App = () => {
       return
     }
     setTodoList(prevTodoList => {
-      return [...prevTodoList, value]
+      return [...prevTodoList, {value: value, delete: false}]
     })
     setValue('')
+  }
+  const tryDeleteToto = i => () => {
+    setTodoList(prevTodoList => {
+      let array = [...prevTodoList]
+      array.splice(i, 1, {value: prevTodoList[i].value, delete: true})
+      return array
+    })
+  }
+  const cancelDeleteTodo = i => () => {
+    setTodoList(prevTodoList => {
+      let array = [...prevTodoList]
+      array.splice(i, 1, {value: prevTodoList[i].value, delete: false})
+      return array
+    })
   }
   const deleteToto = i => () => {
     setTodoList(prevTodoList => {
@@ -50,9 +64,14 @@ const App = () => {
           <ul>
             {todoList.map((v, i) => {
               return (
-                <li key={v + i} className="todo">
-                  <span>{v}</span>
-                  <button className="delete-btn" onClick={deleteToto(i)}>삭제</button>
+                <li key={v.value + i} className="todo">
+                  <span>{v.value}</span>
+                  {v.delete
+                    ? <span>
+                        <button className="delete-btn" onClick={deleteToto(i)}>삭제</button>
+                        <button className="delete-btn" onClick={cancelDeleteTodo(i)}>취소</button>
+                      </span>
+                    : <button className="delete-btn" onClick={tryDeleteToto(i)}>삭제</button>}
                 </li>
               )
             })}
