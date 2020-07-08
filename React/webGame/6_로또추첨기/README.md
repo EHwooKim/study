@@ -50,7 +50,7 @@ const lottoNumbers = useMemo(() => getWinNumbers(), [])
 # Hooks 팁
 
 * useState, useRef 등 Hooks들은 순서가 굉장히 중요하다.
-* Hooks들은 조건문 안에는 **절대** 넣으면 안되고, 함수나 반복문 안에도 웬만하면 넣지 말자.
+* Hooks들은 조건문 안에는 **절대** 넣으면 안되고, 함수나 반복문 안에도 웬만하면 넣지 말자. 
 
 ```javascript
 // 특정 조건에만 redo에 setState를 사용하고 싶어 아래와 같이 쓴다면
@@ -61,3 +61,17 @@ if (조건) {
 ```
 
 * 위에서부터 번호를 메긴다고 생각하고 그 순서가 항상 일정해야하는데, 조건문이 false가 나와 redo가 실행이 안되면 순서가 바뀌게 되면서 문제가 생긴다.
+* 또한 `useEffect`, `useCallback`, `useMemo` 등에서도 `useState`들을 쓰면 안된다.
+* componentDIdMount는 실행 안시키고 componentDIdUpdate만 실행시키고 싶다면? 아래와 같은 꼼수.. 사용
+
+```javascript
+const mounted = useRef(false)
+useEffect(() => {
+    if (!mounted.current) {
+        mounted.current = true
+    } else {
+        // 이떄 원하는 ajax요청
+    }
+}, [바뀌는값])
+```
+
