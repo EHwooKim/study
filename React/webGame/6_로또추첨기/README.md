@@ -3,6 +3,7 @@
 * [componentDidUpdate](#componentDidUpdate)
 * [useMemo](#useMemo)
 * [useCallback](#useCallback)
+* [Hooks 팁](#Hooks-팁)
 
 # componentDidUpdate
 
@@ -45,3 +46,18 @@ const lottoNumbers = useMemo(() => getWinNumbers(), [])
 | useRef      | 일반 값을 기억            |
 | useMemo     | 복잡한 함수 결과값을 기억 |
 | useCallback | 함수 자체를 기억          |
+
+# Hooks 팁
+
+* useState, useRef 등 Hooks들은 순서가 굉장히 중요하다.
+* Hooks들은 조건문 안에는 **절대** 넣으면 안되고, 함수나 반복문 안에도 웬만하면 넣지 말자.
+
+```javascript
+// 특정 조건에만 redo에 setState를 사용하고 싶어 아래와 같이 쓴다면
+if (조건) {
+    const [redo, setRedo] = useState(false)
+}
+// 
+```
+
+* 위에서부터 번호를 메긴다고 생각하고 그 순서가 항상 일정해야하는데, 조건문이 false가 나와 redo가 실행이 안되면 순서가 바뀌게 되면서 문제가 생긴다.
