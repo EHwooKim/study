@@ -35,3 +35,9 @@
 
 * componentDidUpdate
 * useMemo, useCallback, (useRef)
+* Hooks 팁
+
+# [틱택토](./7_틱택토)
+
+* useReducer
+
