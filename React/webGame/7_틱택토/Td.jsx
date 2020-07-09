@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useCallback } from 'react'
+import { CLICK_CELL, CHANGE_TURN } from './TicTacToe'
 
-const Td = () => {
+const Td = ({rowIndex, cellIndex, cellData, dispatch}) => { //dispatch 는 부모 TicTacToe로부터 계속 넘겨 받는다.
+  const onClickTd = useCallback(() => {
+    console.log(rowIndex, cellIndex)
+    dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex })
+    dispatch({ type: CHANGE_TURN })
+  }, [])
+
   return (
-  <td>{''}</td>
+  <td onClick={onClickTd}>{cellData}</td>
   )
 }
 
