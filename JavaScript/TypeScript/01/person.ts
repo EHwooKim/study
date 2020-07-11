@@ -1,5 +1,7 @@
-class Person {
-    private name: string
+export class Person {
+    
+    protected name: string
+
     constructor(name: string) {
         this.name = name
     }
@@ -8,6 +10,3 @@ class Person {
         return `Hello, ${this.name}`
     }
 }
-
-const person = new Person('Kim')
-console.log(person.sayHello())
