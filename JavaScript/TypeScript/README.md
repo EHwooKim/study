@@ -4,6 +4,7 @@
 * [타입 선언](#타입-선언)
 * [정적 타이핑](#정적-타이핑)
 * [클래스](#클래스)
+* [인터페이스](#인터페이스)
 
 
 
@@ -277,3 +278,176 @@
 * `추상 클래스`를 정의할 때 역시 `abtract` 키워드를 사용하며, 직접 인스턴스를 생성할 수 없고  **상속만을 위해** 사용된다.
 * 추상 클래스를 상속한 클래스는 추상 메소드를 **반드시** 구현해야 한다.
 * **모든** 메소드가 추상 메소드인 `인터페이스`와 구분하자.
+
+# 인터페이스
+
+* `인터페이스`는 일반적으로 **타입 체크를 위해 사용되며 변수, 함수, 클래스에 사용**할 수 있다.
+* 여러가지 타입의 프로퍼티들로 이루어진 새로운 커스텀 타입을 만드는 것과 같다.
+* `인타페이스`는 프로퍼티와 메소드를 가질 수 있다는 점에서 `클래스`와 유사하나 직접 인스턴스를 생성할 수 **없고** 모든 메소드는 `추상 메소드`이다. 단. 추상 클래스의 추상메소드와 달리 `abstract` 키워드를 사용하지 않는다.
+
+## 01. 변수와 인터페이스
+
+* 인터페이스 정의
+
+  ````typescript
+  interface Todo {  // 인터페이스 정의
+      id: number,
+      content: string,
+  	completed: boolean
+  }
+  let todo: Todo // 변수 todo의 타입으로 Todo인터페이스를 선언하였다.
+  todo = { id: 1, content: '타입스크립트 공부하기', completed: true }
+  ```
+
+* 인터페이스를 사용하여 **함수 파라미터**의 타입을 선언할 수 있다. 함수에 객체를 전달할 때 복잡한 매개변수 체크가 필요없어서 매우 유용하다. [코드 확인](./05/Interface.ts)
+
+## 02. 함수와 인터페이스
+
+* `인터페이스`는 함수의 타입으로 사용할 수도 있다.
+* 이때 함수의 인터페이스에는 타입이 선언된 파라미터 리스트와 리턴 타입을 정의한다.
+
+```typescript
+interface SquareFunc {
+    (num: number): number
+}
+// 함수 인터페이스를 준수하여 값을 넣어줘야한다.
+const squareFunc: SquareFunc = function (num) {
+    return  num * num
+}
+```
+
+## 03. 클래스와 인터페이스
+
+* 클래스 선언문의 `implements` 뒤에 인터페이스를 선언하면 해당 클래스는 지정된 인터페이스를 반드시 구현하여야 한다. [코드 확인](./05/ClassInterface.ts)
+* 인터페이스는 프로퍼티뿐만 아니라 메소드도 포함할 수 있다. 
+* 단, **모든 메소드**는 `추상 메소드`이어야 한다.
+* 인터페이스를 구현하는 클래스는 인터페이스에서 정의한 프로퍼티와 추상 메소드를 반드시 구현하여야 한다.[코드 확인](./05/ClassInterface2.ts)
+
+## 04. 덕 타이핑 (Duck typing)
+
+* 타입 체크에서 중요한 것은 **값을 실제로 가지고 있다는 것이다**
+
+* `TypeScript`는 해당 인터페이스에서 정의한 프로퍼티나 메소드를 하나라도 가지고 있다면 그 인터페이스를 구현한 것으로 인정하고 이것을 `덕 타이핑` 또는 `구조적 타이핑`이라고 한다.
+
+* 예시1 - 클래스
+
+  ```typescript
+  interface IDuck {
+    quack(): void
+  }
+  class MallarDuck implements IDuck { // 인터페이스 IDuck 구현 한 클래스
+    quack() { 
+      console.log('Quack!!!')
+    }
+  }
+  class RedheadDuck { // 인터페이스 IDuck을 구현하지않았지만 quack 메소드는 가진 클래스
+    quack() {
+      console.log('q----uack!!')
+    }
+  }
+  
+  // 인터페이스 IDuck을 구현한 클래스의 인스턴스 duck을 인자로 전달받는 함수
+  function makeNoise(duck: IDuck): void {
+      duck.quack()
+  }
+  makeNoise(new MallarDUck()) // Quack!!!
+  makeNoise(new RedheadDuck()) // q----uack!! - 정상작동?
+  ```
+
+  * RedheadDuck의 경우 인터페이스 IDuck을 구현하지 **않았지만**, quack 메소드를 가지고 있기 때문에 인터페이스 IDuck을 구현한 것으로 인정되어 **에러가 발생하지 않는다**
+  * 이 덕 타이핑은 클래스뿐 아니라 **변수에서도 적용된다.**
+
+* 예시2 - 변수
+
+  ```typescript
+  interface IPerson {
+    name: string
+  }
+  function sayHello(person: Iperson): void {
+    console.log(`Hello, ${person.name}`)
+  }
+  const me = { name: 'Kim', age: 20 }
+  sayHello(me) // Hello, Kim
+  ```
+
+  * 변수 me는 인터페이스 IPerson와 일치하지 않는다. 
+  * 하지만 IPerson의 name프로퍼티를 가지고 이으면 인터페이스에 부합하는 것으로 인정된다.
+
+## 05. 선택적 프로퍼티
+
+* 인터페이스의 프로퍼티는 **반드시** 구현되어야 한다.
+
+* 하지만 인터페이스의 프로퍼티가 선택적으로 필요한 경우가 있다.
+
+* **선택적 프로퍼티**는 프로퍼티명 뒤에 `?`를 붙이며 **생략하여도 에러가 발생하지 않는다**
+
+  ```typescript
+  interface UserInfo {
+      username: string;
+      password: string;
+      age?: number;
+      address?: string
+  }
+  const userInfo: UserInfo = {
+      username: 'ehwoo',
+      password: 'ehwoo07'
+  }
+  console.log(userInfo)
+  ```
+
+## 06. 인터페이스 상속
+
+* 인터페이스는 `extends` 키워드를 사용하여 인터페이스 또는 클래스를 상속받을 수 있다.
+
+  ```typescript
+  interface Person {
+  	name: string;
+      age: number;
+  }
+  interface Student extends Person {
+      grade: number;
+  }
+  const student: Student = {
+      name: 'Kim',
+      age: 20,
+      grade: 2
+  }
+  ```
+
+* 복수의 인터페이스 상속 또한 가능하다
+
+  ```typescript
+  interface Person {
+      name: string;
+      age: number;
+  }
+  interface Developer {
+      skills: string[]
+  }
+  interface WebDeveloper extends Person, Developer {}
+  const webDeveloper: WebDeveloper = {
+      name: 'Kim',
+      age: 20,
+      skills: ['HTML', 'CSS', 'JS', 'Ts']
+  }
+  ```
+
+* 인터페이스는 인터페이스 뿐만 아니라 클래스도 상속받을 수 있다.
+
+* 단, 클래스의 모든 멤버(public, protected, private)가 상속되지만 **구현까지 상속하지는 않는다.**
+
+  ```typescript
+  class Person {
+      constructor(public name: string, public age: number)
+  }
+  interface Developer extends Person {
+      skills: string[]
+  }
+  const developer: Developer = {
+      name: 'Kim',
+      age: 20,
+      skills: ['HTML', 'CSS', 'JS', 'Ts']
+  }
+  ```
+
+  
