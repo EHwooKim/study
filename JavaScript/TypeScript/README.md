@@ -1,3 +1,5 @@
+* [공식문서](https://www.typescriptlang.org/docs/handbook/basic-types.html)
+
 # 목차
 
 * [설치 및 기본 설정](#설치-및-기본-설정)
@@ -451,3 +453,55 @@ const squareFunc: SquareFunc = function (num) {
   ```
 
   
+
+# 타입 앨리어스 (Type Alias)
+
+* `타입 앨리어스` 는 `인터페이스`와 굉장히 유사하다.
+
+  * `인터페이스`
+
+    ```typescript
+    interface Person {
+        name: string,
+        age?: number
+    }
+    // 빈 객체를 Person 타입으로 지정
+    const person = {} as Person
+    person.name = 'kim'
+    person.age = 20
+    person.address = 'Seoul' // 에러
+    ```
+
+  * `타입 앨리어스`
+
+    ```typescript
+    type Person = {
+        name: string,
+        age?: number
+    }
+    // 빈 객체를 Person 타입으로 지정
+    const person = {} as Person
+    person.name = 'kim'
+    person.age = 20
+    person.address = 'Seoul' // 에러
+    ```
+
+    > 인터페이스와의 차이점은 선언할 떄 type으로 선언한다는 것 뿐
+
+* 하지만 `타입 앨리어스`는 원시값, 유니온 타입, 튜플 등도 타입으로 지정할 수 있다.
+
+  ```typescript
+  let color: 'red' | 'blue' | 'green'
+  color = 'red'
+  color = 'pink' // 에러
+  // 이때 위 color의 타입을 저장해서 쓰고싶다면? 인터페이스가 아닌 타입 앨리어스를 쓰면 된다.
+  
+  type Color = 'red' | 'blue' | 'green'
+  let color1: Color = 'red'
+  let color2: Color = 'pink'  // 에러
+  // 이렇게 원시값을 타입으로 정하여 해당 값만 할당할 수 있게 만들 수 있고 유니온 타입 지정 또한 가능하다.
+  ```
+
+* 인터페이스는 extends 또는 implements될 수 있지만 타입 앨리어스는 extends 또는 implements될 수 없기 떄문에 상속을 통해 확장이 필요하다면 `인터페이스`가 유리하다. 
+
+* 하지만 인터페이스로 표현할 수 없거나 `유니온` 또는 `튜플`을 사용해야한다면 타입 앨리어스를 사용한는 편이 유리하다.
