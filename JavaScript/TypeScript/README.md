@@ -505,3 +505,17 @@ const squareFunc: SquareFunc = function (num) {
 * 인터페이스는 extends 또는 implements될 수 있지만 타입 앨리어스는 extends 또는 implements될 수 없기 떄문에 상속을 통해 확장이 필요하다면 `인터페이스`가 유리하다. 
 
 * 하지만 인터페이스로 표현할 수 없거나 `유니온` 또는 `튜플`을 사용해야한다면 타입 앨리어스를 사용한는 편이 유리하다.
+
+* `&` 연산자로 두개 이상의 타입을 합칠 수도 있다
+
+  ```typescript
+  type Person = {
+      name: string,
+      age?: number
+  }
+  type Developer = Person & {
+      skills: string[]
+  }
+  ```
+
+  
