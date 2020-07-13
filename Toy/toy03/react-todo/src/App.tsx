@@ -3,15 +3,21 @@ import logo from './logo.svg';
 import './App.css';
 
 const App = () => {
-  const [value, setValue] = useState('')
-  const [todoList, setTodoList] = useState(
-    JSON.parse(localStorage.getItem('todoList')) || []
-  )
+  interface Todo {
+    value: string,
+    delete: boolean
+  }
 
-  const onChnageInput = e => {
+  const [value, setValue] = useState<string>('')
+  // const [todoList, setTodoList] = useState(
+  //   JSON.parse(localStorage.getItem('todoList')) || [] 이부분 타입에러 때문에 잠시 빼놓습니다..
+  // )
+  const [todoList, setTodoList] = useState<Todo[]>([])
+
+  const onChnageInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setValue(e.target.value)
   }
-  const addTodo = (e) => {
+  const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (value === '') {
       alert('내용을 입력해주세요')
@@ -22,21 +28,21 @@ const App = () => {
     })
     setValue('')
   }
-  const tryDeleteToto = i => () => {
+  const tryDeleteToto = (i: number) => () => {
     setTodoList(prevTodoList => {
       let array = [...prevTodoList]
       array.splice(i, 1, {value: prevTodoList[i].value, delete: true})
       return array
     })
   }
-  const cancelDeleteTodo = i => () => {
+  const cancelDeleteTodo = (i: number) => () => {
     setTodoList(prevTodoList => {
       let array = [...prevTodoList]
       array.splice(i, 1, {value: prevTodoList[i].value, delete: false})
       return array
     })
   }
-  const deleteToto = i => () => {
+  const deleteToto = (i: number) => () => {
     setTodoList(prevTodoList => {
       let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
       array.splice(i, 1)
