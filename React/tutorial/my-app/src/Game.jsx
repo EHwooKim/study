@@ -1,5 +1,6 @@
 import React from 'react'
 import Board from './Board'
+import StepButton from './StepButton'
 
 class Game extends React.Component {
   constructor(props) {
@@ -66,9 +67,7 @@ class Game extends React.Component {
         `Go to move #${move}` :
         'Go to game start'
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
+        <StepButton key={move} move={move} desc={desc} onClick={() => this.jumpTo(move)}/>
       )
     })
 
