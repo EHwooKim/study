@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 
 function StepButton(props) {
   return (
@@ -8,4 +8,4 @@ function StepButton(props) {
   )
 }
 
-export default StepButton
+export default memo(StepButton)

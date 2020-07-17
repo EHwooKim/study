@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 
 // state 필요 없는 컴포넌트의 경우 함수 컴포넌트로 작성하면 좋다
 function Square(props) {
@@ -19,4 +19,4 @@ function Square(props) {
 //   }
 // }
 
-export default Square
+export default memo(Square)
