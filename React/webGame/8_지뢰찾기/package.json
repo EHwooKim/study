@@ -1,0 +1,27 @@
+{
+  "name": "minesearch",
+  "version": "1.0.0",
+  "description": "* `React.createClass` -> `Class` -> `Hooks` 의 변천사를 거치고 있는데 아직 `Class` 형태로 만들어진 웹이 많다.\r * 제이쿼리로도 웹 잘만들다가 왜 리액트를 쓰는걸까?\r   * 사용자 인터페이스를 편하게 만들기 위해 (SPA로 앱같은 경험을 줄 수 있다)\r   * 데이터 처리를 쉽게하기 위해, 데이터와 화면을 일치시키는 것이 쉽다.\r   * 컴포넌트 재사용이 용이",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --hot",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "react-hot-loader": "^4.12.21",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
