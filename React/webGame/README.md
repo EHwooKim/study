@@ -20,7 +20,7 @@
 * 반복문(map)
 * props
 * 불변성
-* 리액트 성능 향상 (shouldComponentUpdate, PureComponent,  memo)
+*  리액트 성능 향상 (shouldComponentUpdate, PureComponent,  memo)
 
 # [반응속도체크](./4_반응속도체크)
 
@@ -42,3 +42,10 @@
 * useReducer
 
 * 성능최적화
+
+# [지뢰찾기](./8_지뢰찾기)
+
+* context API
+
+
+
