@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useContext } from 'react'
-import { Tablecontext, START_GAME } from './MineSearch'
+import { TableContext, START_GAME } from './MineSearch'
 
 const Form = () => {
   const [row, setRow] = useState(10)
   const [cell, setCell] = useState(10)
   const [mine, setMine] = useState(20)
-  const { ditpatch } = useContext(Tablecontext) // value로 불러와서 value.dispatch로 쓸 수 도있지만 지금은 dispatch만 필요하니 구조분해로 불러옴
+  const { dispatch } = useContext(TableContext) // value로 불러와서 value.dispatch로 쓸 수 도있지만 지금은 dispatch만 필요하니 구조분해로 불러옴
 
 
   const onChangeRow = useCallback((e) => {
@@ -19,7 +19,7 @@ const Form = () => {
   }, [])
   
   const onClickBtn = useCallback(() => {
-    ditpatch({ type: START_GAME. row, cell, mine })
+    dispatch({ type: START_GAME, row, cell, mine })
   }, [row, cell, mine])
 
   return (
