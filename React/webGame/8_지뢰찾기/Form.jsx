@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useContext } from 'react'
+import React, { useState, useCallback, useContext, memo } from 'react'
 import { TableContext, START_GAME } from './MineSearch'
 
-const Form = () => {
+const Form = memo(() => {
   const [inputValue, setInputValue] = useState({row: 10, cell: 10, mine: 20})
 
   const { dispatch } = useContext(TableContext) // value로 불러와서 value.dispatch로 쓸 수 도있지만 지금은 dispatch만 필요하니 구조분해로 불러옴
@@ -28,6 +28,6 @@ const Form = () => {
       <button>시작!</button>
     </form>
   )
-}
+})
 
 export default Form

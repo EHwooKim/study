@@ -235,7 +235,7 @@ const MineSearch = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { tableData, halted, timer, result }  = state
   
-  const value = useMemo(() => ({ tableData: tableData, halted:halted, dispatch }), [tableData, halted])
+  const value = useMemo(() => ({ tableData, halted, dispatch }), [tableData, halted])
 
   useEffect(() => {
     let timer
