@@ -1,4 +1,4 @@
-import React, { useReducer, createContext, useMemo } from 'react'
+import React, { useReducer, createContext, useMemo, useEffect } from 'react'
 import Table from './Table'
 import Form from './Form'
 
@@ -22,9 +22,15 @@ export const TableContext = createContext({
 
 const initialState = {
   tableData: [],
+  data: {
+    row: 0,
+    cell: 0,
+    mine: 0
+  },
   timer: 0,
   result: '',
   halted: true,
+  openedCount: 0,
 }
 
 const plantMine = (row, cell, mine) => {
@@ -60,6 +66,7 @@ export const CLICK_MINE = 'CLICK_MINE'
 export const FLAG_CELL = 'FLAG_CELL'
 export const QUESTION_CELL = 'QUESTION_CELL'
 export const NORMALIZE_CELL = 'NORMALIZE_CELL'
+export const INCREMENT_TIMER = 'INCREMENT_TIMER'
 
 
 const reducer = (state, action) => {
@@ -67,8 +74,15 @@ const reducer = (state, action) => {
     case START_GAME: 
       return {
         ...state,
+        data: {
+          row: action.row, 
+          cell: action.cell, 
+          mine: action.mine,
+        },
+        openedCount: 0,
         tableData: plantMine(action.row, action.cell, action.mine),
-        halted: false
+        halted: false,
+        timer: 0,
       }
     case OPEN_CELL: {
       const tableData = [...state.tableData] // 지뢰없는 칸 모두 열기전에는 이 코드였는데 클릭한 칸만 바뀌는게 아닌
@@ -77,12 +91,12 @@ const reducer = (state, action) => {
         tableData[i] = [...state.tableData[i]]
       })
       const checked = []
+      let openedCount = 0
       const checkAround = (row, cell) => {
-        console.log('check')
         if ([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
           return
         }
-        if (row < 0 || row > tableData.length || cell < 0 || cell > tableData[0].length) {
+        if (row < 0 || row >= tableData.length || cell < 0 || cell >= tableData[0].length) {
           return
         }
         if (checked.includes(row + ',' + cell)) {
@@ -137,12 +151,24 @@ const reducer = (state, action) => {
           //   checkAround(n[0], n[1])
           // })
         } 
+        if (tableData[row][cell] === CODE.NORMAL) {
+          openedCount += 1
+        }
         tableData[row][cell] = count
       }
       checkAround(action.row, action.cell)
+      let halted = false
+      let result = ''
+      if (state.data.row * state.data.cell - state.data.mine === state.openedCount + openedCount) { // 승리조건
+        halted = true
+        result = `${state.timer}초만에 승리하셨습니다.`
+      }
       return {
         ...state,
-        tableData
+        tableData,
+        openedCount: state.openedCount + openedCount,
+        halted,
+        result,
       }
     }
     case CLICK_MINE: {
@@ -194,6 +220,12 @@ const reducer = (state, action) => {
         tableData,
       }      
     }
+    case INCREMENT_TIMER: {
+      return {
+        ...state,
+        timer: state.timer + 1
+      }
+    }
     default:
       return state
   }
@@ -202,7 +234,20 @@ const reducer = (state, action) => {
 const MineSearch = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { tableData, halted, timer, result }  = state
+  
   const value = useMemo(() => ({ tableData: tableData, halted:halted, dispatch }), [tableData, halted])
+
+  useEffect(() => {
+    let timer
+    if (halted === false) {
+      timer = setInterval(() => {
+        dispatch({ type: INCREMENT_TIMER })
+      }, 1000)
+    }
+    return () => {
+      clearInterval(timer)
+    }
+  }, [halted])
 
   return (
     <TableContext.Provider value={value}>
