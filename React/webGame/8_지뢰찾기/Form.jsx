@@ -2,33 +2,31 @@ import React, { useState, useCallback, useContext } from 'react'
 import { TableContext, START_GAME } from './MineSearch'
 
 const Form = () => {
-  const [row, setRow] = useState(10)
-  const [cell, setCell] = useState(10)
-  const [mine, setMine] = useState(20)
+  const [inputValue, setInputValue] = useState({row: 10, cell: 10, mine: 20})
+
   const { dispatch } = useContext(TableContext) // value로 불러와서 value.dispatch로 쓸 수 도있지만 지금은 dispatch만 필요하니 구조분해로 불러옴
 
-
-  const onChangeRow = useCallback((e) => {
-    setRow(e.target.value)
-  }, [])
-  const onChangeCell = useCallback((e) => {
-    setCell(e.target.value)
-  }, [])
-  const onChangeMine = useCallback((e) => {
-    setMine(e.target.value)
-  }, [])
-  
-  const onClickBtn = useCallback(() => {
+  const onChangeInput = useCallback((e) => {
+    const { name, value } = e.target
+    setInputValue({
+      ...inputValue,
+      [name]: value
+    })
+    console.log('name:', name, 'value: ', value)
+  })
+  const onSubmitForm = useCallback((e) => {
+    e.preventDefault()
+    const { row, cell, mine } = inputValue
     dispatch({ type: START_GAME, row, cell, mine })
-  }, [row, cell, mine])
+  }, [inputValue.row, inputValue.cell, inputValue.mine])
 
   return (
-    <div>
-      <input type="number" placeholder="세로" value={row} onChange={onChangeRow}/>
-      <input type="number" placeholder="가로" value={cell} onChange={onChangeCell}/>
-      <input type="number" placeholder="지뢰" value={mine} onChange={onChangeMine}/>
-      <button onClick={onClickBtn}>시작!</button>
-    </div>
+    <form onSubmit={onSubmitForm}>
+      <input type="number" name="row" placeholder="세로" value={inputValue.row} onChange={onChangeInput}/>
+      <input type="number" name="cell" placeholder="가로" value={inputValue.cell} onChange={onChangeInput}/>
+      <input type="number" name="mine" placeholder="지뢰" value={inputValue.mine} onChange={onChangeInput}/>
+      <button>시작!</button>
+    </form>
   )
 }
 
