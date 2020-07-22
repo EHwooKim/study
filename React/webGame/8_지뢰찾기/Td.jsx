@@ -33,7 +33,7 @@ const getTdStyle = (code) => {
 
 const getTdText = (code) => {
   switch (code) {
-    case CODE.NORMAR:
+    case CODE.NORMAL:
       return ''
     case CODE.MINE:
       return 'X'

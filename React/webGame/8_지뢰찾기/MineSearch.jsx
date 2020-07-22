@@ -71,33 +71,75 @@ const reducer = (state, action) => {
         halted: false
       }
     case OPEN_CELL: {
-      const tableData = [...state.tableData]
-      tableData[action.row] = [...state.tableData[action.row]]
-      tableData[action.row][action.cell] = CODE.OPENED 
-      let around = []
-      if (tableData[action.row - 1]) {
-        console.log('first')
-        around = around.concat(
-          tableData[action.row - 1][action.cell - 1],
-          tableData[action.row - 1][action.cell],
-          tableData[action.row - 1][action.cell + 1]
-        )
+      const tableData = [...state.tableData] // 지뢰없는 칸 모두 열기전에는 이 코드였는데 클릭한 칸만 바뀌는게 아닌
+      // tableData[action.row] = [...state.tableData[action.row]] // 어떤 칸이 불변성이 안지켜질지 몰라서 모든 칸을 다 새로 만들어주었다
+      tableData.forEach((row, i) => {
+        tableData[i] = [...state.tableData[i]]
+      })
+      const checked = []
+      const checkAround = (row, cell) => {
+        console.log('check')
+        if ([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
+          return
+        }
+        if (row < 0 || row > tableData.length || cell < 0 || cell > tableData[0].length) {
+          return
+        }
+        if (checked.includes(row + ',' + cell)) {
+          return
+        } else {
+          checked.push(row + ',' + cell)
+        }
+        let around = []
+        if (tableData[row - 1]) {
+          around = around.concat(
+            tableData[row - 1][cell - 1],
+            tableData[row - 1][cell],
+            tableData[row - 1][cell + 1]
+          )
+        }
+        if (tableData[row][cell - 1]) {
+          around = around.concat(tableData[row][cell - 1])
+        }
+        if (tableData[row][cell +1]) {
+          around = around.concat(tableData[row][cell +1])
+        }
+        if (tableData[row + 1]) {
+          around = around.concat(
+            tableData[row + 1][cell - 1],
+            tableData[row + 1][cell],
+            tableData[row + 1][cell + 1]
+          )
+        }
+        const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.FLAG_MINE].includes(v)).length
+        if (count === 0) {
+          if (row > -1) {
+            const near = []
+            if (row - 1 > -1) {
+              near.push([row - 1, cell - 1])
+              near.push([row - 1, cell])
+              near.push([row - 1, cell + 1])
+            }
+            near.push([row, cell - 1])
+            near.push([row, cell + 1])
+            if (row + 1 < tableData.length) {
+              near.push([row + 1, cell - 1])
+              near.push([row + 1, cell])
+              near.push([row + 1, cell + 1])
+            }
+            near.forEach((n) => {
+              if (tableData[n[0]][n[1]] !== CODE.OPENED) {
+                checkAround(n[0], n[1])
+              }
+            })
+          }
+          // near.filter(v => !!v[0]).forEach((n) => {
+          //   checkAround(n[0], n[1])
+          // })
+        } 
+        tableData[row][cell] = count
       }
-      if (tableData[action.row][action.cell - 1]) {
-        around = around.concat(tableData[action.row][action.cell - 1])
-      }
-      if (tableData[action.row][action.cell +1]) {
-        around = around.concat(tableData[action.row][action.cell +1])
-      }
-      if (tableData[action.row + 1]) {
-        around = around.concat(
-          tableData[action.row + 1][action.cell - 1],
-          tableData[action.row + 1][action.cell],
-          tableData[action.row + 1][action.cell + 1]
-        )
-      }
-      const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.FLAG_MINE].includes(v)).length
-      tableData[action.row][action.cell] = count
+      checkAround(action.row, action.cell)
       return {
         ...state,
         tableData
