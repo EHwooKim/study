@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>드래그 방향 감지</title>
+  <style>
+    * { padding: 0; margin: 0; }
+   body { width: 100vw; height: 100vh; background-color: lightgreen; display: flex; justify-content: center; align-items: center;}
+   #direction { font-size: 24px; font-weight: bold; }
+   #moving {width: 20px; height: 20px; border-radius: 50%; border: 1px solid black; position:absolute; animation: move 5s infinite; transition: 1s all;}
+   .box {
+      width: 100px;
+      height: 100px;
+      border: 1px solid black;
+      position: absolute;
+      left: 150px;
+      top: 150px;
+      transform: translate(-50%, -50%);
+      transition: 1s all;
+   }
+  </style>
+</head>
+<body>
+  <span id='direction'></span>
+
+  <script>
+    (function() {
+      var startCoord
+      var endCoord
+      var dragStart = false
+      var dragging = false
+      const direction = document.querySelector('#direction')
+
+      window.addEventListener('mousedown', function(event) {
+        dragStart = true
+        startCoord = { x: event.clientX, y: event.clientY }
+      })
+      
+      window.addEventListener('mousemove', function(event) {
+        if (dragStart) {
+          dragging = true
+        }
+      })
+
+      window.addEventListener('mouseup', function(event) {
+        if (dragging) {
+          endCoord = { x: event.clientX, y: event.clientY }
+          diffX = endCoord.x - startCoord.x
+          diffY = endCoord.y - startCoord.y
+          if (diffX < 0 && Math.abs(diffX) / Math.abs(diffY) > 1 ) {
+            direction.innerText = '왼쪽'
+          } else if ( diffX > 0 && Math.abs(diffX) / Math.abs(diffY) > 1) {
+            direction.innerText = '오른쪽'
+          } else if ( diffY < 0 && Math.abs(diffY) / Math.abs(diffX) > 1) {
+            direction.innerText = '위'
+          } else if ( diffY > 0 && Math.abs(diffY) / Math.abs(diffX) > 1) {
+            direction.innerText = '아래'
+          }
+        } else {
+          direction.innerText = '클릭'
+        }
+        dragStart = false
+        dragging = false
+      })
+    })()
+  </script>
+  
+</body>
+</html>
