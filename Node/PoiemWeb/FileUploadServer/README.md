@@ -100,7 +100,7 @@ HTTP server가 router를 사용한다는 것을 알게 해야 한다. dependency
 
 먼저 router 함수를 파라미터로 넘길 수 있도록 server의 start() 함수를 확장한다.
 
-![route-server](https://user-images.githubusercontent.com/52653793/88673227-534f7c00-d123-11ea-9efb-569d79409f76.png)
+![route-server](https://user-images.githubusercontent.com/52653793/88673227-534f7c00-d123-11ea-9efb-569d79409f76.png)	
 
 그리고 index.js를 확장한다. 여기서 router 함수를 server로 주입(inject)한다.
 
@@ -108,5 +108,33 @@ HTTP server가 router를 사용한다는 것을 알게 해야 한다. dependency
 
 server는 router 객체의 route 메소도를 주입(inject)받아 route 메소드를 호출할 수 있게 되었다.
 
+## Request handler
 
+`server`는 `router.route`를 주입받아 사용할 수 있게 되었다. `router.route`는 `server`로 부터 `pathname`을 전달 받는데 이 `pathname`에 따라 각각의 `Requset handler`를 호출하면 요청에 따라 행동하는 서버를 만들 수 있다.
+
+![request-handler](https://user-images.githubusercontent.com/52653793/88681364-7599c780-d12c-11ea-9141-91c59403f5d4.png)
+
+`router`에 `Request handler`를 하드코딩할 수도 있으나 이 방법을 사용하면 handler의 수가 늘어날 때마다 `router`에서 request와 handler를 매핑하는 일을 해야만 한다.
+
+`server`와 `router` 이외에 request와 handler의 관계를 알고 있는 무언가를 만들어 `router`에 주입하면 깔끔한 연결이 될 것이다.
+
+request와 handler의 관계를 아고 있는 무언가는 키와 값의 쌍인 Javascropt object의 성질과 잘 맞아 떨어진다.
+
+![handler-index](https://user-images.githubusercontent.com/52653793/88682265-71ba7500-d12d-11ea-88d3-97477444ff61.png)
+
+![handler-server](https://user-images.githubusercontent.com/52653793/88682360-8d258000-d12d-11ea-9a59-b3ee400ea325.png)
+
+![handler-router](https://user-images.githubusercontent.com/52653793/88682474-aa5a4e80-d12d-11ea-8f01-82f190b5ca26.png)
+
+브라우저에 표시된 "Hello world"는 `server.js`의 `onRequest` 함수 내에서 처리하고 있다. 사실 이 처리는 `request handler`가 처리하여야 한다.
+
+먼저 떠오르는 아이디어는 `request handler`가 화면에 표시할 콘텐츠를 반환해 주면 콘텐츠를 server가 `response.write`로 처리하는 것일 것이다.
+
+![handler](https://user-images.githubusercontent.com/52653793/88683488-d2967d00-d12e-11ea-963d-44105b59d79b.png)
+
+![handler-router](https://user-images.githubusercontent.com/52653793/88683559-e93cd400-d12e-11ea-81c5-55322710570a.png)
+
+![router-server](https://user-images.githubusercontent.com/52653793/88683630-fce83a80-d12e-11ea-90d2-cd42f82291e2.png)
+
+이제 각 요청에 맞는 문구가 출력되며, 존재하지 않는 요청에 대해서는 "404 Not found"가 출력된다.
 

@@ -2,15 +2,15 @@
 const http = require('http')
 const url = require('url') 
 
-function start(route) {
+function start(route, handle) {
   function onRequest(req, res) {
     const pathname = url.parse(req.url).pathname
     console.log(`Request for ${pathname} received.`)
 
-    route(pathname)
-  
-    res.writeHead(200, { "Content-type": "text/palin" })
-    res.write('Hello world')
+    res.writeHead(200, { "Content-type": "text/plain" })
+    // handler로부터 넘어온 반환 값을 사용하기 위해
+    var content = route(handle, pathname) 
+    res.write(content)
     res.end()
   }
 
