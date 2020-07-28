@@ -49,3 +49,41 @@ Javascript 함수는 일급 객체임을 이용하여 아래와 같이 코드를
 // 실행
 $ node index.js
 ```
+
+## Routing
+
+요청 `URL`과  `GET/POST 파라미터`를 router로 전달하면 router는 어떤 코드를 실행할지 결정할 수 있어야 한다.
+
+즉, 전달된 요청 URL과 파라미터에 따라 서버의 할 일이 정해지는데 서버의 할 일을 수행하는 함수를 `request handler`라 한다. 우선 요청 URL과 파라미터를 취득할 수 있어야 한다.
+
+<hr>
+
+우리에게 필요한 모든 정보는 `request 객체`를 통해 접근할 수 있다. 하지만 이 정보를 얻어내기 위해 `url`과 `querystring` 모듈이 추가로 필요하다.
+
+`url 모듈`은 URL의 각각의 부분 (예를 들면 URL path와 query sring)을 추출할 수 있는 메소드를 제공한다.
+
+`quertstring 모듈`은 query string을 requset 파라미터로 파싱하는데 사용한다. 또한, `POST` 요청의 body를 파싱하는 데도 사용된다.
+
+![url-quert-module](https://user-images.githubusercontent.com/52653793/88638937-1d949e00-d0f7-11ea-8d2b-02b7a40eabe1.png)
+
+```
+localhost:8888/user?name=kim
+Path name is /user
+Request parameter is [Object: null prototype] { name: 'Kim' }
+```
+
+요청 URL과 파라미터 취득 처리를 어디에 구현해야 하는지 논의가 필요하지만 일단은 HTTP server의 일부로 만들어 본다.
+
+![url-module](https://user-images.githubusercontent.com/52653793/88637168-c42b6f80-d0f4-11ea-8ec4-0aa4f95b5e93.png)
+
+![urlpath](https://user-images.githubusercontent.com/52653793/88637393-11a7dc80-d0f5-11ea-85d0-9b2c2c40ef99.png)
+
+`url 모듈`을 사용하여 URL path 기분으로 요청을 구분할 수 있게 되었다.
+
+이것을 이용하면 URL path를 기반으로 요청을 request handler로 매핑하는 `router`를 만들 수 있다.
+
+`router`의 역할은 **클라이언트의 요청**과 **request handler**를 매핑하는 것이다.
+
+예를 들어, /start 요청과 /upload 요청에 각각 달리 반응하는 request handler를 매핑할 수 있다.
+
+우선은 URL path를 전달받는 `router`를 구현한다.

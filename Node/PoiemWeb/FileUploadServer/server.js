@@ -1,10 +1,12 @@
 // server.js
 const http = require('http')
+const url = require('url') 
 
 const onRequest = (req, res) => {
-  console.log('Request received!')
-  res.writeHead(200, { "Content-Type": "text/plain" })
-  res.write("Hello World")
+  const pathname = url.parse(req.url).pathname
+  console.log(`Request for ${pathname} received.`)
+  res.writeHead(200, { "Content-type": "text/palin" })
+  res.write('Hello world')
   res.end()
 }
 
