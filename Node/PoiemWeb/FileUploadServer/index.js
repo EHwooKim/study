@@ -1,4 +1,6 @@
 // index.js
 const server = require('./server')
+const router = require('./router')
 
-server.start()
+
+server.start(router.route)

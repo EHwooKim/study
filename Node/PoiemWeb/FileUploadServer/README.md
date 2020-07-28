@@ -87,3 +87,26 @@ Request parameter is [Object: null prototype] { name: 'Kim' }
 예를 들어, /start 요청과 /upload 요청에 각각 달리 반응하는 request handler를 매핑할 수 있다.
 
 우선은 URL path를 전달받는 `router`를 구현한다.
+
+![route](https://user-images.githubusercontent.com/52653793/88640036-70bb2080-d0f8-11ea-89c3-07b87abdac6e.png)
+
+
+
+## 의존성 주입
+
+router를 server와 어떻게 엮을지 고려해야 한다.
+
+HTTP server가 router를 사용한다는 것을 알게 해야 한다. dependency injection을 통해 server와 router를 느슨하게 결합한다.
+
+먼저 router 함수를 파라미터로 넘길 수 있도록 server의 start() 함수를 확장한다.
+
+![route-server](https://user-images.githubusercontent.com/52653793/88673227-534f7c00-d123-11ea-9efb-569d79409f76.png)
+
+그리고 index.js를 확장한다. 여기서 router 함수를 server로 주입(inject)한다.
+
+![router-index](https://user-images.githubusercontent.com/52653793/88673459-99a4db00-d123-11ea-8258-5ace136f70d2.png)
+
+server는 router 객체의 route 메소도를 주입(inject)받아 route 메소드를 호출할 수 있게 되었다.
+
+
+
