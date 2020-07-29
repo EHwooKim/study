@@ -282,3 +282,13 @@ postData 처리와 request.setEncoding 부분을 삭제하고 대신 `request`�
 ![upload-handler](https://user-images.githubusercontent.com/52653793/88765033-dd91f180-d1b0-11ea-89ad-fa94a34549ac.png)
 
 서버를 실행하여 이미지를 업로드하면 우리가 제대로 동작하는 것을 확인할 수 있다.
+
+## Express framework
+
+`http`모듈로 웹서버를 생성하면 일반적 웹서버가 수행하여야 할 많은 일들을 직접 처리애햐 하는데 이것이 꽤 번거러운 일이다. 위의 예제와 같이 정적 파일을 제공하기 위해서는 직접 구현하든지 아니면 `node-static`, `server-static` 등의 외부 module을 사용하여야 한다.
+
+그러나 `Express`와 같은 framsework를 사용하면 이러한 문제는 쉽게 해결할 수 있다. 지금까지 살펴본 코드를 이해할 수 있다면 `Express`는 쉽게 사용할 수 있다. `Express`를 사용하면 Routing, Error handling, static file 제공 등 일반적 웹서버가 제공해야 하는 서비스를 쉽게 구현할 수 있다.
+
+아래는 Server, Routing, Request handler가 모두 구현되어 있는 `Express`의 Hello world 예제이다.
+
+![express](https://user-images.githubusercontent.com/52653793/88766704-74f84400-d1b3-11ea-96fa-ad9baf3992dc.png)
