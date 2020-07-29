@@ -161,3 +161,19 @@ shell 커맨드를 Node.js 안에서 실행하는 `exec`은 non-blocking 방식�
 서버에 접속하면 현재 디렉토리에 있는 모든 파일 리스트를 출력하지 않고 empty가 출력된다.
 
 위의 코드는 동기적으로 동작한다. 즉, `exec`를 호출한 후 결과를 기다리지 않고 바로 `return content`를 실행하고 이 시점에서 content는 여전히 empty이기 떄문에 화면에 empty가 출력된다.
+
+##  Non-blocking 방식 requrest handler
+
+지금까지는 handler가 작성한 content를 여러 layer를 거쳐 server에 전달하였다.
+
+```
+content의 이동 : request handler -> router -> server
+```
+
+새로운 방법은 `http.createServer`의 callback인 onRequest()에 취득한 `response`객체를 `router`를 통해 `request handler`에게 주입(inject)한다. 이제 handler는 이 객체가 가진 함수들을 이용해서 스스로 요청에 응답할 수 있게 되었다.
+
+![res-callback-server](https://user-images.githubusercontent.com/52653793/88756647-29d43600-d19f-11ea-8d26-c21c7fa08a3c.png)
+
+![res-callback-router](https://user-images.githubusercontent.com/52653793/88756700-440e1400-d19f-11ea-9129-900dbcd38ee5.png)
+
+![res-callback-handler](https://user-images.githubusercontent.com/52653793/88756751-6142e280-d19f-11ea-9914-a3c6d6d3b99a.png)

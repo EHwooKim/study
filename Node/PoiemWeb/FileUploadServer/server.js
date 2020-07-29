@@ -6,17 +6,13 @@ function start(route, handle) {
   function onRequest(req, res) {
     const pathname = url.parse(req.url).pathname
     console.log(`Request for ${pathname} received.`)
-
-    res.writeHead(200, { "Content-type": "text/plain" })
-    // handler로부터 넘어온 반환 값을 사용하기 위해
-    var content = route(handle, pathname) 
-    res.write(content)
-    res.end()
+    
+    // 기존 route(handle, pathname) 형태였지만, 이제 res 객체도 같이 넘겨준다.
+    route(handle, pathname, res)
   }
 
   http.createServer(onRequest).listen(8888)
   console.log(`Server has started http://127.0.0.1:8888`)
 }
-
 
 exports.start = start
