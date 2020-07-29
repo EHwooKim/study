@@ -218,3 +218,67 @@ request.addListener("end", function() {
 `/upload request handler`가 POST data를 화면에 표시하기 위해 `router.js`를 아래와 같이 수정한다.
 
 ![post-router](https://user-images.githubusercontent.com/52653793/88759129-0a400c00-d1a5-11ea-9d8f-db6c46947df9.png)
+
+그리고 requestHandlers.js의 upload request handler에서 응답에 이 데이터를 추가한다.
+
+![post-handler](https://user-images.githubusercontent.com/52653793/88759233-470c0300-d1a5-11ea-9d04-4978ecc89c55.png)
+
+## Handling file uploads
+
+우리 계획은 사용자가 이미지 파일을 업로드하면 이미지를 브라우저에 출력하는 것이었다.
+
+파일 데이터를 받아서 처리하는 것은 단지 POST 데이터를 처리하는 것이지만, 그 처리가 단순하지 않고 복잡하기 때문에 여기서는 미리 만들어진 `formidable` 오픈소스 모듈을 사용한다.
+
+```bash
+$ npm i formidable@latest
+```
+
+`formidable`은 HTTP POST로 submit된 form을 Node.js에서 파싱할 수 있게한다. 사용법은 다음과 같다.
+
+1. 새 IncomingForm을 생성한다. 이것은 submit된 form의 추상화 객체이다.
+2. request 객체를 파싱하여 submit된 파일과 필드들을 얻는다.
+
+![formidabl-test](https://user-images.githubusercontent.com/52653793/88761463-25f9e100-d1aa-11ea-9375-16460fe072c9.png)
+
+위 코드를 실행하면 `form.parse` 메소드의 callback에 파라미터로 넘어가는 `files`객체가 어떻게 생겼는지 살펴볼 수 있다.
+
+![formidable-files](https://user-images.githubusercontent.com/52653793/88761607-69ece600-d1aa-11ea-897f-f7afde7a6350.png)
+
+<hr>
+
+이제 `formidable`을 코드에서 사용해 보자.
+
+`formidable`을 사용하여 할 일은 2가지이다.
+
+1. 업로드된 파일을 저장 (/tmp 폴더)
+2. 업드드된 파일을 읽어 들여 화면에 출력
+
+우선 2. 부터 구현해 본다. /tmp/test.png에 파일이 존재한다고 가정하고 `/show request handler`에서 이것을 처리한다고 하자.
+
+![file-upload-show](https://user-images.githubusercontent.com/52653793/88762175-a0773080-d1ab-11ea-86e1-426f7fdfe456.png)
+
+> start handler는 아직 그대로
+
+이렇게 만든 `request handler`를 `/show` URL과 매핑한다.
+
+![show-hander-request](https://user-images.githubusercontent.com/52653793/88762274-d0becf00-d1ab-11ea-9799-da0adb76b0bc.png)
+
+다음은 /start의 form에 파일 업로드 element를 추가한다.
+
+![start-handler](https://user-images.githubusercontent.com/52653793/88762431-23988680-d1ac-11ea-988a-bbae4a4379c7.png)
+
+다음은 업로드된 파일을 /tmp/test.png에 저장하기 위해서 `formidable`을 `upload request handler`에 추가한다. 이때 `request` 객체가 필요하므로 `server`에서 `router`를 통해 `request handler`에게 `request` 객체를 전달하여야 한다.
+
+postData 처리와 request.setEncoding 부분을 삭제하고 대신 `request`를 `router`로 전달한다.
+
+![server](https://user-images.githubusercontent.com/52653793/88763761-a589af00-d1ae-11ea-97f1-0c43053b4c09.png)
+
+전달된 `request`를 bypass한다.
+
+![rotuer](https://user-images.githubusercontent.com/52653793/88763828-bfc38d00-d1ae-11ea-9766-92928dc72903.png)
+
+![start-handler](https://user-images.githubusercontent.com/52653793/88764944-bf2bf600-d1b0-11ea-8c7a-797ddffa049f.png)
+
+![upload-handler](https://user-images.githubusercontent.com/52653793/88765033-dd91f180-d1b0-11ea-89ad-fa94a34549ac.png)
+
+서버를 실행하여 이미지를 업로드하면 우리가 제대로 동작하는 것을 확인할 수 있다.
