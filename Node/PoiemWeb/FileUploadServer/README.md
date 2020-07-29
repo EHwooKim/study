@@ -177,3 +177,44 @@ content의 이동 : request handler -> router -> server
 ![res-callback-router](https://user-images.githubusercontent.com/52653793/88756700-440e1400-d19f-11ea-9129-900dbcd38ee5.png)
 
 ![res-callback-handler](https://user-images.githubusercontent.com/52653793/88756751-6142e280-d19f-11ea-9914-a3c6d6d3b99a.png)
+
+## Handling POST requests
+
+Post 요청 처리를 구현하기 위해 서버에 접속하면 textaread와 submit  버튼을 가진 html을 클라이언트에 전송한다.
+
+submit 버튼을 클릭하여 textarea에 입력한 내용을 Post 요청으로 서버에 전송하면 서버는 이 요청을 받아 내용을 출력하는 처리를 구현한다.
+
+![post-request-handler](https://user-images.githubusercontent.com/52653793/88758011-68b7bb00-d1a2-11ea-86f9-8bc9a4bb7bcb.png)
+
+사실 `view`와 `controller` 로직을 한 곳에 구현하는 것은 바람직하지 않지만 일단은 그대로 해보자.
+
+textarea의 내용은 상당히 클 수도 있다. 전체 데이터 블록을 하나로 처리하는 것은 blocking 방식일 것이다.
+
+non-blocking 으로 만들려면 POST 데이터를 작은 청크로 나누고 특정 이벤트 때마다 callback을 호출하는 방식으로 만들어야 한다. 이 이벤트가 `data`(POST 데이터의 새 청크가 도착했다)와 `end`(모든 청크를 다 받았다) 이다.
+
+이 이벤트가 발생했을 때 어떤 callback이 호출되어야 할지 Node.js에게 알려줘야 하는데, HTTP 요청이 올 때 `onRequest` callback 함수가 넘겨받은 request 객체에 listner 함수들을 추가하는 방식으로 할 수 있다.
+
+```javascript
+request.addListener("data", function(chunk) {
+    // called when a new chunk of data was received
+})
+request.addListener("end", function() {
+    // called when adll chunks of data have been received
+})
+```
+
+:heavy_exclamation_mark: ​참고로 `request.addListener` 대신 `request.on`도 가능하다.
+
+> .on() is exactly the same as .addListener() in the EventEmitter object (by [EventEmitter source code](https://github.com/nodejs/node-v0.x-archive/blob/master/lib/events.js#L188))
+
+위의 처리는 `request` 객체가 필요하다.
+
+`http.createServer`의 callback인 onRequest()에서 취득한 `response` 객체를 `router`를 통해 `request handler`에게 주입(inject)하여 handler가 요청에 직접 응답하도록 하였다.
+
+이번에는 `request` 객체를 `router`를 통해 `request handler`에게 주입(inject)하는 것보다 `server`가 POST data를 받고 최종 data를 `router`를 통해 `request handler`로 보내도록 한다.
+
+![post-server](https://user-images.githubusercontent.com/52653793/88759043-dfee4e80-d1a4-11ea-89a2-1d9d589b8065.png)
+
+`/upload request handler`가 POST data를 화면에 표시하기 위해 `router.js`를 아래와 같이 수정한다.
+
+![post-router](https://user-images.githubusercontent.com/52653793/88759129-0a400c00-d1a5-11ea-9d8f-db6c46947df9.png)

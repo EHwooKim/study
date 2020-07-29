@@ -1,20 +1,31 @@
 // requestHandlers.js
-const exec = require("child_process").exec
 
-function start(res) {
+function start(res, postData) {
   console.log("Request handler 'start' was called.")
 
-  exec("ls -lah", function(err, stdout, stderr) {
-    res.writeHead(200, { "Content-Type": "text/plain" })
-    res.write(stdout)
-    res.end()
-  })
+  const body = `
+    <html lang="ko">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <title>POST request</title>
+    </head>
+    <body>
+    <form action="/upload" method="post">
+    <textarea name="text" cols="60" rows="20"></textarea>
+    <input type="submit" value="Submit text">
+    </form>
+    </body>
+    </html>
+  `
+  res.writeHead(200, { "Content-Type": "text/html" })
+  res.write(body)
+  res.end()
 }
 
-function upload(res) {
+function upload(res, postData) {
   console.log("Request handler 'upload' was called.")
   res.writeHead(200, { "Content-Type": "text/plain" })
-  res.write("Hello Upload")
+  res.write(`You've sent: ${postData}`)
   res.end()
 }
 
