@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <input type="text" name="username">
+  <input type="text" name="password">
+  <button>전송</button>
+
+  <p class="result">전송을 눌러보렴</p>
+  
+  <script>
+    document.querySelector('button').addEventListener('click', function () {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:3000/signin');
+
+    const username = document.querySelector('input[name=username]').value;
+    const password = document.querySelector('input[name=password]').value;
+
+    const payload = { username, password };
+
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(JSON.stringify(payload));
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== XMLHttpRequest.DONE) return;
+
+      if (xhr.status === 200) {
+        console.log(xhr.response)
+        document.querySelector('.result').innerHTML = xhr.response;
+      } else {
+        console.log("Error!");
+      }
+    };
+  });
+  </script>
+</body>
+</html>
