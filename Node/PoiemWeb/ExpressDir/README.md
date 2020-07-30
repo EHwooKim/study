@@ -99,5 +99,48 @@ Route path에는 문자열 또는 정규표현식을 사용할 수 있다.
   res.sendStatus(500); // equivalent to res.status(500).send('Internal Server Error')
   ```
 
-  
+## Middleware
+
+미들웨어 함수는 요청 오브젝트(req), 응답 오브젝트(res) 그리고 애플리케이션의 request - response cycle 내에서 다음 미들웨어 함수에 대한 엑세스 권한을 갖는 함수이다.
+
+미들웨어에는 유용한 동작을 하거나 요청이 실행되는데 도움이 되는 무언가를 추가하는 `패스스루(pass-through)` 함수가 있다.
+
+예를 들면 bodyParser()와 cookieParser()는 각각 HTTP 요청 페이로드(req.body)와 파싱된 쿠키 데이터(req.cookie)를 추가한다.
+
+```javascript
+const express = require('express')
+
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+
+const app = express()
+
+
+// parse application/json
+app.use(bodyParser.json())
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookieParser())
+```
+
+커스텀 미들웨어를 만들어 사용할 경우, 해당 미들웨어 함수가 `요청 - 응답 주기`를 종료하지 않는 경우에는 `next()`를 호출하여 그 다음 미들웨어 함수에 제어를 전달해야 한다. 그렇지 않으면 해당 요청은 정지된 채로 방치된다.
+
+![second](https://user-images.githubusercontent.com/52653793/88945291-c5ad9100-d2c8-11ea-8b2d-e19f99153f78.png)
+
+## 정적 파일의 제공
+
+HTML, CSS, Javascript, 이미지 파일과 같은 정적 파일을 제공하기 위해 Express의 기본 제공 미들웨어 함수인 `express.static`을 사용한다. 정적 파일들이 저장되어 있는 디렉터리명을 express.static 함수에 전달하면 정적 파일 서비스를 사용할 수 있다.
+
+아래는 public 디렉터리에 있는 정적 파일을 제공하는 예이다.
+
+```javascript
+app.use(express.static('public'))
+```
+
+기존의 웹서버 상의 파일을 요청하는 것과 동일하게 정적 파일 서비스를 사용할 수 있다.
+
+```
+http://localhost:3000/index.html
+http://localhost:3000/images/bg.png
+```
 
