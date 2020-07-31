@@ -144,3 +144,45 @@ http://localhost:3000/index.html
 http://localhost:3000/images/bg.png
 ```
 
+## Express 에러 처리
+
+Express에서 에러 처리는 **매개변수가 4개(err, req, res, next)인 미들웨어 함수**를 사용한다.
+
+```javascript
+app.use(function(err, req, res, next) {
+    console.log(err.stack)
+    res.status(500).send({ status:500, message: 'internal error', type: 'internal'})
+})
+```
+
+> 전달하고자 하는 텍스만 클라이언트로 전송하여도 무방하다
+
+```javascript
+...
+	res.status(500).send('internal server error')
+...
+```
+
+또는 view template나 html을 render할 수도 있다.
+
+```javascript
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.render('500') // 500.jade or 500.ejs
+})
+```
+
+`next()`를 사용하여 `Error handler middleware`로 에러 처리를 위임할 수 있다.
+
+`next()`를 인수없이 호출하면 이후에 일치하는 route로 이동하지만,  next()를 인수를 전달하여 호출하면 Error handler middleware로 처리를 이동시킨다.
+
+![errorhandler](https://user-images.githubusercontent.com/52653793/88993394-ca9e2f00-d320-11ea-9e10-bb77d1ca370e.png)
+
+* `Error Handler`는 **반드시** 4개의 인자가 필요하며, 4개의 인자가 있는 handler는 자동으로 `Erorr handler`로 인식합니다.
+  * `logHandler`의 err 인자를 지우고 실행해보니 에러 상황 때 실행되지 않았습니다.
+* `next() `안에 인수를 전달해야 다음 `Error Handler`로 처리가 이동됩니다.
+  * `logHandler`의 next() 인자를 없애니 errorHandler가 실행되지 않았습니다.
+* `middleware`는 위에서부터 순서대로 실행됩니다.
+  * `logHandler`와 `erorrHandler`의 미들웨어 사용(app.use) 순서를 바꾸니 errorHandler에서 req-res-cycle이 종료되어 logHandler가 실행되지 않았습니다.
+* **오류 처리 미들웨어는 다른 `app.use()` 및 라우트 호출을 정의한 후에 마지막으로 정의해야 합니다.**
+  * 위 예제에서도 지금까지와는 다르게 라우트 호출 밑에 error handler를 정의한 것을 볼 수 있으며 라우터 위쪽으로 순서를 바꾸니 실행되지 않았습니다.
