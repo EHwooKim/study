@@ -4,6 +4,15 @@
 
 아래의 내용은 [Poiemaweb](https://poiemaweb.com/)의 본문을 옮긴 것입니다.
 
+## 목차
+
+* [Install & usage](##Install-&-usage)
+* [Routing](##Routing)
+  * [Route method](###Route-method),  [Route path](###Route-path),  [Route handler](###Route-handler),  [Response method](###Response-method)
+* [Middleware](##Middleware)
+* [Static File](##Static-File)
+* [Error Handler](##Error-Handler)
+
 ## Install & usage
 
 ```bash
@@ -79,8 +88,6 @@ Route path에는 문자열 또는 정규표현식을 사용할 수 있다.
 
 ### Response method
 
-[Response method](http://expressjs.com/ko/4x/api.html#res.append)
-
 | 메소드           | 설명                                                         |
 | ---------------- | ------------------------------------------------------------ |
 | res.end()        | 응답 프로세스를 종료한다.                                    |
@@ -98,6 +105,8 @@ Route path에는 문자열 또는 정규표현식을 사용할 수 있다.
   res.sendStatus(404); // equivalent to res.status(404).send('Not Found') 
   res.sendStatus(500); // equivalent to res.status(500).send('Internal Server Error')
   ```
+
+더 많은 `method`들은 [공식문서 - Response method](http://expressjs.com/ko/4x/api.html#res.append)에서 확인해봅시다.
 
 ## Middleware
 
@@ -127,7 +136,7 @@ app.use(cookieParser())
 
 ![second](https://user-images.githubusercontent.com/52653793/88945291-c5ad9100-d2c8-11ea-8b2d-e19f99153f78.png)
 
-## 정적 파일의 제공
+## Static File
 
 HTML, CSS, Javascript, 이미지 파일과 같은 정적 파일을 제공하기 위해 Express의 기본 제공 미들웨어 함수인 `express.static`을 사용한다. 정적 파일들이 저장되어 있는 디렉터리명을 express.static 함수에 전달하면 정적 파일 서비스를 사용할 수 있다.
 
@@ -144,7 +153,7 @@ http://localhost:3000/index.html
 http://localhost:3000/images/bg.png
 ```
 
-## Express 에러 처리
+## Error Handler
 
 Express에서 에러 처리는 **매개변수가 4개(err, req, res, next)인 미들웨어 함수**를 사용한다.
 
