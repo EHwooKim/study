@@ -6,12 +6,12 @@
 
 ## 목차
 
-* [Install & usage](##Install-&-usage)
-* [Routing](##Routing)
-  * [Route method](###Route-method),  [Route path](###Route-path),  [Route handler](###Route-handler),  [Response method](###Response-method)
-* [Middleware](##Middleware)
-* [Static File](##Static-File)
-* [Error Handler](##Error-Handler)
+* [Install & usage](#Install-&-usage)
+* [Routing](#Routing)
+  * [Route method](#Route-method),  [Route path](#Route-path),  [Route handler](#Route-handler),  [Response method](#Response-method)
+* [Middleware](#Middleware)
+* [Static File](#Static-File)
+* [Error Handler](#Error-Handler)
 
 ## Install & usage
 
