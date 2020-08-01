@@ -6,7 +6,9 @@
 
 * [Math](#Math)
 
-* [클래스](#클래스)
+* [Class](#Class)
+
+* [Date](#Date)
 
   
 
@@ -397,7 +399,7 @@ const makeRandomNumber = (min, max) => {
 
 * `round`가 아닌 `floor`로 해야 0과 1까지도 나올 확률이 동일해진다.
 
-# 클래스
+# Class
 
 * `자바스크립트`는 `프로토타입 기반` 객체지향 언어이다. ES5에서는 생성자 함수와 프로토 타입, 클로저를 사용하여 객체 지향 프로그래밍을 구현하였다. 
 
@@ -534,3 +536,61 @@ const makeRandomNumber = (min, max) => {
 ### 3. static 메소드와 prototype 메소드의 상속
 
 [프로토타입 공부 다시하고 읽어보자..](https://poiemaweb.com/es6-class#83-static-메소드와-prototype-메소드의-상속)
+
+# Date
+
+`Date`객체는 `빌트인 객체`이면서 `생성자 함수`이다. 
+
+Date 생성자 함수로 생성한 Date 객체는 내부적으로 숫자값을 갖는다. 이 값은 1970년 1월 1일 00:00(UTC)을 기점으로 현재 시간까지의 밀리초를 나타낸다.
+
+## Date Constructor
+
+### new Date()
+
+인수를 전달하지 않으면 **`현재 날짜와 시간`**을 가지는 `인스턴스`를 반환한다.
+
+### new Date(milliseconds)
+
+인수로 숫자 타입의 밀리초를 전달하면 UTC를 기점으로 전달된 밀리초만큼 경과한 날짜와 시간을 가진 `인스턴스`를 반환한다.
+
+```javascript
+const date = new Date(86400000) // 86400000 = oneDay
+console.log(date) // Fri Jan 02 1970 09:00:00 GMT+0900 (한국 표준시)
+```
+
+### new Date(dateString)
+
+인수로 날짜와 시간을 나태는 문자열을 전달하면 지정된 날짜와 시간을 가지는 `인스턴스`를 반환한다.
+
+이때 인수로 전달한 문자열은 `Date.parse`메소드에 의해 해석 가능한 형식이어야 한다.
+
+```javascript
+let date = new Date('May 16, 2019 17:22:10');
+console.log(date); // Thu May 16 2019 17:22:10 GMT+0900 (한국 표준시)
+
+date = new Date('2019/05/16/17:22:10');
+console.log(date); // Thu May 16 2019 17:22:10 GMT+0900 (한국 표준시)
+```
+
+### new Date(year, month [, day, hour, minute, second, millisecond])
+
+인수로 년, 월, 일, 시 , 분, 초, 밀리초를 의미하는 숫자를 전달하면 지정된 날짜와 시간을 가지는 `인스턴스`를 반환한다.  이때 **년, 월은 반드시 지정하여야 한다.**
+
+:lipstick: `month`의 경우 0월부터 시작하는 것에 주의하자. (year, day를 제외하고는 모두 0부터 시작한다)
+
+```javascript
+let date = new Date(2019, 4); // month가 0부터 시작함에 주의하자!!
+console.log(date); // Wed May 01 2019 00:00:00 GMT+0900 (한국 표준시)
+```
+
+### Date 생성자 함수를 new 연산자 없이 호출
+
+Date 생성자 함수를 `new`연산자 없이 호출하면 **인스턴스를 반환하지 않고** 결과값을 **문자열로** 반환한다.
+
+```javascript
+let date1 = new Date()
+console.log(typeof date1, date) //object Sat Aug 01 2020 20:24:47 GMT+0900 (대한민국 표준시)
+let date2 = Date()
+console.log(typeof date2, date2) //string Sat Aug 01 2020 20:24:47 GMT+0900 (대한민국 표준시)
+```
+
