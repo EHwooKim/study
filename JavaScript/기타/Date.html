@@ -60,9 +60,11 @@
         const month = today.getMonth() + 1
         const date = today.getDate()
         const day = dayNames[today.getDay()]
-        const hour = display24 ? today.getHours() : today.getHours() - 12
+        let hour = today.getHours()
         const minute = today.getMinutes()
         const second = today.getSeconds()
+
+        hour = display24 ? today.getHours() : (today.getHours() % 12 || 12)
 
         const addZero = (number) => {
           return number < 10 ? '0' + number : number
