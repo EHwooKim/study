@@ -31,7 +31,7 @@
   </style>
 </head>
 <body>
-  <span id="display-type"></span>
+  <span id="display-type">12시간제 바꾸기</span>
   <span id="date-display"></span>
   <span id="time">
     <span id="time-display"></span>
@@ -41,45 +41,61 @@
   <script>
     (function() {
       let display24 = true
-      const displayType = document.querySelector('#display-type')
-      displayType.innerText = '12시간제'
-      
-      displayType.addEventListener('click', () => {
+      let time = { 
+        year: '',
+        month: '', 
+        date: '', 
+        day: '',
+        hour: '', 
+        minute: '', 
+        second: ''
+      }
+
+      // 12시간제 <-> 24시간제
+      const changeType = () => {
         display24 = !display24
-        displayType.innerText = display24 ? '12시간제' : '24시간제'
-        printNow()
+        time.hour = display24 ? time.hour + 12 : (time.hour % 12 || 12)
+        displayType.innerText = display24 ? '12시간제로 바꾸기' : '24시간제로 바꾸기'
+      }
+
+      const displayType = document.querySelector('#display-type')
+      displayType.addEventListener('click', () => {
+        changeType()
+        displayTime(time)
       })
 
-
-
-      const printNow = () => {
+      const clacNow = () => {
         const today = new Date()
         const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
 
-        const year = today.getFullYear()
-        const month = today.getMonth() + 1
-        const date = today.getDate()
-        const day = dayNames[today.getDay()]
-        let hour = today.getHours()
-        const minute = today.getMinutes()
-        const second = today.getSeconds()
-
-        hour = display24 ? today.getHours() : (today.getHours() % 12 || 12)
-
-        const addZero = (number) => {
-          return number < 10 ? '0' + number : number
-        }
-
+        time.year = today.getFullYear()
+        time.month = today.getMonth() + 1
+        time.date = today.getDate()
+        time.day = dayNames[today.getDay()]
+        time.hour = display24 ? today.getHours() : (today.getHours() % 12 || 12) // 초기값: 24시간제
+        time.minute = today.getMinutes()
+        time.second = today.getSeconds()
+      }
+      
+      const addZero = (number) => {
+        return number < 10 ? '0' + number : '' + number
+      }
+      const displayTime = (time) => {
         const dateDisplay = document.querySelector('#date-display')
         const timeDisplay = document.querySelector('#time-display')
         const secondDisplay = document.querySelector('#sec-display')
-        dateDisplay.innerText = `${year}년 ${month}월 ${date}일 ${day}`
-        timeDisplay.innerText = `${addZero(hour)} : ${addZero(minute)}`
-        secondDisplay.innerText = addZero(second)
-      }
 
-      printNow()
-      setInterval(printNow, 1000)
+        dateDisplay.innerText = `${time.year}년 ${time.month}월 ${time.date}일 ${time.day}`
+        timeDisplay.innerText = `${addZero(time.hour)} : ${addZero(time.minute)}`
+        secondDisplay.innerText = addZero(time.second)
+      }
+      
+      clacNow()
+      displayTime(time)
+      setInterval(() => {
+        clacNow()
+        displayTime(time)
+      }, 1000)
     })()
   </script>
 </body>
