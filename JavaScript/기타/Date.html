@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date</title>
+  <style>
+    * {padding: 0; margin: 0;}
+    body { 
+      width: 100vw;
+      height: 100vh;
+      color: white; 
+      background-color: black; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      flex-direction: column;
+    }
+    #time-display {
+      font-size: 48px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <span id="date-display"></span>
+  <span id="time">
+    <span id="time-display"></span>
+    <span id="sec-display"></span>
+  </span>
+  
+  <script>
+    (function() {
+
+      const printNow = () => {
+        const today = new Date()
+        const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+
+        const year = today.getFullYear()
+        const month = today.getMonth() + 1
+        const date = today.getDate()
+        const day = dayNames[today.getDay()]
+        const hour = today.getHours()
+        const minute = today.getMinutes()
+        const second = today.getSeconds()
+
+        const addZero = (number) => {
+          return number < 10 ? '0' + number : number
+        }
+
+        const dateDisplay = document.querySelector('#date-display')
+        const timeDisplay = document.querySelector('#time-display')
+        const secondDisplay = document.querySelector('#sec-display')
+        dateDisplay.innerText = `${year}년 ${month}월 ${date}일 ${day}`
+        timeDisplay.innerText = `${addZero(hour)} : ${addZero(minute)}`
+        secondDisplay.innerText = addZero(second)
+      }
+
+      setInterval(printNow, 1000)
+    })()
+  </script>
+</body>
+</html>
