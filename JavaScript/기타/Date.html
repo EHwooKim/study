@@ -16,6 +16,14 @@
       align-items: center;
       flex-direction: column;
     }
+    #display-type {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
     #time-display {
       font-size: 48px;
       font-weight: bold;
@@ -23,6 +31,7 @@
   </style>
 </head>
 <body>
+  <span id="display-type"></span>
   <span id="date-display"></span>
   <span id="time">
     <span id="time-display"></span>
@@ -31,6 +40,17 @@
   
   <script>
     (function() {
+      let display24 = true
+      const displayType = document.querySelector('#display-type')
+      displayType.innerText = '12시간제'
+      
+      displayType.addEventListener('click', () => {
+        display24 = !display24
+        displayType.innerText = display24 ? '12시간제' : '24시간제'
+        printNow()
+      })
+
+
 
       const printNow = () => {
         const today = new Date()
@@ -40,7 +60,7 @@
         const month = today.getMonth() + 1
         const date = today.getDate()
         const day = dayNames[today.getDay()]
-        const hour = today.getHours()
+        const hour = display24 ? today.getHours() : today.getHours() - 12
         const minute = today.getMinutes()
         const second = today.getSeconds()
 
@@ -56,6 +76,7 @@
         secondDisplay.innerText = addZero(second)
       }
 
+      printNow()
       setInterval(printNow, 1000)
     })()
   </script>
