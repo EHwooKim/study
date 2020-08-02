@@ -6,7 +6,7 @@ module.exports = {
   mode: 'development', // 실서비스 때는 production으로 바꿔준다.
   devtool: 'eval', // 빠르게 하겠다는 뜻,  실서비스 때는 hidden-source-map으로 바꿔준다.
   resolve: { // 확장자 관리
-      extensions: ['.js', '.jsx']
+      extensions: ['.js', '.jsx', 'ts', 'tsx']
   },
 
   entry: { // 가장 중요한 부분 entry(입력), output(출력)
@@ -34,7 +34,12 @@ module.exports = {
           'react-hot-loader/babel'
         ],
       }
-    }]
+    },
+    { 
+      test: /\.tsx?$/, 
+      loader: "ts-loader" 
+    },
+  ]
   },
   plugins: [
     new webpack.LoaderOptionsPlugin({ debug: true }), // loader들의 optios에 debug:true 를 다 넣어주는 plugin

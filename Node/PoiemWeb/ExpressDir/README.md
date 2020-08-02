@@ -6,7 +6,7 @@
 
 ## 목차
 
-* [Install & usage](#Install-&-usage)
+* [Install](#Install)
 * [Routing](#Routing)
   * [Route method](#Route-method),  [Route path](#Route-path),  [Route handler](#Route-handler),  [Response method](#Response-method)
 * [Middleware](#Middleware)
