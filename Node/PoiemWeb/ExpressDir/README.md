@@ -231,12 +231,16 @@ http 프로토콜의 stateless 문제를 보완하여 클라이언트와 서버 
 
 ## 02. Memorry Store를 사용한 세션 관리
 
-Express 4.x 에서는 [express-session middleware](https://www.npmjs.com/package/express-session가 express에서 분리되었으므로 별도의 npm install이 필요하다. express-session 1.5.0 이후 버전부터는 cookie-parser middleware가 필요하지 않다.
+Express 4.x 에서는 [express-session middleware](https://www.npmjs.com/package/express-session)가 express에서 분리되었으므로 별도의 npm install이 필요하다. express-session 1.5.0 이후 버전부터는 cookie-parser middleware가 필요하지 않다.
 
 ```bash
 $ npm i express-session
 ```
 
+![express-session](https://user-images.githubusercontent.com/52653793/89246179-7effc400-d645-11ea-9b7d-9e365f87b95f.png)
 
+session secret는 쿠키에 저장될 Session ID 서명에 사용된다. session secret는 랜덤한 일정 길이 이상의 문자열을 사용하는 것이 좋다.
 
-  
+세션 데이터는 쿠키에 저장되지 않고 server-side에 저장된다. 쿠키에는 session ID만이 저장된다.
+
+MemoryStore는 개발에만 사용하는 것이 좋다.
