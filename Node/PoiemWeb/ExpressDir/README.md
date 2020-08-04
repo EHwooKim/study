@@ -12,6 +12,7 @@
 * [Middleware](#Middleware)
 * [Static File](#Static-File)
 * [Error Handler](#Error-Handler)
+* [Session]($Session)
 
 ## Install & usage
 
@@ -195,3 +196,47 @@ app.use((err, req, res, next) => {
   * `logHandler`와 `erorrHandler`의 미들웨어 사용(app.use) 순서를 바꾸니 errorHandler에서 req-res-cycle이 종료되어 logHandler가 실행되지 않았습니다.
 * **오류 처리 미들웨어는 다른 `app.use()` 및 라우트 호출을 정의한 후에 마지막으로 정의해야 합니다.**
   * 위 예제에서도 지금까지와는 다르게 라우트 호출 밑에 error handler를 정의한 것을 볼 수 있으며 라우터 위쪽으로 순서를 바꾸니 실행되지 않았습니다.
+
+# Session
+
+Web applicaion은 로그인 인증 등의 용도로 Session을 사용한다. Express는 메모리 상(MemoryStore)에 Session data를 저장할 수 있다.
+
+개발을 위한 MemoryStore의 사용은 문제될 것이 없지만 production 환경에서 Memory Store의 사용은 적절하지 않으며 복수 서버 상에서의 Session data 공유도 Memorry Store 에서는 불가능하다.
+
+따라서 production 환경에서는 Redis, MongoDB를 사용하여 영속적 Session data 관리하는 것이 일반적이다.
+
+## 01. Sesion & Cookie
+
+http 프로토콜의 stateless 문제를 보완하여 클라이언트와 서버 간의 논리적 연결을 위한 방법에는 `Session`과 `Cookie`가 있다.
+
+* `Cookie` 
+
+  쿠키는 웹서버가 브라우저를 통해 클라이언트에 일시적으로 데이터를 저장하는 방식을 의미한다. 
+
+  웹서버에 접속한 클라이언트의 정보를 쿠키에 기입한 후 클라이언트에 저장하면 이후 웹서버에 전송되는 요청에 쿠키내의 정보가 같이 전송되는 방식이다.
+
+  쿠키는 **클라이언트에 저장**된 작은 조각의 텍스트 파일로서 **세션에 비해 보안에 취약하다. ** 따라서 아이디와 비밀번호를 쿠키에 저장하는 방식은 피해야 한다.
+
+* `Session`
+
+   세션의 사전적 의미는 '개회 중임', '개정 중임'으로 웹서버에 접속되어 있는 상태를 의미한다. 즉, **브라우저를 통해 서버에 접속한뒤 접속을 종료하는 시점까지를 세션이라고 한다.**
+
+   세션은 최초 접속 시점에 생성되어 일정 기간 유지되며 접속이종료되면(브라우저 종료) 삭제된다.
+
+   쿠키와 달리 세션은 **서버에 저장된다.** 따라서 클라이언트에 저장되는 쿠키보다 안전하다 할 수 있다.
+
+* `Cookie - based Session`
+
+   쿠키에 `Session ID`만을 저장하고 전송된 Session ID를 사용하여 Session에 저장된 정보를 사용하는 방법이다. 쿠키에 보안에 관련된 정보를 저장하는 것은 바람직하지 않다.
+
+## 02. Memorry Store를 사용한 세션 관리
+
+Express 4.x 에서는 [express-session middleware](https://www.npmjs.com/package/express-session가 express에서 분리되었으므로 별도의 npm install이 필요하다. express-session 1.5.0 이후 버전부터는 cookie-parser middleware가 필요하지 않다.
+
+```bash
+$ npm i express-session
+```
+
+
+
+  
