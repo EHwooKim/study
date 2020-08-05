@@ -59,7 +59,7 @@ const App = () => {
 
   useEffect(() => { // 처음 접속시 todoList가져오기
     api.getAllTodos().then(setTodoList)
-  })
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('todoList', JSON.stringify(todoList)) // 추가, 삭제시 실행되도록. 처음에 JSON.stringfy-parse 안해서 타입오류 발생
