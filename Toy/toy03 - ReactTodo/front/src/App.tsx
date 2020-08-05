@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import api from './apis/index'
 import logo from './logo.svg';
 import './App.css';
 
 const App = () => {
   interface Todo {
+    id: number,
     value: string,
-    delete: boolean
+    delete: boolean,
+    createdAt: string
   }
 
   const [value, setValue] = useState<string>('')
@@ -17,38 +20,47 @@ const App = () => {
   const onChnageInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setValue(e.target.value)
   }
-  const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault()
-    if (value === '') {
-      alert('내용을 입력해주세요')
-      return
-    }
-    setTodoList(prevTodoList => {
-      return [...prevTodoList, {value: value, delete: false}]
-    })
-    setValue('')
-  }
-  const tryDeleteToto = (i: number) => () => {
-    setTodoList(prevTodoList => {
-      let array = [...prevTodoList]
-      array.splice(i, 1, {value: prevTodoList[i].value, delete: true})
-      return array
-    })
-  }
-  const cancelDeleteTodo = (i: number) => () => {
-    setTodoList(prevTodoList => {
-      let array = [...prevTodoList]
-      array.splice(i, 1, {value: prevTodoList[i].value, delete: false})
-      return array
-    })
-  }
-  const deleteToto = (i: number) => () => {
-    setTodoList(prevTodoList => {
-      let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
-      array.splice(i, 1)
-      return array
-    })
-  }
+  // const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
+  //   e.preventDefault()
+  //   if (value === '') {
+  //     alert('내용을 입력해주세요')
+  //     return
+  //   }
+  //   setTodoList(prevTodoList => {
+  //     return [...prevTodoList, {value: value, delete: false}]
+  //   })
+  //   setValue('')
+  // }
+  const addTodo = () => {}
+  // const tryDeleteToto = (i: number) => () => {
+  //   setTodoList(prevTodoList => {
+  //     let array = [...prevTodoList]
+  //     array.splice(i, 1, {value: prevTodoList[i].value, delete: true})
+  //     return array
+  //   })
+  // }
+  const tryDeleteToto = (i:number) => () => {}
+  // const cancelDeleteTodo = (i: number) => () => {
+  //   setTodoList(prevTodoList => {
+  //     let array = [...prevTodoList]
+  //     array.splice(i, 1, {value: prevTodoList[i].value, delete: false})
+  //     return array
+  //   })
+  // }
+  const cancelDeleteTodo = (i:number) => () => {}
+  // const deleteToto = (i: number) => () => {
+  //   setTodoList(prevTodoList => {
+  //     let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
+  //     array.splice(i, 1)
+  //     return array
+  //   })
+  // }
+  const deleteToto = (i:number) => () => {}
+
+  useEffect(() => { // 처음 접속시 todoList가져오기
+    api.getAllTodos().then(setTodoList)
+  })
+
   useEffect(() => {
     localStorage.setItem('todoList', JSON.stringify(todoList)) // 추가, 삭제시 실행되도록. 처음에 JSON.stringfy-parse 안해서 타입오류 발생
   }, [todoList])
