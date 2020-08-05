@@ -20,18 +20,20 @@ const App = () => {
   const onChnageInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setValue(e.target.value)
   }
-  // const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
-  //   e.preventDefault()
-  //   if (value === '') {
-  //     alert('내용을 입력해주세요')
-  //     return
-  //   }
-  //   setTodoList(prevTodoList => {
-  //     return [...prevTodoList, {value: value, delete: false}]
-  //   })
-  //   setValue('')
-  // }
-  const addTodo = () => {}
+  const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault()
+    if (value === '') {
+      alert('내용을 입력해주세요')
+      return
+    }
+    api.postNewTodo({ value })
+      .then(data => setTodoList(prevTodoList => {
+        return [...prevTodoList, data[0]]
+      }))
+      .catch(console.error)
+    setValue('')
+  }
+
   // const tryDeleteToto = (i: number) => () => {
   //   setTodoList(prevTodoList => {
   //     let array = [...prevTodoList]
@@ -58,7 +60,7 @@ const App = () => {
   const deleteToto = (i:number) => () => {}
 
   useEffect(() => { // 처음 접속시 todoList가져오기
-    api.getAllTodos().then(setTodoList)
+    api.getAllTodos().then(setTodoList).catch(console.error)
   }, [])
 
   useEffect(() => {

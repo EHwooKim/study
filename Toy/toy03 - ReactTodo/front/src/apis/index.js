@@ -2,6 +2,17 @@ const baseUrl = 'http://localhost:4000'
 
 module.exports = {
   getAllTodos: () => {
-    return fetch(`${baseUrl}/todo`).then(data => data.json())
+    return fetch(`${baseUrl}/todo`)
+      .then(data => data.json())
+  },
+  postNewTodo: (payload) => {
+    return fetch(`${baseUrl}/todo`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(data => data.json())
   }
 }
