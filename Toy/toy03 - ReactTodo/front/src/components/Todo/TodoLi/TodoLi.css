@@ -1,0 +1,22 @@
+.todo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;  
+  margin-bottom: 1vh;
+}
+.delete-btn {
+  padding: 5px 10px;
+  margin-left: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #61dafb;
+  background-color: transparent;
+  border: 1px solid #61dafb;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  background-color: #61dafb;
+  color: #282c34;
+}

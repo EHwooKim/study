@@ -1,0 +1,46 @@
+ul {
+  list-style: none;
+}
+.todo-container {
+  width: 100%;
+  padding-top: 5vh;
+  /* background-color: lightgreen; */
+}
+.input-container {
+  width: 50%;
+  height: 5vh;
+  margin: 0 auto;
+  display: flex;
+}
+.input-container > input {
+  width: 85%;
+  height: 100%;
+  padding: 2px 4px;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px 0 0 5px;
+  border: none;
+  color: white;
+  background-color: #282c34;
+  border: 2px solid #61dafb;
+  border-right: none;
+}
+.input-container > button {
+  width: 15%;
+  height: 100%;
+  display: inline-block;
+  border: 2px solid #61dafb;
+  border-radius: 0 5px 5px 0;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #61dafb;
+  color: #282c34;
+  outline: none;
+  cursor: pointer;
+}
+
+.todo-list-container {
+  width: 50%;
+  margin: 3vh auto 0;
+  color: white;
+}
