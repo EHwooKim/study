@@ -10,7 +10,7 @@ interface Todo {
 type TodoProps = {
   todo: Todo,
   i: number,
-  deleteTodo: (i:number) => void,
+  deleteTodo: (id: number, i: number) => void,
   cancelDeleteTodo: (i:number) => void,
   tryDeleteToto: (i:number) => void
 }
@@ -21,7 +21,7 @@ const TodoLi = ({todo, i, deleteTodo, cancelDeleteTodo, tryDeleteToto}: TodoProp
       <span>{todo.value}</span>
       {todo.delete
         ? <span>
-            <button className="delete-btn" onClick={() => deleteTodo(i)}>삭제</button>
+            <button className="delete-btn" onClick={() => deleteTodo(todo.id, i)}>삭제</button>
             <button className="delete-btn" onClick={() => cancelDeleteTodo(i)}>취소</button>
           </span>
         : <button className="delete-btn" onClick={() => tryDeleteToto(i)}>삭제</button>}

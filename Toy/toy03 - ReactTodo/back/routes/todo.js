@@ -14,7 +14,6 @@ const router = express.Router()
   휴지통 테이블을 따로 만들어야 하나.. db 컬럼만 추가해서 그거로 판단해야하나..
 */
 
-
 // Todo 전체 조회
 router.get('/', (req, res) => {
   connection.query('SELECT * FROM todos', (error, rows) => {
@@ -22,7 +21,6 @@ router.get('/', (req, res) => {
     res.send(rows)
   })
 })
-
 // Toto 등록 - 등록하고나서 후처리를 어떻게 하는게 맞을지..
 router.post('/', (req, res) => {
   const value = req.body.value
@@ -32,6 +30,14 @@ router.post('/', (req, res) => {
       if (error) throw error
       res.send(rows)
     })
+  })
+})
+// Todo 삭제
+router.delete('/', (req, res) => {
+  const todoId = req.body.id
+  connection.query(`DELETE FROM todos where id=${todoId}`, (error, rows) => {
+    if (error) throw error
+    res.send(rows)
   })
 })
 

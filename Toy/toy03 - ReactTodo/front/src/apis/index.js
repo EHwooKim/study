@@ -14,5 +14,15 @@ module.exports = {
       body: JSON.stringify(payload)
     })
       .then(data => data.json())
+  },
+  deleteTodo: (payload) => {
+    return fetch(`${baseUrl}/todo`,{
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(data => data.json())
   }
 }

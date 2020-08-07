@@ -40,7 +40,6 @@ const Todo = () => {
     })
   }
   const cancelDeleteTodo = (i: number) => {
-
     setTodoList(prevTodoList => {
       let array = [...prevTodoList]
       array.splice(i, 1, {...prevTodoList[i], delete: false})
@@ -48,15 +47,19 @@ const Todo = () => {
     })
   }
 
-  // const deleteToto = (i: number) => () => {
-  //   setTodoList(prevTodoList => {
-  //     let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
-  //     array.splice(i, 1)
-  //     return array
-  //   })
-  // }
-  const deleteTodo = (i:number) => {
-    console.log(i)
+  const deleteTodo = (id: number, i: number) => {
+    api.deleteTodo({ id: id })
+      .then(data => setTodoList(prevTodoList => {
+        let array = [...prevTodoList]
+        array.splice(i, 1)
+        return array
+      }))
+      .catch(console.error)
+    // setTodoList(prevTodoList => {
+    //   let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
+    //   array.splice(i, 1)
+    //   return array
+    // })
   }
 
   useEffect(() => { // 처음 접속시 todoList가져오기
