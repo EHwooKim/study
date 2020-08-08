@@ -1204,8 +1204,61 @@ app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
   > 시퀄라이즈는 기본적으로 모델 이름은 단수형, 테이블 이름은 복수형으로 사용합니다.	
   
   * models 폴더에 `user.js`, `comment.js` 파일 만들어 모델을 정의해줍니다.
+  
+    ```javascript
+    // user.js
+    module.exports = (sequelize, DataTypes) => {
+      return sequelize.define('user', {
+        name: {
+          type: DataTypes.STRING(20),
+          allowNull: false,
+          unique: true,
+        },
+        age: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+        },
+        married: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+        },
+        comment: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        created_at: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaualtValue: sequelize.literal('now()'),
+        }
+      }, {
+        timestamps: false,
+      })
+    }
+    // comment.js
+    module.exports = (sequelize, DataTypes) => {
+      return sequelize.define('comment',{
+        comment: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        created_at: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          defaultValue: sequelize.literal('now()')
+        }
+      }, {
+        timestamps: false,
+      })
+    }
+    ```
+  
+    
+  
   * 시퀄라이즈는 알아서 `id`를 기본 키로 연결하므로 `id` 컬럼은 적어줄 필요가 없습니다.
+  
   * MySQL 테이블과 컬럼 내용이 일치해야 적확하게 대응됩니다.
+  
   * 시퀄라이즈 자료형은 MySQL의 자료형과 조금 다릅니다.
     * VARCHAR => `STRING`
     * INT => `INTEGER`
@@ -1215,9 +1268,28 @@ app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
     * NOT NULL => `aloowNull`
     * UNIQUE => `unique`
     * `defaultValue`로 기본값 정의가 가능하며 `DataTypes.NOW`로 현재 시간을 기본값으로 사용할 수 있습니다. SQL의 now()와 같습니다.
+    
   * `define`메서드의 세 번째 인자는 테이블 옵션입니다.
+    
     * `timestamps` 속성이 true 이면 시퀄라이즈는 createdAt과 updatedAt 컬럼을 추가하여 로우가 생설될 때와 수정될 떄의 시간이 자동으로 입력됩니다. (예제에서는 직접 created_at 컬럼을 만들었으므로 false로 합니다.)
   
+
+```
+Note ≣ 기타 테이블 옵션
+
+예제에서는 사용하지 않았지만, 테이블의 옵션으로 paranoid, underscored, tableName 옵션도 자주 사용됩니다.
+
+실무에서는 timestamps: true와 함께 paranoid: true를 자주 사용합니다. paranoid 옵션은 timestamps가 true여야 설정할 수 있습니다. paranoid를 true로 설정하면 deletedAt이라는 컬럼이 추가됩니다. 로우를 삭제하는 시퀄라이즈 명령을 내렸을 때 로우를 제거하는 대신 deletedAt에 제거된 날짜를 입력합니다. 로우를 조회하는 명령을 내렸을 때는 deletedAt의 값이 null인 로우(삭제되지 않았다는 뜻)를 조회합니다.
+
+왜 완전히 삭제하지 않고 deletedAt 컬럼을 따로 만들어 지운 날짜를 기록할까요? 데이터 복구를 염두에 두어서 그렇습니다. 백업 데이터베이스가 없다면 로우를 지운 후 복구할 수가 없습니다. 고객이 삭제된 데이터를 다시 복구해달라고 요청했을 때 복구할 수가 없는 것이죠. 그렇기 때문에 데이터에 삭제되었다는 표시를 deletedAt 컬럼에 남겨두고, 조회할 때는 deletedAt 컬럼이 null인 로우에서 찾습니다. 9장의 예제에서 paranoid를 사용합니다.
+
+underscored 옵션은 createdAt, updatedAt, deletedAt 컬럼과 시퀄라이즈가 자동으로 생성해주는 관계 컬럼들의 이름을 스네이크케이스 형식으로 바꾸어줍니다. 스네이크케이스란 변수 이름에 대문자 대신 _를 사용하는 방식으로 createdAt, updatedAt, deletedAt 컬럼은 각각 created_at, updated_at, deleted_at이 됩니다.
+
+tableName 옵션은 테이블 이름을 다른 것으로 설정하고 싶을 때 사용합니다. 시퀄라이즈는 자동으로 define 메서드의 첫 번째 인자를 복수형으로 만들어 테이블 이름으로 사용합니다. 현재 user와 comment가 첫 번째 인자로 설정되어 있습니다. 시퀄라이즈는 이를 사용해 users와 comments 테이블을 만듭니다. 이러한 자동 변환을 막고 싶다면 tableName 옵션에 값을 주어 해당 값으로 테이블 이름을 만들 수 있습니다.
+```
+
+
+
 * 모델 정의 후 index.js 에서 db 객체에 모델을 담아준다.
 
 * config.json에서 database와 관련된 내용 수정한다.
@@ -1388,7 +1460,7 @@ app.set('view engine', 'pug') // pug를 템플릿 엔진으로 사용합니다.
       attributes: ['name', 'age'],
       where: {
           married: 1,
-          age: { [Op.gt: 30]}
+          age: { [Op.gt]: 30}
       }
   })
   // 시퀄라이즈는 자바스크립트 객체를 사용해서 쿼리를 생성해야 하므로 Op.gt 같은 특수한 연산자들이 사용됩니다. Sequelize 객체 내부의 Op객체를 불러와 사용합니다.

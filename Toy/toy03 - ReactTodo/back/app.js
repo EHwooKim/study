@@ -8,8 +8,10 @@ var cors = require('cors')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var todoRouter = require('./routes/todo')
+var sequelize = require('./models').sequelize
 
 var app = express();
+sequelize.sync()
 
 app.use(cors())
 

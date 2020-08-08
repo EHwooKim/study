@@ -7,9 +7,11 @@ import './Todo.css'
 const Todo = () => {
   interface Todo {
     id: number,
-    value: string,
+    todo: string,
     delete: boolean,
-    createdAt: string
+    created_at: string,
+    updated_at: string,
+    deleted_at: string | null,
   }
 
   const [value, setValue] = useState<string>('')
@@ -24,9 +26,10 @@ const Todo = () => {
       alert('내용을 입력해주세요')
       return
     }
-    api.postNewTodo({ value })
+    api.postNewTodo({ todo: value })
       .then(data => setTodoList(prevTodoList => {
-        return [...prevTodoList, data[0]]
+        console.log(data)
+        return [...prevTodoList, data]
       }))
       .catch(console.error)
     setValue('')
@@ -55,11 +58,6 @@ const Todo = () => {
         return array
       }))
       .catch(console.error)
-    // setTodoList(prevTodoList => {
-    //   let array = [...prevTodoList] // 이거 이렇게 안하고 prevTodoList 하나로 다 하니 원하는대로 안나와..
-    //   array.splice(i, 1)
-    //   return array
-    // })
   }
 
   useEffect(() => { // 처음 접속시 todoList가져오기

@@ -3,9 +3,11 @@ import './TodoLi.css'
 
 interface Todo {
   id: number,
-  value: string,
+  todo: string,
   delete: boolean,
-  createdAt: string
+  created_at: string,
+  updated_at: string,
+  deleted_at: string | null,
 }
 type TodoProps = {
   todo: Todo,
@@ -17,8 +19,8 @@ type TodoProps = {
 
 const TodoLi = ({todo, i, deleteTodo, cancelDeleteTodo, tryDeleteToto}: TodoProps) => {
   return (
-    <li key={todo.value + i} className="todo">
-      <span>{todo.value}</span>
+    <li className="todo">
+      <span>{todo.todo}</span>
       {todo.delete
         ? <span>
             <button className="delete-btn" onClick={() => deleteTodo(todo.id, i)}>삭제</button>

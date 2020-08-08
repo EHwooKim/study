@@ -2,6 +2,7 @@ const baseUrl = 'http://localhost:4000'
 
 module.exports = {
   getAllTodos: () => {
+    console.log('조회')
     return fetch(`${baseUrl}/todo`)
       .then(data => data.json())
   },
@@ -23,6 +24,5 @@ module.exports = {
       },
       body: JSON.stringify(payload)
     })
-      .then(data => data.json())
   }
 }

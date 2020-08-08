@@ -1,8 +1,6 @@
 const express = require('express')
-const mysql = require('mysql')
-const dbconfig = require('../config/database.js')
-const connection = mysql.createConnection(dbconfig)
 const router = express.Router()
+const { Todo } = require('../models')
 
 /*
   get / : 전체 조회
@@ -15,33 +13,43 @@ const router = express.Router()
 */
 
 // Todo 전체 조회
-router.get('/', (req, res) => {
-  connection.query('SELECT * FROM todos', (error, rows) => {
-    if (error) throw error;
-    res.send(rows)
-  })
+router.get('/', (req, res, next) => {
+  console.log('조회!')
+  Todo.findAll({})
+    .then(data => res.send(data))
+    .catch((err) => {
+      console.error(err)
+      next(err)
+    })
 })
 // Toto 등록 - 등록하고나서 후처리를 어떻게 하는게 맞을지..
-router.post('/', (req, res) => {
-  const value = req.body.value
-  connection.query(`INSERT INTO todos (value) VALUES ('${value}')`, (error, rows) => {
-    if (error) throw error
-    connection.query(`SELECT * FROM todos WHERE id=${rows.insertId}`, (error, rows) => {
-      if (error) throw error
-      res.send(rows)
-    })
+router.post('/', (req, res, next) => {
+  const { todo } = req.body
+  Todo.create({
+    todo: todo
   })
+    .then(result => res.send(result))
+    .catch(err => {
+      console.error(err)
+      next(err)
+    })
 })
 // Todo 삭제
-router.delete('/', (req, res) => {
-  const todoId = req.body.id
-  connection.query(`DELETE FROM todos where id=${todoId}`, (error, rows) => {
-    if (error) throw error
-    res.send(rows)
+router.delete('/', (req, res, next) => {
+  const TodoId = req.body.id
+  Todo.destroy({
+    where: {
+      id: TodoId
+    }
   })
+    .then(result => {
+      res.status(200).end()
+    })
+    .catch(err => {
+      console.error(err)
+      next(err)
+    })
 })
-
-
 
 
 module.exports = router
