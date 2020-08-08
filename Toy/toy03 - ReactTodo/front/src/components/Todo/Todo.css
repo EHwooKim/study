@@ -45,3 +45,12 @@ ul {
   margin: 3vh auto 0;
   color: white;
 }
+
+@media screen and (max-width: 768px) {
+  .input-container {
+    width: 90%;
+  }
+  .todo-list-container {
+    width: 90%;
+  }
+}

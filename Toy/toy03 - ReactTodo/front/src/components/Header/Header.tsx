@@ -2,6 +2,8 @@ import React from 'react'
 import './Header.css'
 import logo from '../../assets/logo.svg'
 
+import Watch from '../Watch/Watch'
+
 const Header = () => {
   return (
     <header className="App-header">
@@ -9,6 +11,7 @@ const Header = () => {
       <span>
         React Todo
       </span>
+      <Watch />
     </header>
   )
 }
