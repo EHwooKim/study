@@ -153,3 +153,46 @@ socket.on("event_name", function(data) {
 ```
 
 완성된 클라이언트 코드 [index.html](./socketio-chat/index.html)
+
+## Namespace
+
+[공식문서](https://socket.io/docs/namespaces/)
+
+<hr>
+
+socket.io는 서로 다른 엔드포인트 또는 경로를 할당하는 의미로 socket에 namespace를 지정할 수 있다.
+
+namespace를 특별히 지정하지 않은 경우 default namespace인 `/`를 사용하게 된다.
+
+사용자 지정 namespace를 사용할 경우의 예제는 아래오 같다.
+
+```javascript
+// Server-side
+var nsp = io.of('/my-namespace')
+
+nsp.on('connection', function(socket){
+    console.log('someone connected')
+})
+nsp.emit('hi', 'everyone')
+```
+
+```javascript
+// Client-side
+// 지정 namespace로 접속한다.
+var socket = io('/my-namespace')
+```
+
+## Room
+
+각 namespace 내에서 임의의 채널을 지정할 수 있다. 이를 room이라 하며 이를 통해 room에 join되어 있는 클라이언트 만의 데이터 송수신이 가능하게 된다.
+
+즉 각 클라이언트는 socket을 가지게 되며 이 socket은 namespace를 가지고 각 namespace는 room을 가질 수 있다.
+
+각 socket은 랜덤하고 유일하게 작성된 socket.id로 구별된다. socket.io는 각 socket을 socket.id를 room 시별자로 사용하여 자동으로 room을 생성하고 join시킨다.
+
+특정 클라이언트에게만 메시지를 전송할 때 `io.to(id).emit`을 사용하는데 이것은 사실 디폴트로 생성되어 자동 join된 개별 socket의 room에 소속되어 있는 유일한 클라이언트에 메시지를 전송한 것이다.
+
+room에 join하기 위해서는 `join` 메소드를 사용한다.
+
+완성된 코드 [server](./socketio-chat/app.js), [client](./socketio-chat/index-room.js)
+
