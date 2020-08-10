@@ -104,3 +104,52 @@ io.to(id).emit('evnet_name', data)
 ```
 
 완성된 서버 측 코드 [app.js](./socketio-chat/app.js)
+
+### 02. Client-side
+
+루트 디렉터리에 index.html을 생성한다.
+
+클라이언트 라이브러리는 script tag의 src 어트리뷰트 값으로 "/socket.io/socket.io.js"을 지정하면 된다. socket.io 서버 기동시 socket.io.js 라이브러리를 자동 생성해주기 때문에 실제 path에 socket.io.js 파일을 배치할 필요는 없다. 
+
+```javascript
+<script src="/socket.io/socket.io.js"></script>
+```
+
+socket.io 서버에 접속하기 위해 io() 메소드를 호출한다.
+
+```javascript
+// socket.io 서버에 접속한다
+var socket = io();
+```
+
+이떄 생성된 `socket`으로 **서버로의 메시지 송신** 또는 **서버로부터의 메시지 수신**을 할 수 있다.
+
+**서버로의 메시지 송신**
+
+현재 접속되어 있는 서버로 메시지를 송신하기 위해서는 `emit` 메소드를 사용한다.
+
+| Parameter  | Description                   |
+| ---------- | ----------------------------- |
+| event name | 이벤트 명(string)             |
+| msg        | 송신 메시지(string or object) |
+
+```javascript
+socket.emit("envt_name", msg)
+```
+
+**서버로부터의 메시지 수신**
+
+현재 접속되어 있는 서버로부터의 메시지를 수신하기 위해서는 `on`메소드를 사용한다.
+
+| Parameter  | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| event name | 서버가 메시지 송신 시 지정한 이벤트 명(string)               |
+| function   | 이벤트 핸들러. 핸들러 함수의 인자에 서버가 송신한 메시지가 전달된다. |
+
+```javascript
+socket.on("event_name", function(data) {
+    console.log('Message from Server: ' + data)
+})
+```
+
+완성된 클라이언트 코드 [index.html](./socketio-chat/index.html)

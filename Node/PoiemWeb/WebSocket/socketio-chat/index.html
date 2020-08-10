@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>채팅 채팅</title>
+</head>
+<body>
+  <div class="container">
+    <h3>Socket.io Chat Example</h3>
+    <form>
+      <div>
+        <label for="msgForm">Message: </label>
+        <input type="text" id="msgForm">
+      </div>
+      <button type="submit">Send</button>
+    </form>
+    <div id="chatLogs"></div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    (function() {
+      // socket.io 서버에 접속
+      var socket = io()
+      var chatLogs = document.querySelector("#chatLogs")
+      var form = document.querySelector("form")
+
+      // 서버로 자신의 정보를 전송한다. - 서버에서는 socket.on('login', function(data) {...} 에서 이 메시지를 받는다.
+      socket.emit("login", {
+        name: makeRandomName(),
+        userid: "ehwoo0707@naver.com"
+      })
+      
+      // 서버로부터의 메시지가 수신되면 - io.emit('login', data.name) 로부터 송신된 메시지
+      socket.on("login", function(data) {
+        chatLogs.innerHTML = chatLogs.innerHTML + `<div><strong>${data}</strong> has joined</div>`
+      })
+
+      // 서버로부터의 메시지가 수신되면 - io.emit('chat', msg)으로부터 송신된 메시지
+      socket.on("chat", function(data) {
+        chatLogs.innerHTML = chatLogs.innerHTML + `<div>${data.msg}: from <strong>${data.from.name}</strong></div>`
+      })
+
+      // send 버튼이 클릭되면
+      form.addEventListener('submit', function(e) {
+        e.preventDefault()
+        const msgForm = document.querySelector('#msgForm')
+
+        // 서버로 메시지를 전송한다.
+        socket.emit("chat", { msg: msgForm.value })
+        msgForm.value = ''
+      })
+
+      function makeRandomName(){
+      var name = "";
+      var possible = "abcdefghijklmnopqrstuvwxyz";
+      for( var i = 0; i < 3; i++ ) {
+        name += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return name;
+    }
+    })()
+  </script>
+</body>
+</html>
