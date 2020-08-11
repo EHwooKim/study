@@ -1,6 +1,0 @@
-class TodoInput {
-    constructor($target) {
-        
-        
-    }
-}
