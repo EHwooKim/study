@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import api from '../api'
 
 import { Table } from 'antd'
-import axios from 'axios'
 
 function Album() {
   const [album, setAlbum] = useState([])
@@ -10,12 +11,14 @@ function Album() {
     {
       title: 'Title',
       dataIndex: 'title',
-      render: title => <a>{title}</a>
+      render: (text, record) => (
+        <Link to={`/album/${record.id}`}>{record.title}</Link>
+      ),
     },
   ];
 
   useEffect(() => {
-    axios.get('https://jsonplaceholder.typicode.com/albums')
+    api.Album.all()
       .then(res => setAlbum(res.data))
   }, [])
 

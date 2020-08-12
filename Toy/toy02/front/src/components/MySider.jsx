@@ -22,7 +22,7 @@ function MySider() {
         defaultOpenKeys={['sub1']}
         style={{ height: '100%', borderRight: 0 }}
       >
-        <Menu.Item key="Post" icon={<LaptopOutlined />} > <Link to="/">Post</Link> </Menu.Item>
+        <Menu.Item key="Post" icon={<LaptopOutlined />} > <Link to="/post">Post</Link> </Menu.Item>
         <Menu.Item key="User" icon={<UserOutlined />} ><Link  to="/user">User</Link></Menu.Item>
         <Menu.Item key="Album" icon={<PictureOutlined />} ><Link  to="/album">Album</Link></Menu.Item>
       </Menu>

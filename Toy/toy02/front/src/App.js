@@ -1,11 +1,14 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 
 import MyHeader from './components/MyHeader'
 import MySider from './components/MySider'
 import Post from './components/Post'
+import PostDetail from './components/PostDetail'
 import User from './components/User'
+import UserDetail from './components/UserDetail'
 import Album from './components/Album'
+import AlbumDetail from './components/AlbumDetail'
 
 import { Layout } from 'antd';
 
@@ -25,11 +28,16 @@ function App() {
                 margin: 0,
                 minHeight: 280,
                 backgroundColor: '#fff',
+                overflow: 'scroll'
             }}>
               <Switch>
-                <Route exact path="/" component={Post}/>
-                <Route path="/user" component={User}/>
-                <Route path="/album" component={Album}/>
+                <Redirect exact from="/" to="/post" />
+                <Route exact path="/post" component={Post}/>
+                <Route path="/post/:id" component={PostDetail}/>
+                <Route exact path="/user" component={User}/>
+                <Route path="/user/:id" component={UserDetail}/>
+                <Route exact path="/album" component={Album}/>
+                <Route path="/album/:id" component={AlbumDetail}/>
               </Switch>
             </Content>
           </Layout>

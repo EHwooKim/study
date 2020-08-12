@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 
-import { Card, Col, Row } from 'antd'
+import { useHistory } from 'react-router-dom'
+import api from '../api'
 
-import axios from 'axios'
+import { Card, Col, Row } from 'antd'
 
 function User() {
   const [user, setUser] = useState([])
+  let histody = useHistory()
+
+  const handleClick = id => () => histody.push(`/user/${id}`)
 
   useEffect(() => {
-    axios.get('https://jsonplaceholder.typicode.com/users')
+    api.User.all()
       .then(res => setUser(res.data))
   }, [])
 
@@ -18,7 +22,7 @@ function User() {
       <Row gutter={[16, 16]}>
         {user.map(user => (
           <Col span={6}>
-            <Card title={user.username} hoverable>
+            <Card title={user.username} hoverable onClick={handleClick(user.id)}>
               <p><strong>name: </strong>{user.name}</p>  
               <p><strong>email: </strong>{user.email}</p>  
             </Card>

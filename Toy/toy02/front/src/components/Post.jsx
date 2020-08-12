@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 import { Table } from 'antd'
-import axios from 'axios'
+import api from '../api.js'
 
 function Post() {
   const [post, setPost] = useState([])
@@ -10,12 +11,14 @@ function Post() {
     {
       title: 'Title',
       dataIndex: 'title',
-      render: title => <a>{title}</a>
+      render: (text, record) => (
+        <Link to={`/post/${record.id}`}>{record.title}</Link>
+      ),
     },
   ];
 
   useEffect(() => {
-    axios.get('https://jsonplaceholder.typicode.com/posts')
+    api.Post.all()
       .then(res => setPost(res.data))
   }, [])
 
