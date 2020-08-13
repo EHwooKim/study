@@ -1,14 +1,20 @@
 import React from 'react';
 import './App.css';
 
-import Header from './components/Header/Header'
-import Todo from './components/Todo/Todo'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
+import Intro from './components/Intro/Intro'
+import Home from './components/Home/Home'
 
 const App = () => {
   return (
     <div className="App">
-      <Header />
-      <Todo />
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Intro}></Route>
+          <Route path="/home" component={Home}></Route>
+        </Switch>
+      </Router>
     </div>
   );
 }

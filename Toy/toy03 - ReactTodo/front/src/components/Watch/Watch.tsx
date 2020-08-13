@@ -5,7 +5,6 @@ const Watch = () => {
   let [time, setTime] = useState(0)
 
   const increaseTime = () => {
-    console.log('tic')
     setTime(prevTime => prevTime + 1)
   }
 
