@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', isLoggedIn, async (req, res, next) => {
   const user = req.user
-  req.json(user)
+  res.json(user)
 })
 
 // 회원가입

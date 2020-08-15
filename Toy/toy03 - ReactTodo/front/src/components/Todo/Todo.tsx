@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import api from '../../apis/index'
+import api from '../../apis'
 import TodoLi from './TodoLi/TodoLi'
 
 import './Todo.css'
@@ -27,9 +27,8 @@ const Todo = () => {
       return
     }
     api.postNewTodo({ todo: value })
-      .then(data => setTodoList(prevTodoList => {
-        console.log(data)
-        return [...prevTodoList, data]
+      .then(res => setTodoList(prevTodoList => {
+        return [...prevTodoList, res.data]
       }))
       .catch(console.error)
     setValue('')
@@ -52,7 +51,7 @@ const Todo = () => {
 
   const deleteTodo = (id: number, i: number) => {
     api.deleteTodo({ id: id })
-      .then(data => setTodoList(prevTodoList => {
+      .then(res => setTodoList(prevTodoList => {
         let array = [...prevTodoList]
         array.splice(i, 1)
         return array
@@ -61,7 +60,9 @@ const Todo = () => {
   }
 
   useEffect(() => { // 처음 접속시 todoList가져오기
-    api.getAllTodos().then(setTodoList).catch(console.error)
+    api.getAllTodos()
+      .then(res => setTodoList(res.data))
+      .catch(err => console.error(err))
   }, [])
 
   useEffect(() => {

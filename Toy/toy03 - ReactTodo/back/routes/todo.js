@@ -36,7 +36,9 @@ router.post('/', (req, res, next) => {
 })
 // Todo 삭제
 router.delete('/', (req, res, next) => {
+  console.log('asd',req.body)
   const TodoId = req.body.id
+  console.log(TodoId)
   Todo.destroy({
     where: {
       id: TodoId

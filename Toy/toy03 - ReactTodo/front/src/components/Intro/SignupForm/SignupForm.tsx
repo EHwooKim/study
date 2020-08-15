@@ -1,30 +1,33 @@
 import React, { useState } from 'react'
+import api from '../../../apis'
+
 
 function SignupForm() {
   interface SignupInfo {
-    userid: string,
+    userId: string,
     password: string,
     passwordCheck: string,
-    githubid: string
+    githubId: string
   }
 
   const [signupInfo, setSignupInfo] = useState<SignupInfo>({
-    userid: '',
+    userId: '',
     password: '',
     passwordCheck: '',
-    githubid: ''    
+    githubId: ''    
   })
-  const { userid, password, passwordCheck, githubid } = signupInfo
+  const { userId, password, passwordCheck, githubId } = signupInfo
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('회원가입')
-    // 회원가입 로직
+    api.signup(signupInfo)
+      .then(res => console.log(res))
+
     setSignupInfo({
-      userid: '',
+      userId: '',
       password: '',
       passwordCheck: '',
-      githubid: ''          
+      githubId: ''          
     })
   }
 
@@ -38,10 +41,10 @@ function SignupForm() {
 
   return (
     <form onSubmit={onSubmit}>
-      <input type="text" name="userid" value={userid} onChange={onChange} placeholder="아이디"/>
+      <input type="text" name="userId" value={userId} onChange={onChange} placeholder="아이디"/>
       <input type="password" name="password" value={password} onChange={onChange} placeholder="비밀번호"/>
       <input type="password" name="passwordCheck" value={passwordCheck} onChange={onChange} placeholder="비밀번호 확인"/>
-      <input type="text"name="githubid" value={githubid} onChange={onChange} placeholder="github ID"/>
+      <input type="text"name="githubId" value={githubId} onChange={onChange} placeholder="github ID"/>
       <button type="submit">회원가입</button>
   </form>
   )

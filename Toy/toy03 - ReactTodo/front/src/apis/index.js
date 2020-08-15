@@ -1,28 +1,35 @@
+import axios from 'axios'
 const baseUrl = 'http://localhost:4000'
 
-module.exports = {
+const api = {
   getAllTodos: () => {
-    console.log('조회')
-    return fetch(`${baseUrl}/todo`)
-      .then(data => data.json())
+    return axios.get(`${baseUrl}/todo`)
   },
   postNewTodo: (payload) => {
-    return fetch(`${baseUrl}/todo`,{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(data => data.json())
+    return axios.post(`${baseUrl}/todo`, payload)
   },
   deleteTodo: (payload) => {
-    return fetch(`${baseUrl}/todo`,{
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
+    return axios.delete(`${baseUrl}/todo`, { data: {...payload}})
+  },
+  signup: (payload) => {
+    console.log(payload)
+    return axios.post(`${baseUrl}/user/signup`,
+      payload, {
+      withCredentials: true
+    })
+  },
+  login: (payload) => {
+    return axios.post(`${baseUrl}/user/login`,{
+      ...payload
+    }, {
+      withCredentials: true,
+    })
+  },
+  logout: () => {
+    return axios.get(`${baseUrl}/user/logout`, {
+      withCredentials: true,
     })
   }
 }
+
+export default api
