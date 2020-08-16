@@ -3,10 +3,14 @@ const baseUrl = 'http://localhost:4000'
 
 const api = {
   getAllTodos: () => {
-    return axios.get(`${baseUrl}/todo`)
+    return axios.get(`${baseUrl}/todo`, {
+      withCredentials: true
+    })
   },
   postNewTodo: (payload) => {
-    return axios.post(`${baseUrl}/todo`, payload)
+    return axios.post(`${baseUrl}/todo`, payload, {
+      withCredentials: true
+    })
   },
   deleteTodo: (payload) => {
     return axios.delete(`${baseUrl}/todo`, { data: {...payload}})
@@ -28,6 +32,11 @@ const api = {
   logout: () => {
     return axios.get(`${baseUrl}/user/logout`, {
       withCredentials: true,
+    })
+  },
+  getUser: () => {
+    return axios.get(`${baseUrl}/user`, {
+      withCredentials: true
     })
   }
 }

@@ -17,7 +17,7 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
     const hash = await bcrypt.hash(req.body.password, 12)
     const exUser = await User.findOne({
       where: {
-        userId: req.body.userId
+        userAccount: req.body.userAccount
       }
     })
     if (exUser) {
@@ -27,9 +27,9 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
       })
     }
     await User.create({
-      userId: req.body.userId,
+      userAccount: req.body.userAccount,
       password: hash,
-      githubId: req.body.githubId
+      githubAccount: req.body.githubAccount
     })
     return res.status(200).send('회원가입 성공')
     // passport.authenticate('local', (err, user, info) => {

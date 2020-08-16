@@ -1,14 +1,30 @@
 import React from 'react'
 import './Header.css'
 import logo from '../../assets/logo.svg'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import api from '../../apis'
+import { SET_USER } from '../../App'
 
 import Watch from '../Watch/Watch'
 
-const Header = () => {
+interface propsType {
+  userId: string,
+  dispatch: ({}:any) => void
+}
 
-  const logout = () => api.logout().then(res => console.log(res))
+function Header({ userId, dispatch }: propsType) {
+  const history = useHistory()
+
+  const logout = () => api.logout()
+    .then(res => {
+      dispatch({type: SET_USER, user: {
+        id: 0,
+        userId: '',
+        githubId: '',
+        isAdmin: false
+      }})
+      history.push('/')
+    })
 
   return (
     <header className="App-header">
@@ -17,7 +33,7 @@ const Header = () => {
         React Todo
       </span>
       <small><Link to="/home">일단 투두로 들어가기</Link></small>
-      <button onClick={logout}>로그아웃</button>
+      {userId && <button onClick={logout}>로그아웃</button>}
       <Watch />
     </header>
   )

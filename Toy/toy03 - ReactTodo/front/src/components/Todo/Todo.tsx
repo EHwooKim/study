@@ -4,7 +4,11 @@ import TodoLi from './TodoLi/TodoLi'
 
 import './Todo.css'
 
-const Todo = () => {
+interface propsType {
+  id: number
+}
+
+function Todo({ id }: propsType) {
   interface Todo {
     id: number,
     todo: string,
@@ -64,10 +68,6 @@ const Todo = () => {
       .then(res => setTodoList(res.data))
       .catch(err => console.error(err))
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem('todoList', JSON.stringify(todoList)) // 추가, 삭제시 실행되도록. 처음에 JSON.stringfy-parse 안해서 타입오류 발생
-  }, [todoList])
 
 
   return (

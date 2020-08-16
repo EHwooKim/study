@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataType) => {
-  return sequelize.define('todo', {
+  const Todo = sequelize.define('todo', {
     todo: {
       type: DataType.STRING(100),
       allowNull: false,
@@ -14,4 +14,10 @@ module.exports = (sequelize, DataType) => {
     paranoid: true,
     underscored: true,
   })
+
+  Todo.associate = (db) => {
+    db.Todo.belongsTo(db.User)
+  }
+
+  return Todo
 }

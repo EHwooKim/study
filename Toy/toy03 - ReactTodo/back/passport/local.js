@@ -6,12 +6,12 @@ const { Strategy: LocalStrategy } = require('passport-local')
 module.exports = () => {
   console.log('local - 0')
   passport.use(new LocalStrategy({
-    usernameField: 'userId',
+    usernameField: 'userAccount',
     passwordField: 'password'
-  }, async (userId, password, done) => {
+  }, async (userAccount, password, done) => {
     try {
       console.log('local - 1')
-      const exUser = await db.User.findOne({ where: { userId }})
+      const exUser = await db.User.findOne({ where: { userAccount }})
       if (!exUser) {
         console.log('local - 2')
         return done(null, false, { reason: '존재하지 않는 사용자입니다.' })

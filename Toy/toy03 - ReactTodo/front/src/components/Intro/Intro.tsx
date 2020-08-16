@@ -20,7 +20,7 @@ function Intro({ dispatch }: propsType) {
 
   return (
     <div className="intro-container">
-      <Header />
+      <Header userId={''}dispatch={() =>{}}/>
       <div id="intro-0">
         <fieldset>
           <legend>회원가입</legend>

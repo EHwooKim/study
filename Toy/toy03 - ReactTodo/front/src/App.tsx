@@ -1,14 +1,14 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import './App.css';
-
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import api from './apis'
 
 import Intro from './components/Intro/Intro'
 import Home from './components/Home/Home'
 
 type User = {
-  id: string,
-  userId: string,
+  id: number,
+  userAccount: string,
   githubId: string,
   isAdmin: boolean
 }
@@ -16,8 +16,8 @@ type User = {
 type Action = { type: 'SET_USER', user: User }
 
 const initialState:User = {
-  id: '',
-  userId: '',
+  id: 0,
+  userAccount: '',
   githubId: '',
   isAdmin: false
 }
@@ -35,15 +35,23 @@ function reducer(state: User, action: Action) {
   }
 }
 
-const App = () => {
+function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
+  
+  useEffect(() => {
+    api.getUser()
+    .then(res => {
+      dispatch({type: SET_USER , user: res.data})
+    })
+    .catch(() => {})
+  }, [])
+
   return (
     <div className="App">
-      <div>{state.userId}</div>
       <Router>
         <Switch>
           <Route exact path="/" component={() => <Intro dispatch={dispatch}/>}></Route>
-          <Route path="/home" component={Home}></Route>
+          <Route path="/home" component={() => <Home state={state} dispatch={dispatch} />}></Route>
         </Switch>
       </Router>
     </div>

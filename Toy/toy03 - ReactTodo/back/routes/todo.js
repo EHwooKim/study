@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const { Todo } = require('../models')
+const { isLoggedIn } = require('../routes/middlewares')
+
 
 /*
   get / : 전체 조회
@@ -13,20 +15,29 @@ const { Todo } = require('../models')
 */
 
 // Todo 전체 조회
-router.get('/', (req, res, next) => {
+router.get('/', isLoggedIn, (req, res, next) => {
   console.log('조회!')
-  Todo.findAll({})
-    .then(data => res.send(data))
+  console.log('body', req.user.id)
+  Todo.findAll({
+    where: {
+      userId: req.user.id
+    }
+  })
+    .then(data => {
+      res.send(data)
+    })
     .catch((err) => {
       console.error(err)
       next(err)
     })
 })
 // Toto 등록 - 등록하고나서 후처리를 어떻게 하는게 맞을지..
-router.post('/', (req, res, next) => {
+router.post('/', isLoggedIn, (req, res, next) => {
+  console.log('todo psost id', req.user.id)
   const { todo } = req.body
   Todo.create({
-    todo: todo
+    todo: todo,
+    userId: req.user.id
   })
     .then(result => res.send(result))
     .catch(err => {
@@ -35,7 +46,7 @@ router.post('/', (req, res, next) => {
     })
 })
 // Todo 삭제
-router.delete('/', (req, res, next) => {
+router.delete('/', isLoggedIn, (req, res, next) => {
   console.log('asd',req.body)
   const TodoId = req.body.id
   console.log(TodoId)

@@ -1,6 +1,8 @@
+const db = require(".")
+
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('user', {
-    userId: {
+  const User = sequelize.define('user', {
+    userAccount: {
       type:DataTypes.STRING(15),
       allowNull: false,
       unique: true
@@ -9,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    githubId: {
+    githubAccount: {
       type: DataTypes.STRING(20),
       allowNull: true
     },
@@ -23,4 +25,10 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true,
     underscored: true,
   })
+
+  User.associate = (db) => {
+    db.User.hasMany(db.Todo)
+  }
+
+  return User
 }

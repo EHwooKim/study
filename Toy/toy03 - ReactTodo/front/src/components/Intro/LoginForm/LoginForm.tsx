@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import api from '../../../apis'
+import { SET_USER } from '../../../App'
+import {useHistory} from 'react-router-dom'
 
 interface propsType {
   dispatch: ({}:any) => void
@@ -7,24 +9,28 @@ interface propsType {
 
 function LoginForm({ dispatch }: propsType) {
   interface LoginInfo {
-    userId: string,
+    userAccount: string,
     password: string
   }
 
   const [loginInfo, setLoginInfo] = useState<LoginInfo>({
-    userId: '',
+    userAccount: '',
     password: ''
   })
-  const { userId, password } = loginInfo
+  const { userAccount, password } = loginInfo
 
+  const history = useHistory()
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log('로그인')
     // 로그인 로직
     api.login(loginInfo)
-      .then(res => console.log(res.data))
+      .then(res => {
+        dispatch({type: SET_USER , user: res.data})
+        history.push('/home')
+      })
     setLoginInfo({
-      userId:'',
+      userAccount:'',
       password: ''
     })
   }
@@ -39,7 +45,7 @@ function LoginForm({ dispatch }: propsType) {
 
   return (
     <form onSubmit={onSubmit}>
-      <input type="text" name="userId" value={userId} onChange={onChange} placeholder="아이디"/>
+      <input type="text" name="userAccount" value={userAccount} onChange={onChange} placeholder="아이디"/>
       <input type="password" name="password" value={password} onChange={onChange} placeholder="비밀번호"/>
       <button type="submit">로그인</button>
     </form>
