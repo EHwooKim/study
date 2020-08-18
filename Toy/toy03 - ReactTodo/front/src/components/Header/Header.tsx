@@ -5,8 +5,6 @@ import { Link, useHistory } from 'react-router-dom'
 import api from '../../apis'
 import { SET_USER } from '../../App'
 
-import Watch from '../Watch/Watch'
-
 interface propsType {
   userId: string,
   dispatch: ({}:any) => void
@@ -34,7 +32,6 @@ function Header({ userId, dispatch }: propsType) {
       </span>
       <small><Link to="/home">일단 투두로 들어가기</Link></small>
       {userId && <button onClick={logout}>로그아웃</button>}
-      <Watch />
     </header>
   )
 }
