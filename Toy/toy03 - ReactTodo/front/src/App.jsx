@@ -1,16 +1,23 @@
-import React, { useReducer, useEffect } from 'react';
-import './App.css';
+import React, { useReducer, useEffect, createContext, useMemo } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import api from './apis'
+import './App.css';
 
 import Intro from './components/Intro/Intro'
 import Home from './components/Home/Home'
 
+export const UserContext = createContext({
+  id: 0,
+  userAccount: '',
+  githubAccount: '',
+  isAdmin: false,
+  dispatch: () => {}
+})
 
 const initialState = {
   id: 0,
   userAccount: '',
-  githubId: '',
+  githubAccount: '',
   isAdmin: false
 }
 
@@ -28,7 +35,10 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState) // user state
+  const { id, userAccount, githubAccount, isAdmin } = state
+
+  const value = useMemo(() => ({ id, userAccount, githubAccount, isAdmin, dispatch }), [id])
   
   useEffect(() => {
     api.getUser()
@@ -39,14 +49,16 @@ function App() {
   }, [])
 
   return (
-    <div className="App">
-      <Router>
-        <Switch>
-          <Route exact path="/" component={() => <Intro dispatch={dispatch}/>}></Route>
-          <Route path="/home" component={() => <Home state={state} dispatch={dispatch} />}></Route>
-        </Switch>
-      </Router>
-    </div>
+    <UserContext.Provider value = {value}>
+      <div className="App">
+        <Router>
+          <Switch>
+            <Route exact path="/" component={() => <Intro dispatch={dispatch}/>}></Route>
+            <Route path="/home" component={Home}></Route>
+          </Switch>
+        </Router>
+      </div>
+    </UserContext.Provider>
   );
 }
 

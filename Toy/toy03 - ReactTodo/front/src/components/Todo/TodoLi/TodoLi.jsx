@@ -2,6 +2,8 @@ import React from 'react'
 import './TodoLi.css'
 
 const TodoLi = ({todo, i, deleteTodo, cancelDeleteTodo, tryDeleteToto}) => {
+  console.log('TodoLi rendered')
+
   return (
     <li className="todo">
       <span>{todo.todo}</span>

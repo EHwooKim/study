@@ -1,21 +1,26 @@
-import React from 'react'
-import './Header.css'
-import logo from '../../assets/logo.svg'
+import React, { useContext } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+
+import logo from '../../assets/logo.svg'
+import './Header.css'
+
 import api from '../../apis'
 import { SET_USER } from '../../App'
+import { UserContext } from '../../App'
 
 
 
-function Header({ userId, dispatch }) {
+function Header() {
+  console.log('Header rendered')
   const history = useHistory()
+  const { userAccount, dispatch } = useContext(UserContext)
 
   const logout = () => api.logout()
     .then(res => {
       dispatch({type: SET_USER, user: {
         id: 0,
-        userId: '',
-        githubId: '',
+        userAccount: '',
+        githubAccdount: '',
         isAdmin: false
       }})
       history.push('/')
@@ -28,7 +33,7 @@ function Header({ userId, dispatch }) {
         React Todo
       </span>
       <small><Link to="/home">일단 투두로 들어가기</Link></small>
-      {userId && <button onClick={logout}>로그아웃</button>}
+      {userAccount && <button onClick={logout}>로그아웃</button>}
     </header>
   )
 }

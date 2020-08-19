@@ -1,19 +1,13 @@
 import React from 'react'
 import './Intro.css'
 
-import { Link } from 'react-router-dom'
-
 import Header from '../Header/Header'
 import SignupForm from './SignupForm/SignupForm'
 import LoginForm from './LoginForm/LoginForm'
 
-import api from '../../apis'
 
-import {SET_USER} from '../../App'
-
-
-function Intro({ dispatch }) {
-
+function Intro() {
+  console.log('Intro rendered')
 
   return (
     <div className="intro-container">
@@ -24,8 +18,8 @@ function Intro({ dispatch }) {
           <SignupForm />
         </fieldset>
         <fieldset>
-          <legend>로그인  </legend>
-          <LoginForm dispatch={dispatch} />
+          <legend>로그인</legend>
+          <LoginForm/>
         </fieldset>
       </div>
     </div>

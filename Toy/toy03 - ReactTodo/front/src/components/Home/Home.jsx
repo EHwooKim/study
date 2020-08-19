@@ -5,12 +5,12 @@ import Header from '../Header/Header'
 
 
 
-function Home({state, dispatch}) {
-
+function Home() {
+  console.log('Home rendered')
   return (
     <>
-      <Header userId={state.userAccount} dispatch={dispatch}/>
-      <Todo id={state.id}/>
+      <Header/>
+      <Todo />
     </>
   )
 }

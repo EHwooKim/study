@@ -1,15 +1,22 @@
-import React, { useState } from 'react'
-import api from '../../../apis'
-import { SET_USER } from '../../../App'
+import React, { useState, useContext } from 'react'
 import {useHistory} from 'react-router-dom'
 
+import api from '../../../apis'
+import { SET_USER } from '../../../App'
+import { UserContext } from '../../../App'
 
-function LoginForm({ dispatch }) {
+
+
+
+function LoginForm() {
+  console.log('LoginForm rendered')
+
   const [loginInfo, setLoginInfo] = useState({
     userAccount: '',
     password: ''
   })
   const { userAccount, password } = loginInfo
+  const { dispatch } = useContext(UserContext)
 
   const history = useHistory()
   const onSubmit = (e) => {

@@ -3,6 +3,8 @@ import api from '../../../apis'
 
 
 function SignupForm() {
+  console.log('SignupForm rendered')
+
   const [signupInfo, setSignupInfo] = useState({
     userAccount: '',
     password: '',

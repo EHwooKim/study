@@ -5,8 +5,8 @@ import TodoLi from './TodoLi/TodoLi'
 import './Todo.css'
 
 
-function Todo({ id }) {
-  const [value, setValue] = useState('')
+function Todo() {
+  const [value, setValue] = useState('') // input value
   const [todoList, setTodoList] = useState([])
 
   const onChnageInput = (e) => {
