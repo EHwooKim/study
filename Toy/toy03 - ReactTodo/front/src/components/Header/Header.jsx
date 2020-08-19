@@ -5,12 +5,9 @@ import { Link, useHistory } from 'react-router-dom'
 import api from '../../apis'
 import { SET_USER } from '../../App'
 
-interface propsType {
-  userId: string,
-  dispatch: ({}:any) => void
-}
 
-function Header({ userId, dispatch }: propsType) {
+
+function Header({ userId, dispatch }) {
   const history = useHistory()
 
   const logout = () => api.logout()

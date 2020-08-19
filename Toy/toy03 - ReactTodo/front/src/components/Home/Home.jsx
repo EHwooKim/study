@@ -3,17 +3,9 @@ import React from 'react'
 import Todo from '../Todo/Todo'
 import Header from '../Header/Header'
 
-interface propsType {
-  state: {
-    id: number,
-    userAccount: string,
-    githubId: string,
-    isAdmin: boolean
-  },
-  dispatch: ({}:any) => void
-}
 
-function Home({state, dispatch}: propsType) {
+
+function Home({state, dispatch}) {
 
   return (
     <>

@@ -3,24 +3,16 @@ import api from '../../../apis'
 import { SET_USER } from '../../../App'
 import {useHistory} from 'react-router-dom'
 
-interface propsType {
-  dispatch: ({}:any) => void
-}
 
-function LoginForm({ dispatch }: propsType) {
-  interface LoginInfo {
-    userAccount: string,
-    password: string
-  }
-
-  const [loginInfo, setLoginInfo] = useState<LoginInfo>({
+function LoginForm({ dispatch }) {
+  const [loginInfo, setLoginInfo] = useState({
     userAccount: '',
     password: ''
   })
   const { userAccount, password } = loginInfo
 
   const history = useHistory()
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e) => {
     e.preventDefault()
     console.log('로그인')
     // 로그인 로직
@@ -35,7 +27,7 @@ function LoginForm({ dispatch }: propsType) {
     })
   }
 
-  const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e) => {
     const { name, value } = e.target
     setLoginInfo({
       ...loginInfo,

@@ -3,14 +3,7 @@ import api from '../../../apis'
 
 
 function SignupForm() {
-  interface SignupInfo {
-    userAccount: string,
-    password: string,
-    passwordCheck: string,
-    githubAccount: string
-  }
-
-  const [signupInfo, setSignupInfo] = useState<SignupInfo>({
+  const [signupInfo, setSignupInfo] = useState({
     userAccount: '',
     password: '',
     passwordCheck: '',
@@ -18,7 +11,7 @@ function SignupForm() {
   })
   const { userAccount, password, passwordCheck, githubAccount } = signupInfo
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e) => {
     e.preventDefault()
     api.signup(signupInfo)
       .then(res => console.log(res))
@@ -31,7 +24,7 @@ function SignupForm() {
     })
   }
 
-  const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e) => {
     const { name, value } = e.target
     setSignupInfo({
       ...signupInfo,

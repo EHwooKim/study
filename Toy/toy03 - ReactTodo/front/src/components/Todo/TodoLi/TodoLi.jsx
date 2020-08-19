@@ -1,23 +1,7 @@
 import React from 'react'
 import './TodoLi.css'
 
-interface Todo {
-  id: number,
-  todo: string,
-  delete: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at: string | null,
-}
-type TodoProps = {
-  todo: Todo,
-  i: number,
-  deleteTodo: (id: number, i: number) => void,
-  cancelDeleteTodo: (i:number) => void,
-  tryDeleteToto: (i:number) => void
-}
-
-const TodoLi = ({todo, i, deleteTodo, cancelDeleteTodo, tryDeleteToto}: TodoProps) => {
+const TodoLi = ({todo, i, deleteTodo, cancelDeleteTodo, tryDeleteToto}) => {
   return (
     <li className="todo">
       <span>{todo.todo}</span>

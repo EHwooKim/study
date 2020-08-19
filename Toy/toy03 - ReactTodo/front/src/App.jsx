@@ -6,16 +6,8 @@ import api from './apis'
 import Intro from './components/Intro/Intro'
 import Home from './components/Home/Home'
 
-type User = {
-  id: number,
-  userAccount: string,
-  githubId: string,
-  isAdmin: boolean
-}
 
-type Action = { type: 'SET_USER', user: User }
-
-const initialState:User = {
+const initialState = {
   id: 0,
   userAccount: '',
   githubId: '',
@@ -24,7 +16,7 @@ const initialState:User = {
 
 export const SET_USER = 'SET_USER'
 
-function reducer(state: User, action: Action) {
+function reducer(state, action) {
   switch (action.type) {
     case SET_USER: 
       return {

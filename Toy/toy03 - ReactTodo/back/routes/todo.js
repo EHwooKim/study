@@ -46,7 +46,7 @@ router.post('/', isLoggedIn, (req, res, next) => {
     })
 })
 // Todo 삭제
-router.delete('/', isLoggedIn, (req, res, next) => {
+router.delete('/', isLoggedIn,  (req, res, next) => {
   console.log('asd',req.body)
   const TodoId = req.body.id
   console.log(TodoId)

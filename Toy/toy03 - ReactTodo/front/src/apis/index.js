@@ -13,7 +13,9 @@ const api = {
     })
   },
   deleteTodo: (payload) => {
-    return axios.delete(`${baseUrl}/todo`, { data: {...payload}})
+    return axios.delete(`${baseUrl}/todo`, { data: {...payload},
+      withCredentials: true
+    })
   },
   signup: (payload) => {
     console.log(payload)

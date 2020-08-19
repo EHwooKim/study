@@ -4,27 +4,15 @@ import TodoLi from './TodoLi/TodoLi'
 
 import './Todo.css'
 
-interface propsType {
-  id: number
-}
 
-function Todo({ id }: propsType) {
-  interface Todo {
-    id: number,
-    todo: string,
-    delete: boolean,
-    created_at: string,
-    updated_at: string,
-    deleted_at: string | null,
-  }
+function Todo({ id }) {
+  const [value, setValue] = useState('')
+  const [todoList, setTodoList] = useState([])
 
-  const [value, setValue] = useState<string>('')
-  const [todoList, setTodoList] = useState<Todo[]>([])
-
-  const onChnageInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onChnageInput = (e) => {
     setValue(e.target.value)
   }
-  const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
+  const addTodo = (e) => {
     e.preventDefault()
     if (value === '') {
       alert('내용을 입력해주세요')
@@ -38,14 +26,14 @@ function Todo({ id }: propsType) {
     setValue('')
   }
 
-  const tryDeleteToto = (i: number) => {
+  const tryDeleteToto = (i) => {
     setTodoList(prevTodoList => {
       let array = [...prevTodoList]
       array.splice(i, 1, {...prevTodoList[i], delete: true})
       return array
     })
   }
-  const cancelDeleteTodo = (i: number) => {
+  const cancelDeleteTodo = (i) => {
     setTodoList(prevTodoList => {
       let array = [...prevTodoList]
       array.splice(i, 1, {...prevTodoList[i], delete: false})
@@ -53,7 +41,7 @@ function Todo({ id }: propsType) {
     })
   }
 
-  const deleteTodo = (id: number, i: number) => {
+  const deleteTodo = (id, i) => {
     api.deleteTodo({ id: id })
       .then(res => setTodoList(prevTodoList => {
         let array = [...prevTodoList]

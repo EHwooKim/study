@@ -11,11 +11,8 @@ import api from '../../apis'
 
 import {SET_USER} from '../../App'
 
-interface propsType {
-  dispatch: ({}:any) => void
-}
 
-function Intro({ dispatch }: propsType) {
+function Intro({ dispatch }) {
 
 
   return (
