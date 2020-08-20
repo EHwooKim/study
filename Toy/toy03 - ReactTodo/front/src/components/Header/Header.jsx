@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useCallback, memo } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 
 import logo from '../../assets/logo.svg'
@@ -15,7 +15,7 @@ function Header() {
   const history = useHistory()
   const { userAccount, dispatch } = useContext(UserContext)
 
-  const logout = () => api.logout()
+  const logout = useCallback(() => api.logout()
     .then(res => {
       dispatch({type: SET_USER, user: {
         id: 0,
@@ -24,7 +24,7 @@ function Header() {
         isAdmin: false
       }})
       history.push('/')
-    })
+    }), [])
 
   return (
     <header className="App-header">
@@ -38,4 +38,4 @@ function Header() {
   )
 }
 
-export default Header
+export default memo(Header)

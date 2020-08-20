@@ -35,6 +35,8 @@ function reducer(state, action) {
 }
 
 function App() {
+  console.log('App rendered')
+
   const [state, dispatch] = useReducer(reducer, initialState) // user state
   const { id, userAccount, githubAccount, isAdmin } = state
 

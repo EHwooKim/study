@@ -1,11 +1,9 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useCallback, memo } from 'react'
 import {useHistory} from 'react-router-dom'
 
 import api from '../../../apis'
 import { SET_USER } from '../../../App'
 import { UserContext } from '../../../App'
-
-
 
 
 function LoginForm() {
@@ -19,7 +17,7 @@ function LoginForm() {
   const { dispatch } = useContext(UserContext)
 
   const history = useHistory()
-  const onSubmit = (e) => {
+  const onSubmit = useCallback((e) => {
     e.preventDefault()
     console.log('로그인')
     // 로그인 로직
@@ -32,15 +30,15 @@ function LoginForm() {
       userAccount:'',
       password: ''
     })
-  }
+  }, [loginInfo])
 
-  const onChange = (e) => {
+  const onChange = useCallback((e) => {
     const { name, value } = e.target
     setLoginInfo({
       ...loginInfo,
       [name]: value
     })
-  }
+  }, [loginInfo])
 
   return (
     <form onSubmit={onSubmit}>
@@ -51,4 +49,4 @@ function LoginForm() {
   )
 }
 
-export default LoginForm
+export default memo(LoginForm)

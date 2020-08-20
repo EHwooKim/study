@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, memo, useCallback } from 'react'
 import api from '../../apis'
 import TodoLi from './TodoLi/TodoLi'
 
@@ -6,13 +6,17 @@ import './Todo.css'
 
 
 function Todo() {
+  console.log('Todo rendered')
+
   const [value, setValue] = useState('') // input value
   const [todoList, setTodoList] = useState([])
 
-  const onChnageInput = (e) => {
+  const onChnageInput = useCallback((e) => {
     setValue(e.target.value)
-  }
-  const addTodo = (e) => {
+    console.log(value)
+  }, [value])
+
+  const addTodo = useCallback((e) => {
     e.preventDefault()
     if (value === '') {
       alert('내용을 입력해주세요')
@@ -24,40 +28,34 @@ function Todo() {
       }))
       .catch(console.error)
     setValue('')
-  }
+  }, [value])
 
-  const tryDeleteToto = (i) => {
-    setTodoList(prevTodoList => {
-      let array = [...prevTodoList]
-      array.splice(i, 1, {...prevTodoList[i], delete: true})
-      return array
-    })
-  }
-  const cancelDeleteTodo = (i) => {
-    setTodoList(prevTodoList => {
-      let array = [...prevTodoList]
-      array.splice(i, 1, {...prevTodoList[i], delete: false})
-      return array
-    })
-  }
+  const tryDeleteToto = useCallback((id) => {
+    setTodoList(todoList.map((v) => v.id === id 
+      ? {...v, delete: true}
+      : v))
+  }, [todoList])
 
-  const deleteTodo = (id, i) => {
+  const cancelDeleteTodo = useCallback((id) => {
+    setTodoList(todoList.map((v) => v.id === id 
+      ? {...v, delete: false}
+      : v))
+  }, [todoList])
+
+  const deleteTodo = useCallback((id) => {
     api.deleteTodo({ id: id })
-      .then(res => setTodoList(prevTodoList => {
-        let array = [...prevTodoList]
-        array.splice(i, 1)
-        return array
-      }))
+      .then(res => setTodoList(todoList
+        .filter((v) => v.id !== id))
+      )
       .catch(console.error)
-  }
+  }, [todoList])
 
   useEffect(() => { // 처음 접속시 todoList가져오기
     api.getAllTodos()
       .then(res => setTodoList(res.data))
       .catch(err => console.error(err))
   }, [])
-
-
+  
   return (
     <div className="todo-container">
       <form className="input-container" onSubmit={addTodo}>
@@ -66,11 +64,11 @@ function Todo() {
       </form>
       <div className="todo-list-container">
         <ul>
-          {todoList.map((todo, i) => <TodoLi todo={todo} i={i} deleteTodo={deleteTodo} cancelDeleteTodo={cancelDeleteTodo} tryDeleteToto={tryDeleteToto} key={Date.now() + i}/>)}
+          {todoList.map((todo, i) => <TodoLi todo={todo} i={i} deleteTodo={deleteTodo} cancelDeleteTodo={cancelDeleteTodo} tryDeleteToto={tryDeleteToto} key={todo.todo+i}/>)}
         </ul>
       </div>
     </div>    
   )
 }
 
-export default Todo
+export default memo(Todo)
