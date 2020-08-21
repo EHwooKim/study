@@ -9,11 +9,28 @@
 }
 .App-header {
   height: 5vh;
-  padding-top:1vh;
+  padding: 1vh 12px 0;
   font-size: calc(10px + 2vmin);
   color: white;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+.App-header span {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.App-header button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  font-size: calc(10px + 1vmin);
+  font-weight: bold;
+  color: white;
+  /* position: absolute;
+  right: 12px; */
+  cursor: pointer;
 }
 @keyframes App-logo-spin {
   from {

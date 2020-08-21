@@ -28,12 +28,13 @@ function Header() {
 
   return (
     <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
       <span>
-        React Todo
+        <img src={logo} className="App-logo" alt="logo" />
+        <span>
+          React Todo
+        </span>
       </span>
-      <small><Link to="/home">일단 투두로 들어가기</Link></small>
-      {userAccount && <button onClick={logout}>로그아웃</button>}
+      {userAccount && <button class="logout-btn"onClick={logout}>{userAccount}<small>(logout)</small></button>}
     </header>
   )
 }

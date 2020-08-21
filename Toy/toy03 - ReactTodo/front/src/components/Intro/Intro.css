@@ -13,7 +13,7 @@ input {
 }
 #intro-0 fieldset {
   flex: 1;
-  margin: 10vmin 10vmin;
+  margin: 10vmin 5vmin;
   padding: 5vmin;
   border-radius: 8px;
 }

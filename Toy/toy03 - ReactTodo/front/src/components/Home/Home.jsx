@@ -1,5 +1,6 @@
 import React from 'react'
 
+import './Home.css'
 import Todo from '../Todo/Todo'
 import Header from '../Header/Header'
 
@@ -10,7 +11,9 @@ function Home() {
   return (
     <>
       <Header/>
-      <Todo />
+      <div className="home-content">
+        <Todo />
+      </div>
     </>
   )
 }
