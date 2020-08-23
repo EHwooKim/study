@@ -58,15 +58,15 @@ function Todo() {
   }, [])
 
 
-  useEffect(() => {
-    const focusToInput = () => {
-      inputRef.current.focus()
-    } 
-    window.addEventListener('keydown', focusToInput)
-    return () => {
-      window.removeEventListener('keydown', focusToInput)
-    }
-  }, [])
+  // useEffect(() => { // 타이핑시 포커스.. 다른 input에 포커싱중일 때 처리..
+  //   const focusToInput = () => {
+  //     inputRef.current.focus()
+  //   } 
+  //   window.addEventListener('keydown', focusToInput)
+  //   return () => {
+  //     window.removeEventListener('keydown', focusToInput)
+  //   }
+  // }, [])
   
   return (
     <div className="todo-container">

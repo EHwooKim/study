@@ -1,8 +1,9 @@
 import React from 'react'
 
 import './Home.css'
-import Todo from '../Todo/Todo'
 import Header from '../Header/Header'
+import Todo from '../Todo/Todo'
+import TodoSide from '../TodoSide/TodoSide'
 
 
 
@@ -14,6 +15,7 @@ function Home() {
       <div className="home-content">
         <div></div>
         <Todo />
+        <TodoSide />
       </div>
     </>
   )

@@ -2,6 +2,7 @@ import axios from 'axios'
 const baseUrl = 'http://localhost:4000'
 
 const api = {
+  // Todo
   getAllTodos: () => {
     return axios.get(`${baseUrl}/todo`, {
       withCredentials: true
@@ -17,6 +18,8 @@ const api = {
       withCredentials: true
     })
   },
+
+  // User
   signup: (payload) => {
     console.log(payload)
     return axios.post(`${baseUrl}/user/signup`,
@@ -38,6 +41,11 @@ const api = {
   },
   getUser: () => {
     return axios.get(`${baseUrl}/user`, {
+      withCredentials: true
+    })
+  },
+  searchUser: (payload) => {
+    return axios.get(`${baseUrl}/user/search?userAccount=${payload.userAccount}`,{
       withCredentials: true
     })
   }

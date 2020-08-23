@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares')
+const { Op } = require('sequelize')
 const { User } = require('../models');
 
 const router = express.Router();
@@ -32,6 +33,7 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
       githubAccount: req.body.githubAccount
     })
     return res.status(200).send('회원가입 성공')
+    // 회원가입 후 바로 로그인 - 잠시 주석
     // passport.authenticate('local', (err, user, info) => {
     //   if (err) {
     //     console.error(err)
@@ -88,5 +90,22 @@ router.get('/logout', isLoggedIn, (req, res) => {
     return res.status(200).send('로그아웃 되었습니다.')
   }
 });
+
+router.get('/search', async (req, res) => {
+  const { userAccount } = req.query
+  const results = await User.findAll({
+    where: {
+      userAccount: { 
+        [Op.substring]: userAccount
+      },
+      id: {
+        [Op.not]: req.user.id
+      },
+      isAdmin: false
+    },
+    attributes: ['id', 'userAccount']
+  })
+  res.send(results)
+})
 
 module.exports = router;
