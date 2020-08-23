@@ -55,6 +55,11 @@ function Todo() {
       .then(res => setTodoList(res.data))
       .catch(err => console.error(err))
   }, [])
+  useEffect(() => { // 처음 접속시 todoList가져오기
+    window.addEventListener('click', () => {
+      console.log('clicked')
+    })
+  }, [])
   
   return (
     <div className="todo-container">

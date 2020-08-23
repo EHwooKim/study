@@ -1,4 +1,6 @@
 .home-content {
   width: 100%;
   min-height: 95vh;
+  display: grid;
+  grid-template-columns: 10% 60% 30%;
 }

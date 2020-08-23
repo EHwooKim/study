@@ -1,4 +1,6 @@
-import React, { useState, useCallback, memo } from 'react'
+import React, { useState, useCallback, memo, useRef } from 'react'
+
+import Input from '../LoginForm/Input'
 import api from '../../../apis'
 import { sign } from 'crypto'
 
@@ -12,10 +14,35 @@ function SignupForm() {
     passwordCheck: '',
     githubAccount: ''    
   })
-  const { userAccount, password, passwordCheck, githubAccount } = signupInfo
 
-  const onChange = useCallback((e) => {
-    const { name, value } = e.target
+  const formInfo = useRef([
+    {
+      type : "text",
+      name : "userAccount",
+      placeholder : "아이디",
+    },
+    {
+      type : "password",
+      name : "password",
+      placeholder : "비밀번호",
+    },
+    {
+      type : "password",
+      name : "passwordCheck",
+      placeholder : "비밀번호 확인",
+    },
+    {
+      type : "text",
+      name : "githubAccount",
+      placeholder : "github ID",
+    },
+  ])
+
+  const disabledCheck = useCallback(() => {
+    return Object.values(signupInfo).some((v) => v.length < 1)
+  }, [signupInfo])
+
+  const onChange = useCallback((name, value) => {
     setSignupInfo({
       ...signupInfo,
       [name]: value
@@ -25,23 +52,33 @@ function SignupForm() {
   const onSubmit = useCallback((e) => {
     e.preventDefault()
     api.signup(signupInfo)
-      .then(res => console.log(res))
-
-    setSignupInfo({
-      userAccount: '',
-      password: '',
-      passwordCheck: '',
-      githubAccount: ''          
-    })
+      .then(res => {
+        console.log(res)
+        setSignupInfo({
+          userAccount: '',
+          password: '',
+          passwordCheck: '',
+          githubAccount: ''          
+        })
+      })
+      .catch(err => {
+        console.log('회원가입 실패')
+        console.error(err)
+      })
   }, [signupInfo])
 
   return (
     <form onSubmit={onSubmit}>
-      <input type="text" name="userAccount" value={userAccount} onChange={onChange} placeholder="아이디"/>
-      <input type="password" name="password" value={password} onChange={onChange} placeholder="비밀번호"/>
-      <input type="password" name="passwordCheck" value={passwordCheck} onChange={onChange} placeholder="비밀번호 확인"/>
-      <input type="text" name="githubAccount" value={githubAccount} onChange={onChange} placeholder="github ID"/>
-      <button type="submit">회원가입</button>
+      {formInfo.current
+        .map((v, i) => 
+          <Input 
+            key={i}
+            data={v} 
+            value={signupInfo[v.name]} 
+            onChange={onChange}
+          />
+      )}
+      <button type="submit" disabled={disabledCheck()}>회원가입</button>
   </form>
   )
 }

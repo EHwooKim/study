@@ -12,6 +12,7 @@ function Home() {
     <>
       <Header/>
       <div className="home-content">
+        <div></div>
         <Todo />
       </div>
     </>

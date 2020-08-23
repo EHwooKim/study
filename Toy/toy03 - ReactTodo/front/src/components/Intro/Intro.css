@@ -5,6 +5,9 @@ a {
 input {
   outline: none;
 }
+.intro-container {
+  color: white;
+}
 
 #intro-0 {
   width: 100vw;
@@ -39,6 +42,9 @@ input {
   outline: none;
   cursor: pointer;
 }
+#intro-0 fieldset button:disabled {
+  background-color: lightslategray;
+}
 #intro-0 fieldset:focus-within {
   background-color: #282c34;
   border: 2px solid #61dafb;
@@ -47,6 +53,13 @@ input {
   color: #61dafb;
 }
 
-.intro-container {
-  color: white;
+
+
+@media (max-width: 700px) {
+  #intro-0 {
+    flex-direction: column-reverse;
+  }
+  #intro-0 fieldset {
+    margin: 5vmin 5vmin; 
+  }
 }

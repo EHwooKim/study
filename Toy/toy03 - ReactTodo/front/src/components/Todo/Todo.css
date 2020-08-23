@@ -7,11 +7,12 @@ ul {
   /* background-color: lightgreen; */
 }
 .input-container {
-  width: 50%;
+  width: 70%;
   height: 5vh;
   margin: 0 auto;
   display: flex;
 }
+/* #61dafb */
 .input-container > input {
   width: 85%;
   height: 100%;
@@ -22,26 +23,33 @@ ul {
   border: none;
   color: white;
   background-color: #282c34;
-  border: 2px solid #61dafb;
+  border: 2px solid white;
   border-right: none;
 }
 .input-container > button {
   width: 15%;
   height: 100%;
   display: inline-block;
-  border: 2px solid #61dafb;
+  border: 2px solid white;
   border-radius: 0 5px 5px 0;
   font-size: 16px;
   font-weight: bold;
-  background-color: #61dafb;
+  background-color: white;
   color: #282c34;
   outline: none;
   cursor: pointer;
 }
+.input-container > input:focus {
+  border-color: #61dafb;
+}
+.input-container > input:focus ~  button{
+  border-color: #61dafb;
+  background-color: #61dafb;
+}
 
 
 .todo-list-container {
-  width: 50%;
+  width: 70%;
   margin: 3vh auto 0;
   color: white;
 }
