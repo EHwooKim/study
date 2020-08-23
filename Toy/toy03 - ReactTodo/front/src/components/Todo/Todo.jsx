@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useCallback } from 'react'
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react'
 import api from '../../apis'
 import TodoLi from './TodoLi/TodoLi'
 
@@ -11,9 +11,10 @@ function Todo() {
   const [value, setValue] = useState('') // input value
   const [todoList, setTodoList] = useState([])
 
+  const inputRef = useRef(null)
+
   const onChnageInput = useCallback((e) => {
     setValue(e.target.value)
-    console.log(value)
   }, [value])
 
   const addTodo = useCallback((e) => {
@@ -55,16 +56,22 @@ function Todo() {
       .then(res => setTodoList(res.data))
       .catch(err => console.error(err))
   }, [])
-  useEffect(() => { // 처음 접속시 todoList가져오기
-    window.addEventListener('click', () => {
-      console.log('clicked')
-    })
+
+
+  useEffect(() => {
+    const focusToInput = () => {
+      inputRef.current.focus()
+    } 
+    window.addEventListener('keydown', focusToInput)
+    return () => {
+      window.removeEventListener('keydown', focusToInput)
+    }
   }, [])
   
   return (
     <div className="todo-container">
       <form className="input-container" onSubmit={addTodo}>
-        <input type="text" value={value} onChange={onChnageInput} placeholder="할일을 입력하세요" />
+        <input type="text" ref={inputRef} value={value} onChange={onChnageInput} placeholder="할일을 입력하세요" />
         <button type="submit" >추가</button>
       </form>
       <div className="todo-list-container">
