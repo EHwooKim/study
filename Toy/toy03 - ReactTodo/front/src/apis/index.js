@@ -18,6 +18,11 @@ const api = {
       withCredentials: true
     })
   },
+  getUserTodo: ({ id }) => {
+    return axios.get(`${baseUrl}/todo/${id}`, {
+      withCredentials: true
+    })
+  },
 
   // User
   signup: (payload) => {

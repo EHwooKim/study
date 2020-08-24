@@ -8,8 +8,12 @@ import api from '../../apis/index'
 function TodoSide() {
   const [value, setValue] = useState('')
   const [searchResults, setSearchResults] = useState([])
+  const [followerTodo, setFollowerTodo] = useState([])
+  const [clickedFollower, setClickedFollower] = useState('')
+
   const { Followings } = useContext(UserContext)
   const timeout = useRef(0)
+
   const onChange = (e) => {
     setValue(e.target.value)
   }
@@ -17,7 +21,15 @@ function TodoSide() {
     const result = await api.follow({ id })
     console.log(result)
   }
-  console.log('asd', Followings)
+  const onClickUser = (id, userAccount) => async () => {
+    try {
+      const result = await api.getUserTodo({ id })
+      setFollowerTodo( result.data )
+      setClickedFollower(userAccount)
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   useEffect(() => { // 친구찾기 관련
     if (timeout.current) {
@@ -55,11 +67,26 @@ function TodoSide() {
         }
       </div>
       <div class="follower-list">
+        <h3>친구목록</h3>
         <ul>
-          {Followings.map((v, i) => (
-            <li key = {v.userAccount + i}>{v.userAccount}</li>
+          {Followings && Followings.map((v, i) => (
+            <li key={v.userAccount + i} onClick={onClickUser(v.id, v.userAccount)}>{v.userAccount}</li>
           ))}
         </ul>
+      </div>
+      <div className="follower-status">
+        {clickedFollower &&
+          <> 
+            <h3>{clickedFollower}' Todo</h3>
+            <ul>
+              {
+                followerTodo.map((v, i) => (
+                  <li key={i}>{v.todo}</li>
+                ))
+              }
+            </ul>
+          </> 
+        }
       </div>
     </div>
   )

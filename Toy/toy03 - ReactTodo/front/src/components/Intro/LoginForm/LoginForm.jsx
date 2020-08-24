@@ -3,8 +3,7 @@ import {useHistory} from 'react-router-dom'
 
 import Input from './Input'
 import api from '../../../apis'
-import { SET_USER } from '../../../App'
-import { UserContext } from '../../../App'
+import { SET_USER, UserContext } from '../../../App'
 
 
 function LoginForm() {
@@ -41,7 +40,12 @@ function LoginForm() {
     // 로그인 로직
     api.login(loginInfo)
       .then(res => {
-        dispatch({type: SET_USER , user: res.data})
+        // dispatch({type: SET_USER , user: res.data})
+        api.getUser()
+          .then(res => {
+            // console.log(res)
+            dispatch({type: SET_USER , user: res.data})
+          })
         history.push('/home')
       })
       .catch((err) => {
