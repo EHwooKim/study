@@ -48,6 +48,11 @@ const api = {
     return axios.get(`${baseUrl}/user/search?userAccount=${payload.userAccount}`,{
       withCredentials: true
     })
+  },
+  follow: (payload) => {
+    return axios.post(`${baseUrl}/user/${payload.id}/follow`, {}, {
+      withCredentials: true
+    })
   }
 }
 

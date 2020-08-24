@@ -13,7 +13,16 @@ module.exports = () => {
       console.log('index - 2')
       const user = await db.User.findOne({
         where: { id },
-        attributes: ['id', 'userAccount', 'githubAccount', 'isAdmin' ]
+        attributes: ['id', 'userAccount', 'githubAccount', 'isAdmin' ],
+        include: [{
+          model: db.User,
+          as: 'Followings',
+          attributes: ['id', 'userAccount']
+        }, {
+          model: db.User,
+          as: 'Followers',
+          attributes: ['id', 'userAccount']
+        }]
       })
       return done(null, user)
     } catch(err) {

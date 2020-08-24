@@ -1,21 +1,23 @@
-import React, { memo, useState, useEffect, useRef } from 'react'
+import React, { memo, useState, useEffect, useRef, useContext } from 'react'
 import './TodoSide.css'
 
+import { UserContext } from '../../App'
 import api from '../../apis/index'
 
 
 function TodoSide() {
   const [value, setValue] = useState('')
   const [searchResults, setSearchResults] = useState([])
+  const { Followings } = useContext(UserContext)
   const timeout = useRef(0)
-
   const onChange = (e) => {
     setValue(e.target.value)
   }
-  const onClickBtn = (id) => () => {
-    console.log(id)
+  const onClickBtn = (id) => async () => {
+    const result = await api.follow({ id })
+    console.log(result)
   }
-  
+  console.log('asd', Followings)
 
   useEffect(() => { // 친구찾기 관련
     if (timeout.current) {
@@ -51,6 +53,13 @@ function TodoSide() {
             ))}
           </ul>
         }
+      </div>
+      <div class="follower-list">
+        <ul>
+          {Followings.map((v, i) => (
+            <li key = {v.userAccount + i}>{v.userAccount}</li>
+          ))}
+        </ul>
       </div>
     </div>
   )

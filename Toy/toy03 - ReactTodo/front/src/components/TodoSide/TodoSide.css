@@ -56,6 +56,9 @@
 .search-input:focus+.search-results {
   display: block;
 }
+.search-results:hover {
+  display: block;
+}
 .search-results li{
   padding: 6px 12px;
   text-align: right;

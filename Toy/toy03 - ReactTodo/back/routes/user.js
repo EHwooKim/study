@@ -4,6 +4,7 @@ const passport = require('passport')
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares')
 const { Op } = require('sequelize')
 const { User } = require('../models');
+const db = require('../models');
 
 const router = express.Router();
 
@@ -91,21 +92,57 @@ router.get('/logout', isLoggedIn, (req, res) => {
   }
 });
 
-router.get('/search', async (req, res) => {
-  const { userAccount } = req.query
-  const results = await User.findAll({
-    where: {
-      userAccount: { 
-        [Op.substring]: userAccount
+// 유저 검색
+router.get('/search', async (req, res, next) => {
+  try {
+    const { userAccount } = req.query
+    const results = await User.findAll({
+      where: {
+        userAccount: { 
+          [Op.substring]: userAccount
+        },
+        id: {
+          [Op.not]: req.user.id
+        },
+        isAdmin: false
       },
-      id: {
-        [Op.not]: req.user.id
-      },
-      isAdmin: false
-    },
-    attributes: ['id', 'userAccount']
-  })
-  res.send(results)
+      attributes: ['id', 'userAccount']
+    })
+    res.send(results)
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+
 })
 
 module.exports = router;
+
+// 팔로우
+router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where : { id: req.user.id },
+    })
+    await me.addFollowing(req.params.id)
+    res.send(req.params.id)
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+})
+
+router.delete('/:id/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where : { id: req.user.id },
+    })
+    await me.removeFollowing(req.params.id)
+    res.send(req.params.id)
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+})
+
+
