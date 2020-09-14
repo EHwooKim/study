@@ -45,9 +45,17 @@ router.post('/products', (req, res) => {
   let limit = req.body.limit ? parseInt(req.body.limit) : 10
   let skip = req.body.skip ? parseInt(req.body.skip) : 0
 
+  // filter
+  let findArgs = {}
+  for (let key in req.body.filters) {
+    if (req.body.filters[key].length > 0) {
+      findArgs[key] = req.body.filters[key]
+    }
+  }
+
   // find() : 모든 정보 검색 인자로 조건을 넣을 수도 있다.
   // populate : writer에 현재 id만 들어있는데 writer의 모든 정보를 가져오기 위해 사용
-  Product.find()
+  Product.find(findArgs)
     .populate('writer')
     .skip(skip)
     .limit(limit)
