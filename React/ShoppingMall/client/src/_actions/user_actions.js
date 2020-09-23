@@ -68,8 +68,9 @@ export function getCartItems(cartItems, userCart) {
         .then(res => {
             // cartItems에 해당하는 정보를 가져오고 quantity 정보를 넣어준다.
             userCart.forEach(cartItem => {
-                res.data.product.forEach((productDetail, index) => {
+                res.data.forEach((productDetail, index) => {
                     if (cartItem.id === productDetail._id) {
+                        console.log(res.data, cartItem)
                         res.data[index].quantity = cartItem.quantity
                     }
                 })
