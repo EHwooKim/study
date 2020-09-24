@@ -1,7 +1,7 @@
 import React from 'react'
-import './UserCardBlock.css'
+import './UserCartBlock.css'
 
-function UserCardBlock(props) {
+function UserCartBlock(props) {
 
   const renderCartImage = (images) => {
     if (images.length > 0) {
@@ -25,7 +25,7 @@ function UserCardBlock(props) {
           $ {product.price}
         </td>
         <td>
-          <button>
+          <button onClick={() => props.removeItem(product._id)}>
             Remove
           </button>
         </td>
@@ -55,4 +55,4 @@ function UserCardBlock(props) {
 }
 
 
-export default UserCardBlock
+export default UserCartBlock
