@@ -141,5 +141,52 @@ router.get('/removeFromCart', auth, (req, res) => {
         }
     )
 })
+router.get('/removeFromCart', auth, (req, res) => {
+    // cart안에 내가 지우려고 한 상품 지우기
+    User.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+            "$pull": 
+                { "cart": { "id": req.query.id } }
+        },
+        { new: true },
+        (err, userInfo) => {
+            let cart = userInfo.cart
+            // product collection에서 현재 남아있는 상품들의 정보를 가져오기
+            let array = cart.map(item => {
+                return item.id
+            })
+            Product.find({ _id: { $in: array }})
+                .populate('writer')
+                .exec((err, productInfo) => {
+                    return res.status(200).json({
+                        productInfo,
+                        cart
+                    })
+                })
+        }
+    )
+})
+
+router.post('/successBuy', auth, (req, res) => {
+    // User collection 안에 history 필드 안에 간단 결제 내역 넣기
+    let histody = []
+    let transactionData = {}
+
+    req.body.cartDetail.forEach((item) => {
+        histody.push({
+            dateOfPurchase: Date.now(),
+            name: item.title,
+            id: item.id,
+            price: item.price,
+            quantity: item.quantity,
+            paymentId: req.body.paymentData.paymentID
+        })
+    })
+
+    // payment collection 안에 상세 결제 내역 넣기
+
+    // product collection 안에 있는 sold 필드 정보 업데이트 시켜주기
+})
 
 module.exports = router;

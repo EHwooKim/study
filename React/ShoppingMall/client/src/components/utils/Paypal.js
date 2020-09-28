@@ -4,7 +4,8 @@ import PaypalExpressBtn from 'react-paypal-express-checkout';
 export default class Paypal extends React.Component {
     render() {
         const onSuccess = (payment) => {
-            		console.log("The payment was succeeded!", payment);
+            console.log("The payment was succeeded!", payment);
+            this.props.onSuccess(payment)
         }
  
         const onCancel = (data) => {
@@ -17,10 +18,10 @@ export default class Paypal extends React.Component {
  
         let env = 'sandbox'; 
         let currency = 'USD'; 
-        let total = 1; 
+        let total = this.props.total;
  
         const client = {
-            sandbox:    'YOUR-SANDBOX-APP-ID',
+            sandbox:    'AYpLCfqp_Slf4xJPFDkNdu25ZJIt_NLKAhiHF8NGy6kXLDNeCHzQ8l6NcH0ZmlImHZgmsSVt5myjuNBX',
             production: 'YOUR-PRODUCTION-APP-ID',
         }
 
