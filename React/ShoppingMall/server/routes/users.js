@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { User } = require("../models/User");
 const { Product } = require("../models/Product");
+const { Payment } = require("../models/Payment");
 
 const { auth } = require("../middleware/auth");
+const async = require('async')
 
 //=================================
 //             User
@@ -170,11 +172,11 @@ router.get('/removeFromCart', auth, (req, res) => {
 
 router.post('/successBuy', auth, (req, res) => {
     // User collection 안에 history 필드 안에 간단 결제 내역 넣기
-    let histody = []
+    let history = []
     let transactionData = {}
 
     req.body.cartDetail.forEach((item) => {
-        histody.push({
+        history.push({
             dateOfPurchase: Date.now(),
             name: item.title,
             id: item.id,
@@ -185,8 +187,59 @@ router.post('/successBuy', auth, (req, res) => {
     })
 
     // payment collection 안에 상세 결제 내역 넣기
+    transactionData.user = {
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email
+    }
+    transactionData.data = req.body.paymentData
+    transactionData.product = history
 
-    // product collection 안에 있는 sold 필드 정보 업데이트 시켜주기
+    // history 정보 저장
+    User.findOneAndUpdate(
+        { _id: req.user._id },
+        { $push: { history: history }, $set: { cart: [] } },
+        { new: true },
+        (err, user) => {
+            if (err) return res.json({ success: false, err })
+
+            // Payment에 transactionData 정보 저장
+            const payment = new Payment(transactionData)
+            payment.save((err, doc) => {
+                if (err) return res.json({ success: false, err })
+                
+                // product collection 안에 있는 sold 필드 정보 업데이트 시켜주기
+                
+                // 상품 당 몇개의 quantity를 샀는지
+                let products = []
+                doc.product.forEach(item => {
+                    products.push({ id: item.id, quantity: item.quantity })
+                })
+
+                // 반복문으로 Product를 업데이트 시키는 것 너무 코드가 이상하다. 그래서 사용하는 async
+                async.eachSeries(products, (item, callback) => {
+                    Product.update(
+                        { _id: item.id },
+                        {
+                            $inc: {
+                                "sold": item.quantity
+                            }
+                        },
+                        { new: false },
+                        callback
+                    )
+                }, (err) => {
+                    if (err) return res.status(400).json({ success: false, err })
+                    res.status(200).json({
+                        success: true,
+                        cart: user.cart,
+                        cartDetail: []
+                    })
+                })
+            })
+
+        }
+    )
 })
 
 module.exports = router;
