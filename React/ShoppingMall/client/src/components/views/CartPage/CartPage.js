@@ -79,14 +79,12 @@ function CartPage(props) {
               <p>No Items In the Cart</p>
             </>
       }
-
-      <Paypal 
-        total={total}
-        onSuccess={transactionSuccess}
-      />
-
-
-      
+      {showTotal &&
+        <Paypal 
+          total={total}
+          onSuccess={transactionSuccess}
+        />
+      }      
     </div>
   )
 }

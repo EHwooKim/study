@@ -179,7 +179,7 @@ router.post('/successBuy', auth, (req, res) => {
         history.push({
             dateOfPurchase: Date.now(),
             name: item.title,
-            id: item.id,
+            id: item._id,
             price: item.price,
             quantity: item.quantity,
             paymentId: req.body.paymentData.paymentID
