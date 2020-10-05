@@ -7,7 +7,6 @@ function FileUpload(props) {
   const [images, setImages] = useState([])
 
   const dropHandler = (files) => {
-    // 파일 전송시에는 FormData, config 필요
     let formData = new FormData()
     const config = {
       haeder: {'content-type': 'multipart/form-data'}

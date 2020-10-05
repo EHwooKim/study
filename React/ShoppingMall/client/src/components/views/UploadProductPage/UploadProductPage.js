@@ -47,7 +47,6 @@ function UploadProductPage(props) {
     }
 
     const body = {
-      // 로그인 된 사람의 ID 가져오기 - redux에서 가져오거나 auth.js 에서 넘겨준 props에서 가져오면 된다.
       writer: props.user.userData._id,
       title: title,
       description: description,
@@ -60,7 +59,7 @@ function UploadProductPage(props) {
       .then(res => {
         if (res.data.success) {
           alert('상품 업로드에 성공했습니다.')
-          props.history.push('/') // 여기도 props에서 가져온 이유가..?
+          props.history.push('/') 
         } else {
           alert('상품 업로드에 실패했습니다.')
         }

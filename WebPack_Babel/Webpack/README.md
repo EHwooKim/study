@@ -1,4 +1,4 @@
-# 웹팩 (Webpack)
+# **웹팩** (Webpack)
 
 ## 1. 배경
 
@@ -23,7 +23,7 @@ $npm i -D webpack webpack-cli
 
 ## 3. 실행
 
-* 도움말 확인
+* 도움말 `확인`
 
   ```bash
   $node_modules/.bin/webpack --help 
@@ -91,5 +91,259 @@ $npm i -D webpack webpack-cli
       $npm run build
       ```
 
-    
 
+## 4. 로더
+
+웹팩은 자바스크립트 모듈 뿐만아니라 스타일시트, 이미지, 폰트 등 모두 모듈로 바라보기 때문에 import 구문을 사용하면 자바스크립트 코드 안으로 가져올 수 있다.
+
+그리고 이런 것이 가능한 이유는 웹팩의 `로더` 덕분이다. 로더는 타입스크립트같은 다른 언어를 자바스크립트 문법으로 변환해 주거나 이미지를 data URL 형식의 문자열로 변환하고 CSS 파일을 자바스크립트에서 직접 로딩할 수 있도록 해준다.
+
+<hr/>
+
+* 사용
+
+  * `로더`는 **함수**로 작동한다.
+
+    ```javascript
+    // my-webpack-loader.js
+    module.exports = function myWebpackLoader (content) {
+      console.log('my-webpack-loader가 작동중')
+      return content
+    }
+    ```
+
+  * webpack.config.js에서 `module` 객체에 `rules` 배열에 정의하여 사용할 수 있다.
+
+    ```javascript
+    // webpack.config.js
+    ...
+      module: {
+        rules: [
+          {
+            test: /\.js$/, // '로더가 처리할 파일의 패턴'
+            use: [
+        	     path.resolve('./my-webpack-loader') // '해당 파일에 적용할 로더'   
+            ]
+          }
+        ]
+      }
+  ...
+    ```
+
+  * 실행 결과
+
+    ![loader](https://user-images.githubusercontent.com/52653793/95039205-15ff0000-070b-11eb-9a58-32f48ca49218.png)
+
+  * `console.log`를 `alert`로 바꿔주는 로더를 만들어보자.
+  
+    ```javascript
+    module.exports = function myWebpackLoader (content) {
+      return content.replace('console.log(', 'alert(')
+    }
+    ```
+
+
+### css-loader
+
+CSS 파일을 `import`하여 build를 해보면 에러가 발생한다.
+
+![cssLoader](https://user-images.githubusercontent.com/52653793/95039568-19df5200-070c-11eb-98a5-09b2559fd70d.png)
+
+CSS 파일을 자바스크립트에서 불러와 사용하려면 CSS를 **모듈로 변환하는 작업**이 필요하고`css-loader`가 그런 역할을 해준다.
+
+* 설치 및 설정
+
+  ```bash
+  $npm i css-loader
+  ```
+
+  ```javascript
+  // webpack.config.js
+  ...
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+              'css-loader'
+          ]
+        }
+      ]
+    }
+  ...
+  ```
+
+* 빌드를 해보면 아래와 같은 결과가 나온다.
+
+  ![afterLoader](https://user-images.githubusercontent.com/52653793/95040275-1f3d9c00-070e-11eb-8e51-c42b94d1e36f.png)
+
+* 하지만 `index.html`파일을 열어보면 아직 css가 적용이 안된 것을 확인할 수 있는데, CSS 코드는 [CSSOM](https://developer.mozilla.org/ko/docs/Web/API/CSS_Object_Model)의 형태로 바뀌어야 브라우저에 적용된다. 그러기 위해 HTML 파일에서 CSS 파일을 직접 불러오거나 인라인  스크립트로 넣어주는 등의 처리가 필요하다. **이때 필요한 것이 `style-loader`**
+
+### style-loader
+
+Javascript로 변경된 스타일 코드를 HTML에 적용시켜주는 로더.
+
+* 설치 및 설정
+
+  ```bash
+  $npm i style-loader
+  ```
+
+  ```javascript
+  // webpack.config.js
+  ...
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+              'style-loder',
+              'css-loader'
+          ]
+        }
+      ]
+    }
+  ...
+  ```
+
+  > :lipstick: use 배열안에 여러개의 로더를 적용시킬 수 있는데 순서는 **밑에서부터 위로 (배열 뒤쪽 요소에서 앞쪽 요소)** 적용되기 때문에 style-loader를 위에 적어주었다.****
+
+### file-loader
+
+CSS뿐 아니라 소스코드에서 사용하는 모든 파일을 모듈로 사용하게끔 할 수 있다. 
+
+파일을 모듈 형태로 지원하고 웹팩 아웃풋에 파일을 옮겨주는 것이 `file-loader`가 하는 일이다.
+
+가령 CSS에서 `url()` 함수에 이미지 파일 경로를 지정할 수 있는데 웹팩은 `file-loader`를 이용해 이를 처리한다.
+
+* 설치 및 설정
+
+  ```bash
+  $npm i file-loader
+  ```
+
+  ```javascript
+  // webpack.config.js
+  ...
+    module: {
+      rules: [
+        ...
+        {
+          test: /\.png$/,
+          use: [
+            'file-loader'
+          ]
+        }
+      ]
+    }
+  ...
+  ```
+
+이렇게 설정 후 빌드하여 `index.html`파일을 열어보면 아래와같이 css코드로 변경되었음에도 배경 사진이 적용이 안된 것을 확인할 수 있다.
+
+![bgImg](https://user-images.githubusercontent.com/52653793/95041075-9ecc6a80-0710-11eb-8494-fa7b6ebb4688.png)
+
+이는 `index.html` 파일 입장에서는 해당 파일이 같은 경로가 아닌  `src` 폴더 안에 있기 때문에 발생한 에러이다.
+
+`webpack.cofing.js` 를 아래와 같이 바꿔보자.
+
+```javascript
+// webpack.config.js
+
+{
+  test: /\.png$/,
+  loader: 'file-loader',
+  options: {
+    publicPath: './dist/', 
+    name: '[name].[ext]?[hash]'
+  }
+}
+```
+
+* `publicPath` - `file-loader`가 처리한 파일을 모듈로 사용했을 때 경로 앞에 추가되는 문자열
+* `name` - `file-loader`가 파일을 output에 복사할 때 사용하는 파일명을 설정해준다
+  * `[name]` - 원본 파일명
+  * `[ext]` - 확장자명
+  * `[hash] ` - 캐시 무력화를 위한 쿼리스트링 ( 정적 파일의 경우 성능을 위해 캐싱하여 사용하는 경우가 많다보니 같은 파일명을 사용하지만 파일이 바뀌었을 때 오작동 하는 것을 방지해주는 해쉬값 )
+
+이제 빌드를 다시 해보면 경로와 파일명이 아래와 같이 적용되어 `index.html`이 정상 작동하는 것을 확인할 수 있다.
+
+![fileLoader](https://user-images.githubusercontent.com/52653793/95041490-c7089900-0711-11eb-98ea-69218a453068.png)
+
+### url-loader
+
+사용하는 이미지가 많아지면 네트워크에 부담이 되고 사이트 성능에도 영향을 줄 수 있다.
+
+만약 한 페이지에서 작은 이미지 여러개를 사용한다면 [Data URI](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/Data_URIs)이라는 스키마를 사용하는 것이 좋다.
+
+```
+<img src="data:image/png;base64,iVBORw0KGgoAAA
+ANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4
+//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU
+5ErkJggg==" alt="Red dot" />
+```
+
+`img태그`를 사용할 때 `src`에 이미지 경로를 입력하는데 위와 같이 **문자열 형태**를 입력할 수도 있다.
+
+`데이터 포맷(image/png)`를 정하고 `인코딩 방식(base64)`, 그리고 `해당 값(iVB...)`을 적어주면 그것을 이미지로 랜더링 해주는 방식이다.
+
+이미지 경로(주소)를 적어줄 때와 같은 네트워크 통신을 거치지 않고 이미지를 보여주기 때문에 보다 효율적이다.
+
+<hr />
+
+```javascript
+import nyancat from './nyancat.jpg'
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.innerHTML = `
+    <img src="${nyancat}" />
+  `
+})
+```
+
+```javascript
+// webpack.config.js
+{
+  test: /\.(png|jpg|gif|svg)$/,
+  loader: 'file-loader',
+  options: {
+    publicPath: './dist/',
+    name: '[name].[ext]?[hash]'
+  }
+}
+```
+
+위 처럼 file-loader가 jpg 파일에도 적용되도록 설정을 바꾸어 실핼해도 정상작동한다.
+
+하지만 작은 크기의 nyancat은 굳이 파일을 dist에 복사할 필요 없이 바로 base64 인코딩하여 넣어주면 좋다.
+
+* 설치 및 설정
+
+  ```bash
+  $npm url-loader
+  ```
+
+  ```javascript
+  // webpack-config.js
+  {
+    test: /\.(png|jpg|gif|svg)$/,
+    loader: 'url-loader',
+    options: {
+      publicPath: './dist/',
+      name: '[name].[ext]?[hash]', // file-loader가 output에 복사할 때 사용하는 파일 이름
+      limit: 20000,
+    }
+  }
+  ```
+
+  * `limit` - 해당 값 미만의 파일은 `url-loader`로,  이상의 파일은 `file-loader`로 처리한다.
+
+    ![limit](https://user-images.githubusercontent.com/52653793/95042592-611e1080-0715-11eb-84f7-1dcac519595f.png)
+
+실핼 결과, 용량이 큰 bg.png은 `file-loader`가 적용되어 `dist` 폴더에 적용되었고,
+
+용량이 작은 nyancat.jpg는 `url-loader`가 적용되어 `Data URI` 값으로 적용된 것을 확인할 수 있다.
+
+![fileLoader2](https://user-images.githubusercontent.com/52653793/95042666-962a6300-0715-11eb-8ad7-30fb38265916.png)
+
+![result](https://user-images.githubusercontent.com/52653793/95042788-e99cb100-0715-11eb-9cd1-c5efabda3378.png)
