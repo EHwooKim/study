@@ -2,7 +2,7 @@
 
 ## 1. 배경
 
-* 모듈 시스템 [app.js](./01/src/app.js), [math.js](./01/src/math.js)
+* 모듈 시스템 [app.js](./01(배경, 모듈)/src/app.js), [math.js](./01(배경, 모듈)/src/math.js)
 
   * 전역 스코프에 등록하는 방식 
 
@@ -64,7 +64,7 @@ $npm i -D webpack webpack-cli
 
 * 매번 긴 명령어를 사용할 수 없으니 웹팩 설정 파일을 통해 웹팩을 사용해보자.
 
-  * `--config` - 웹팩 설정 파일을 지정할 수 있다. [webpack.config.js](./02/webpack.config.js)
+  * `--config` - 웹팩 설정 파일을 지정할 수 있다. [webpack.config.js](./02(웹팩)/webpack.config.js)
 
     ```bash
     --config Path to the config file
@@ -347,3 +347,288 @@ document.addEventListener('DOMContentLoaded', () => {
 ![fileLoader2](https://user-images.githubusercontent.com/52653793/95042666-962a6300-0715-11eb-8ad7-30fb38265916.png)
 
 ![result](https://user-images.githubusercontent.com/52653793/95042788-e99cb100-0715-11eb-9cd1-c5efabda3378.png)
+
+## 4. 플러그인
+
+로더가 파일 단위로 처리하는 반면 플러그인은 번들된 결과물을 처리한다. 즉, 로더와 다르게 한번만 실행된다.
+
+번들된 자바스크립트를 **난독화** 한다거나 **특정 텍스트를 추출**하는 용도로 사용한다.
+
+함수로 작성한 로더와 달리 플러그인은 클래스로 작성한다.
+
+[커스터 플러그인](./06(웹팩-플러그인)/my-webpack-plugin.js)을 통해 플러그인이 어떻게 작동하는지 알아보자
+
+### BannerPlugin
+
+웹팩에 내장된 플러그인으로 결과물에 빌드 정보다 커밋 버전같은 것을 추가할 수 있다.
+
+```javascript
+// webpack.config.js
+const webpack = require('webpack')
+const childProcess = require('child_process')
+
+plugins: [
+  new webpack.BannerPlugin({
+    banner: `
+      Build Date: ${new Date().toLocaleString()}
+      Commit Version: ${childProcess.execSync('git rev-parse --short HEAD')}
+      Author: ${childProcess.execSync('git config user.name')}
+    `
+  })
+]
+```
+
+* `child_process` - 터미널 명령어를 실행시킬 수 있는 node 모듈
+
+![banner](https://user-images.githubusercontent.com/52653793/95293063-b55bf880-08ad-11eb-8e1f-144c760a7f40.png)
+
+* 이렇게 배너정보를 추가해서 빌드, 배포시 정적파일들이 잘 배포되었는지, 캐시에 의해 갱신이 안되는 것은 없는지 확인할 떄 사용한다.
+
+### DefinePlugin
+
+소스코드를 개발환경과 운영환영으로 나누어 운영한다. 가령 환경에 따라 API 서버 주소가 다를 수 있는데 그때마다 개발자가 직접 수정해주면 에러가 나기 쉽다. 이러한 환경 의존적인 정보는 소스가 아닌 다른 곳에서 관리하는 것이 좋다.
+
+`DefinePlugin`은 이러한 환경 정보를 제공할 떄 사용한다. (웹팩 기본 플러그인)
+
+```javascript
+// webpack.config.js
+const webpack = require('webpack')
+...
+plunins: [
+    new webpack.DefinePlugin({})
+]
+```
+
+* 빈 객체를 전달해도 기본적으로 노드 환경정보인 `process.env.NODE_ENV`를 넣어준다.
+
+  웹팩 설정의 node에 설정한 값이 여기에 들어간다.
+
+  ```javascript
+  // app.js
+  console.log(process.env.NODE_ENV) // 'development'
+  ```
+
+  * 현재 webpack mode인 development가 찍히는것을 확인할 수 있다.
+
+```javascript
+new webpack.DefinePlugin({
+  TWO: '1+1',
+  'api.domain': JSON.stringify('http://dev.api.domain.com')
+})
+```
+
+* 이렇게 직접 환경 변수를 넣어줄 수도 있으며 **TWO** 라는 이름으로 전역에서 접근이 가능하며 **1+1**이라는 :lipstick: `코드`가 들어가는 것이기 때문에 **2**가 출력된다.
+
+  ```javascript
+  //app.js
+  console.log(TWO) // 2
+  console.log(api.domain) // http://dev.api.domain.com
+  ```
+
+* 코드가 아닌 `값`을 전달하고 싶다면 `JSON.stringify()`를 사용하면된다.
+
+### HtmlTemplatePlugin
+
+`HtmlTemplatePlugin`은 HTML 파일을 후처리하는데 사용한다. 빌드 타임의 값을 넣거나 코드를 압축할 수 있다.
+
+* 설치 빛 사용
+
+```bash
+$npm i -D html-webpack-plugin
+```
+
+```javascript
+// webpack.config.js
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+...
+plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    })
+]
+```
+
+지금까지는 HTML 파일은 빌드하지않고, 다른 파일들만 빌드하여 HTML파일에서 main.js의 주소도 직접 입력하여 사용했는데 이제는 이 플러그인을 사용하여 HTML 파일도 빌드하여 전에 비해 동적인 html 파일을 만들 수 있다.
+
+![htmlBefore](https://user-images.githubusercontent.com/52653793/95299601-f1e12180-08b8-11eb-9ed3-8ded855b8329.png)
+
+> src/index.html
+
+* index.html 파일에서 main.js를 직접 불러오지 않아도 된다.
+
+빌드를 해보면, 지금까지와는 다르게 dist 폴더 안에 `index.html` 파일도 생긴 것을 확인할 수 있다.
+
+![distIndex](https://user-images.githubusercontent.com/52653793/95299855-5603e580-08b9-11eb-888e-868b87a33b00.png)
+
+> dist/index.html
+
+* 자동으로 `main.js` 를 불러온다.( webpack output ) 
+
+이렇게 HTML파일을 빌드 과정에 포함하기 때문에 보다 의존적이지 않은 코드를 만들 수 있다.
+
+![error](https://user-images.githubusercontent.com/52653793/95300111-b004ab00-08b9-11eb-8668-75361a1469be.png)
+
+> index.html의 경로가 바뀌면서 발생한 오류.
+
+* `url-loader`에서 사용한 `publicPath`를 지워주면 해결된다.
+
+**`HtmlTemplatePlugin`을 사용하면 HTML파일을 유동적으로 만드는데 용이하다**
+
+#### 활용 01.
+
+* [EJS](https://ejs.co/) 문법과 함께 개발 버전에 따라 title명을 다르게 만들기.
+
+  ```html
+  <!-- src/index.html -->
+  ...
+  <title>Document<%= title %></title>
+  ```
+
+  ```javascript
+  // webpack.config.js
+  ...
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      templateParameters: {
+        title: '이름 변경'
+      }
+    })
+  ```
+
+  * 결과
+
+    ![title](https://user-images.githubusercontent.com/52653793/95300796-a0399680-08ba-11eb-83d2-6d1b243058a1.png)
+
+  * 활용
+
+  ```javascript
+  // webpack.config.js
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      templateParameters: {
+        title: process.env.NODE_ENV === 'development' ? '(개발용)' : ''
+      }
+    })
+  ```
+
+  ```bash
+  $NODE_ENV=development npm run build
+  ```
+
+  ```html
+  <!--결과 - dist/index.html-->
+  ...
+  <title>Document(개발용)</title>
+  ```
+
+#### 활용 02.
+
+* `minify`옵션을 통해 HTML파일 압축 및 주석 제거할 수 있다. 
+
+  ```javascript
+  new HtmlWebpackPlugin({
+      template: './src/index.html',
+      templateParameters: {
+        title: process.env.NODE_ENV === 'development' ? '(개발용)' : ''
+      },
+      minify: {
+        collapseWhitespace: true, // 빈칸 제거
+        removeComments: true // 주석 제거
+      }
+    })
+  ```
+  
+* 결과
+
+  ![result](https://user-images.githubusercontent.com/52653793/95301666-dd525880-08bb-11eb-847e-4cb33e4972a2.png)
+
+  > 빈칸과 주석이 제거되고 한줄로 빌드된 것을 확인할 수 있다.
+
+* 빌드 환경에 따라 `minify` 활성화 여부를 다르게 하여, 개발시에는 디버깅이 편하도록 옵션 끄기
+
+  ![option](https://user-images.githubusercontent.com/52653793/95301891-2e624c80-08bc-11eb-9530-f516caf738bf.png)
+
+### CleanWebpackPlugin
+
+`CleanWebpackPlugin`은 빌드 이전 결과물을 제거하는 플러그인이다. 빌드 결과물은 아웃풋 경로에 모이는데 과거 파일이 남아있을 수 있다. 지금까지는 필요에 따라 dist폴더를 직접 삭제하고 다시 빌드했지만, 이 플러그인을 통해 이전 빌드 결과물을 빌드 때마다 지울 수 있다.
+
+* 설치 및 사용
+
+  ```bash
+  $ npm i clean-webpack-plugin
+  ```
+
+  ```javascript
+  // webpack.config.js
+  // 다른 플러그인들과 다르게 default로 export되어있지 않아 아래와 같이 불러와야 한다.
+  const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+  ...
+  plugins: [
+    new CleanWebpackPlugin()
+  ]
+  ...
+  ```
+
+아웃풋 폴더에 임의의 파일을 생성후 빌드를 해보면 해당 파일이 삭제된 것을 확인할 수 있다.
+
+### MiniCssExtractPlugin
+
+스타일시트가 많아지면 하나의 자바스크립트로 결과물을 만드는 것이 부담일 수 있다. (∵브라우저에서 큰 파일 하나 로딩하는 것은 성능에 영향을 주기때문에 여러 개의 작은 파일을 동시에 다운받게 하는 것이 좋다.) 번들 결과에서 스타일시트 코드만 따로 뽑아서 별도의 CSS 파일로 만들어 역할에 따라 파일을 분리하는 것이 좋다. ( 최종 결과물이 자바스크립트 파일 하나, CSS 파일 하나 가 될 수 있도록)
+
+* 설치 및 사용
+
+  ```bash
+  $ npm i mini-css-extract-plugin
+  ```
+
+  ```javascript
+  // webpack.config.js
+  const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+  ...
+  plugins: [
+  	new MiniCssExtractPlugin({filename: '[name].css'})
+  ]
+  ...
+  ```
+
+  * 이 플러그인은 자바스크립트 코드에서 CSS를 뽑아내는 것이기 때문에 개발환경에서는 굳이 할 필요가 없기 떄문에 환경에 따라 실행되도록 변경
+
+    ```javascript
+    plugins: [
+      ...(process.env.NODE_ENV === 'production'
+        ? [new MiniCssExtractPlugin({filename: '[name].css'})]
+        : []
+      )
+    ]
+    ```
+
+  * 그리고 이 플러그인은 다른 플러그인들과 다르게 loader 설정도 바꿔줘야 한다. 
+
+    ```javascript
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [ 
+            process.env.NODE_ENV === 'production'
+            ? MiniCssExtractPlugin.loader
+            : 'style-loader',
+            'css-loader',
+          ]
+        },	
+      ]
+    }
+    ```
+
+    > 배포환경일 떄는 MiniCssExtractPlugin이 제공하는 로더를 사용하도록 설정 변경
+
+* 결과 (production 모드로 실행해보자)
+
+  ```bash
+  $ NODE_ENV=production npm run build 
+  ```
+
+  ![minicss](https://user-images.githubusercontent.com/52653793/95304124-1c35dd80-08bf-11eb-9639-aa85af151805.png)
+
+  > 이전과는 다르게 main.css 파일이 생성된 것을 확인할 수 있다.
+
