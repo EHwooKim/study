@@ -94,7 +94,7 @@ $npx babel app.js // app.js - 변환시킬 코드가 담긴 파일
   ```javascript
   // babel.config.js
   module.exports = {
-      presets: [
+      plugins: [
           "@babel/plugin-transform-arrow-functions",
           "@babel/plugin-transform-block-scoping",
           "@babel/plugin-transform-strict-mode",  
@@ -187,3 +187,92 @@ $npx babel app.js
 
   ![SmartSelectImage_2020-05-03-01-35-20](https://user-images.githubusercontent.com/52653793/80869969-5e3e7000-8cde-11ea-8c2d-fe58b24f038d.png)
 
+#### 폴리필
+
+`Promise`는 크롬에서는 지원하지만 IE에서는 지원하지 않는다.
+
+`app.js`에 Promise객체 생성 후 바벨을 실행시켜보자.
+
+![babel_promise](https://user-images.githubusercontent.com/52653793/95649556-e3914080-0b18-11eb-8e93-d621cd68179e.png)
+
+`Promise`가 ECMAScript5 버전으로 변환되는 것을 기대했지만, 변하지않고 그대로인 것을 확인할 수 있다.
+
+`Babel`은 ES6 문법 중 **ECMAScript5 버전으로 변환할 수 있는 것만** 빌드한다.
+
+**그렇지 못한 것들은 `폴리필`이라고 부르는 코드조각을 추가해서 해결한다.**
+
+이러한 폴리필을 제공하는 대표적인 라이브러리로는 `core-js`, `@babel/polyfil` 등이 있다.
+
+`@preset-env`는 타겟 브라우저뿐 아니라 폴리필을 지정할 수 있는 옵션을 제공한다.
+
+```javascript
+// babel.config.js
+module.exports = {
+    presets: [
+        ['@babel/preset-env',{
+            targets: {
+                chrome: '79',
+                ie: '11'
+            },
+
+            // 폴리필 사용 옵션
+            useBuiltIns: 'usage', // 'entry', false 옵션도 가능
+            corejs: {
+                version: 2,
+            }
+        }]
+    ]
+}
+```
+
+![polyfil](https://user-images.githubusercontent.com/52653793/95649763-1f78d580-0b1a-11eb-9cbf-0b7886c5898f.png)
+
+실행 결과, Promise부분은 그대로지만 상단에 `require` 함수가 동작하고 있는 것을 확인할 수 있다.
+
+(core-js 라이브러리에서 promise 폴리필 파일을 가져오는 코드)
+
+## 웹팩으로 통합 (babel-loader)
+
+바벨은 **웹팩으로 통합해서** 사용하는 것이 일반적이다. 로더형태로 제공하는데 `babel-loader`가 그것이다.
+
+* 설치 및 설정
+
+  ```bash
+  $ npm i -D babel-loader
+  ```
+
+  ```javascript
+  // webpack.config.js
+  modiles: {
+    rules: [
+      ...
+      // 바벨 설정
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        // node_modules 코드들은 바벨 로더가 처리하지 않도록
+        exclude: /node_modules/
+      }
+    ]
+  }
+  ```
+
+  > entry 경로도 제대로 설정하고 빌드를 해보자.
+
+![babelError](https://user-images.githubusercontent.com/52653793/95650416-86988900-0b1e-11eb-9e8f-0c8d0824658d.png)
+
+빌드를 해보면 위와 같은 에러가 발생한다.
+
+core-js ~~라는 모듈을 찾을 수 없다는 에러인데, 우리가 빌드를 했을 때 app.js가 바벨에 의해 변환될 것이고, 변환 결과에 코드 상단에 core-js (즉, **폴리필**)가 로드(require)되는 코드가 추가될 것이다. 
+
+그리고 웹팩은 그 코드를 보고 `core-j`s를 어디에선가 찾을텐데, node_modules 폴더 안에 `core-js`가 없기 때문에 발생하는 오류이다. 
+
+그러니까.. core-js 설치하자~
+
+```bash
+$ npm i core-js@2 
+```
+
+> babel 설정에서 core-js 2버전을 사용한다 명시했으니 @2를 붙여 2버전을 설치한다.
+
+이제 다시 빌드해보면 정삭적으로 빌드가 되는 것을 확인할 수 있다.
