@@ -1,5 +1,8 @@
 <template>
   <div class="stock-page-container">
+    <Modal v-if="showModal" v-on:closeModal="closeModal"/>
+    <Loading  v-if="showLoading"/>
+
     <div class="grid-box">
       <div class="chart-grid">
         <h2>회사 데이터 ---</h2>
@@ -19,15 +22,22 @@ import axios from 'axios'
 import LineChart from '../components/LineChart.vue'
 import Input from '../components/Input.vue'
 import InfoTable from '../components/InfoTable.vue'
+import Modal from '../components/Modal.vue'
+import Loading from '../components/Loading.vue'
 
 export default {
   components: {
     LineChart,
     Input,
     InfoTable,
+    Modal,
+    Loading
   },
   data() {
     return {
+      showModal: false,
+      showLoading: false,
+
       tableData: {
         MinMax: {
           buydate: '-',
@@ -49,19 +59,23 @@ export default {
   },
   methods: {
     searchData: function(company) {
-      this.$emit('toggleLoading')
+      this.showLoading = true
       axios.get(`http://127.0.0.1:8000/api/get/${company}`)
         .then(res => {
           console.log(res)
           this.tableData = res.data.price // 테이블 값
           this.chartData = res.data.chart // 테이블 값
-          this.$emit('toggleLoading')
+          this.showLoading = false
         })
         .catch(err => {
-          this.$emit('toggleLoading')
+          this.showLoading = false
+          this.showModal = true
           console.error(err)
-        })
-    }
+      })
+    },
+    closeModal: function() {
+      this.showModal = !this.showModal
+    },
   }
 }
 </script>

@@ -23,9 +23,8 @@
     width: 100px;
     height: 100px;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 45%;
+    left: 45%;
     border: 15px solid rgb(0,198,142);
     border-bottom-color: transparent;
     border-radius: 50%;
@@ -33,7 +32,7 @@
   }
   @keyframes rotate {
     to {
-      transform: rotate(0deg);
+      transform: rotate(0deg) ;
     }
     from {
       transform: rotate(360deg);
