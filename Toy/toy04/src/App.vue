@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header />
-    <StockPage v-on:toggleLoading="toggleLoading"/>
+    <StockPage />
   </div>
 </template>
 

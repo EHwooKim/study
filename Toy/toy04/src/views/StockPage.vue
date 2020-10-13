@@ -1,6 +1,6 @@
 <template>
   <div class="stock-page-container">
-    <Modal v-if="showModal" v-on:closeModal="closeModal"/>
+    <Modal v-if="showModal" message="회사명을 확인해주세요."  v-on:closeModal="closeModal"/>
     <Loading  v-if="showLoading"/>
 
     <div class="grid-box">
@@ -83,6 +83,7 @@ export default {
 <style scoped>
   .stock-page-container {
     padding-top: 36px;
+    min-width: 1500px;
     width: 80vw;
     margin: 0 auto;
   }

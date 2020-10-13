@@ -1,7 +1,7 @@
 <template>
   <div class="modal-background">
     <div class="modal-container">
-      <p>회사명을 확인해주세요.</p>
+      <p>{{ message }}</p>
       <button @click="closeModal">닫기</button>
     </div>
   </div>
@@ -11,6 +11,12 @@
   export default {
     data() {
       return {
+      }
+    },
+    props: {
+      message: {
+        type: String,
+        required: true
       }
     },
     methods: {
