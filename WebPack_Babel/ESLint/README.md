@@ -136,4 +136,140 @@ $ npx eslint --init
 
 
 
+  # Prettier
+
+`Prettier`는 ESLint의 역할 중 `포매팅(코드 스타일)`과 겹치는 부분이 있지만 프리티어는 좀 더 일관적인 스타일로 코드를 다듬는다. 반면 `코드품질(잠재적에러 발견)`과 관련된 기능은 하지 않는 것이 ESLint와 다른 점이다.
+
+* 설치 및 사용
+
+  ```bash
+  $ npm i -D prettier
+  ```
   
+  ```bash
+  $ npx prettier app.js
+  ```
+  
+  > prettier 사용 결과가 console에 보인다.
+  
+  ```bash
+  $ npx prettier app.js --write
+  ```
+  
+  > --write 옵션을 사용하면 prettier 결과를 파일에 적용시킨다.
+
+`Prettier`의 강점은 `ESLint` 가 고칠 수 없는 (--fix 옵션을 제공하지 않던) 코드 또한 고쳐준다.
+
+```javascript
+// app.js
+foo(reallyLongArg(), reallyLongArg(), reallyLongArg(), reallyLongArg(), reallyLongArg(), reallyLongArg())
+```
+
+> prettier 적용 전
+>
+> npx prettier app.js --write
+
+```javascript
+// app.js
+foo(
+  reallyLongArg(),
+  reallyLongArg(),
+  reallyLongArg(),
+  reallyLongArg(),
+  reallyLongArg(),
+  reallyLongArg()
+);
+```
+
+> prettier 적용 후
+
+이렇게 코드를 보다 보기 좋게 바꿔주는 역할을 한다.
+
+
+
+# ESLint - Prettier 통합
+
+## eslint-config-prettier
+
+`Prettier`가 `ESLint`보다 포맷팅을 더 잘해주지만, 코드 품질은 확인하지 않기 떄문에 두가지를 모두 사용해야 한다. `Prettier`는 `ESLint`와 통합 방법을 제공한다. 
+
+[eslint-config-prettier](https://github.com/prettier/eslint-config-prettier)는 프리티어와 충돌하는 ESLint 규칙을 **끄는** 역할을 한다. 둘 다 사용하는 경우 규칙이 충돌하기 떄문이다.
+
+* 설치 및 설정
+
+  ```bash
+  $ npm i -D eslint-config-prettier
+  ```
+
+  ```javascript
+  // .eslintrc.js
+  ...
+  {
+      extends: [
+  		"eslint:recommended",
+          "eslint-config-prettier"
+      ]
+  }
+  ```
+
+* 사용
+
+  ```javascript
+  // 선언 후 사용하지않은 변수 - ESlint에서 처리
+  var foo = '';
+  
+  // 중복 세미콜론 - ESLint에서는 규칙을 껐기때문에 Prettier 에서 처리
+  console.log();;;;;;;
+  ```
+
+  * eslint
+
+    ```bash
+    $ npx eslint app.js --fix
+    ```
+
+    > 사용하지 않은 변수 foo에 대한 에러 발생,
+    >
+    > 중복세미콜론은 에러도, 변화도 없다.
+
+  * prettier
+
+    ```bash
+    $ npx prettier app.js --write
+    ```
+
+    > 중복 세미콜론이 제거된다. 
+
+  물론 매번 이렇게 `ESLint` 따로, `Prettier` 따로 실행시키는 것은 굉장히 불편한 작업이기 때문에 이 두 작업을 한번에 처리해주는 방법이 있다.
+
+## eslint-plugin-prettier
+
+[eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier)는 프리티어 규칙을 **ESLint 규칙으로 추가**하는 플러그인이다.
+
+프리티어 모든 규칙이 ESLint로 들어오기 때문에 **ESLint만 실행하면 된다.**
+
+* 설치 및 설정
+
+  ```bash
+  $ npm i -D eslint-plugin-prettier
+  ```
+
+  ```javascript
+  // .eslintrc.js
+  ...
+      "plugins": [
+          "prettier"
+      ],
+      "rules": {
+          "prettier/prettier": "error"
+      },
+  ...
+  ```
+
+* 실행
+
+  ```bash
+  $ npx eslint app.js --fix
+  ```
+
+  > eslint만 실행시키면 된다
