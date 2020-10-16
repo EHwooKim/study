@@ -248,7 +248,7 @@ foo(
 
 프리티어 모든 규칙이 ESLint로 들어오기 때문에 **ESLint만 실행하면 된다.**
 
-* 설치 및 설정
+* 깃설치 및 설정
 
   ```bash
   $ npm i -D eslint-plugin-prettier
@@ -273,3 +273,104 @@ foo(
   ```
 
   > eslint만 실행시키면 된다
+
+# 자동화
+
+`Lint`와 `Prettier`를 명령어를 통해 사용해도 되지만 매번 수동으로 동작시키는 것은 한계가 있어 자동화를 하여 사용한다.
+
+**깃 훅을 사용하는 방법**이 있고 (Lint를 거쳐야지만 commit, push등이 가능하도록), 
+
+**에디터 확장 도구**를 사용하는 방법이 있다.
+
+## husky
+
+깃으로 코드를 관리한다면 깃 훅을 이용하는 것이 좋다
+
+커밋 전, 푸시 전 등 깃 커맨드 실행 시점에 끼여들수 있는 훅을 제공한다.
+
+`husky`는 깃 훅을 쉽게 사용할 수 있는 도구다.
+
+* 설치 및 설정
+
+  ```bash
+  $ npm i -D husky
+  ```
+
+  ```javascript
+  // package.json
+  ...
+  {
+      "husky": {
+          "hooks": {
+              "pre-commit": "echo \"이것은 커밋 전에 출력됨\""
+          }
+      }
+  }
+  ```
+
+  커밋 전에  `pre-commit`에 등록한 스크립트가 실행된다.
+
+  ![image](https://user-images.githubusercontent.com/52653793/96214524-9e588d00-0fb6-11eb-9124-05b53e4ae56c.png)
+
+  이것을 활용하여 커밋 전에 Lint를 실행하면 된다.
+
+  ```javascript
+  {
+      "husky": {
+          "hooks": {
+              "pre-commit": "eslint src --fix"
+          }
+      }
+  }
+  ```
+
+  ```javascript
+  // app.js
+  
+  var foo = "";
+  
+  console.log();;;;;;
+  ```
+
+  ![image](https://user-images.githubusercontent.com/52653793/96214718-0c9d4f80-0fb7-11eb-8f1b-ebbfc17b0358.png)
+
+  커밋을 하면, `Lint`에 의해 중복 세미콜론이 삭제되고,
+
+  사용하지 않은 변수 `foo`때문에 에러가 발생하여 커밋에 실패한다.
+
+  `var foo = ""` 부분을 삭제하고 커밋을 재시도하면 정상작동한다.
+
+  ![image](https://user-images.githubusercontent.com/52653793/96215018-cbf20600-0fb7-11eb-8cc9-f234ab0ecbfa.png)
+
+  > git add 한 시점의 코드가 커밋되는 것이기 때문에 Lint적용 전 코드가 push되었다..
+
+  그런데 코드 삭제 후 바로 커밋을 하면 문제되는 부분이 변경되지 않은채 커밋이 되기 떄문에 git add 과정부터 다시 해줘야 하는 것 같다.
+
+### lint-staged
+
+만약 `pre-commit`에서 `src` 폴더를 등록하여 사용한다면 코드의 양이 많아질수록 Lint를 실행하는데 시간이 오래 걸릴 것이다. 
+
+그래서 `commit`한 파일에만 `Lint`를 실행하도록 해주는 것이 `lint-staged`이다.
+
+* 설치 및 설정
+
+  ```bash
+  $ npm i lint-staged
+  ```
+
+  ```javascript
+  // package.json
+  {
+    "husky": {
+      "hooks": {
+        "pre-commit": "lint-staged"
+      }
+    },
+    "lint-staged": {
+      "*.js": "eslint --fix"
+    }
+  }
+  ```
+
+  
+
