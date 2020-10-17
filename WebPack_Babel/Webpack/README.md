@@ -632,3 +632,63 @@ plugins: [
 
   > 이전과는 다르게 main.css 파일이 생성된 것을 확인할 수 있다.
 
+## 6. 심화
+
+### 6.1 웹팩 개발서버
+
+지금까지는 브라우저에서 파일을 직접 로딩해서 결과물을 확인했다.
+
+인터넷에 웹사이트를 게시하려면 서버 프로그램으로 이 파일을 읽고 요청한 클라이언트에게 제공한다.
+
+개발환경에서도 이와 유사한 환경을 갖추는 것이 좋다. 운영환경과 맞춤으로써 배포시 잠재적 문제를 미리 확인할 수 있다. 게다가 ajax 방식의 api 연동은 cors 정책 때문에 반드시 서버가 필요하다.
+
+프론트 엔드 개발환경에서 이러한 개발용 서버를 제공해주는 것이 `webpack-dev-server`이다.
+
+* 설치 및 사용
+
+  ```bash
+  $ npm i -D webpack-dev-server
+  ```
+
+  ```bash
+    "scripts": {
+      "start": "webpack-deb-server"
+    },
+  ```
+
+  `npm start`를 해보면, 지금까지는 각 파일들을 직접 브라우저에 올려서 결과를 확인했는데 이제는 localhost:8080로 접속하여 결과를 확인할 수 있다.
+
+* 기본 설정
+
+  ```javascript
+  // webpack.config.js
+  module.exports = {
+      devServer: {
+          contentBase: path.join(__dirname, "dist"),
+          publicPath: "/",
+          host: "dev.domain.com",
+          overlay: true,
+          port: 8081,
+          stats: "errors-only",
+          historyApiFallback: true
+      }
+  }
+  ```
+
+  * `contentBase` - 정적 파일을 제공할 경로, 기본값은 `아웃풋`이다.
+
+  * `publicPath` - 브라우저를 통해 접근하는 경로, 기본값은 `/`이다.
+
+  * `host` - 개발환경에서 도메인을 맞춰야 하는 상황에서 사용한다. 예를 들어 쿠기 기반의 인증은 인정 서버와 동일한 도메인으로 개발환경을 맞춰야한다. 운영체제의 호스트 파일에 해당 도메인과 127.0.0.1 연결을 추가한 뒤 host 속성에 도메인을 설정해서 사용한다.
+
+  * `overlay` - 빌드시 에러나 경고를 터미널이 아닌, 브라우저 화면에 표시한다
+
+  * `port` - 개발 서버 포트 번호를 설정한다. 기본값은 `8080`
+
+  * `stats` - 메시지 수준을 정할 수 있다. (메시지란, webpack-dev-server를 실행했을 때 터미널에 출력되는 것을 말한다.)
+
+    `none`, `errors-only`, `minimal`, `normal`, `verbose` 옵션이 있다.
+
+  * `historyApiFallback` - 히스토리 API를 사용하는 `SPA` 개발시에 설정한다. 404가 발생하면 index.html로 리다이렉트한다.
+
+  이 외에도 개발 서버를실행할 때 명령어 인자로 `--progress`를 추가하면 빌드 진행율을 보여준다. 빌드 시간이 길어질 경우 사용하면 좋다.
