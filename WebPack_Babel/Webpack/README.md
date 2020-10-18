@@ -692,3 +692,121 @@ plugins: [
   * `historyApiFallback` - 히스토리 API를 사용하는 `SPA` 개발시에 설정한다. 404가 발생하면 index.html로 리다이렉트한다.
 
   이 외에도 개발 서버를실행할 때 명령어 인자로 `--progress`를 추가하면 빌드 진행율을 보여준다. 빌드 시간이 길어질 경우 사용하면 좋다.
+
+### 6.2 API 서버 연동
+
+백엔드에서 API가 아직 완성되지 않았을 때 `webpack-dev-server`가 제공하는 `mockup api`를 사용하여 개발할 수 있다.
+
+*  설정
+
+  ```javascript
+  // webpack.config.js
+  devServer: {
+      before: (app) => { // app으로 서버를 받아 사용
+        app.get("/api/users", (req, res) => {
+          res.json([
+            {
+              id: 1,
+              name: "Alice",
+            },
+            }            {
+              id: 2,
+              name: "Bek",
+            },
+            {
+              id: 3,
+              name: "Chris",
+            },
+          ]);
+        });
+      },
+  }
+  ```
+
+  * `before` 함수 안에서 api를 만들어 사용할 수 있다.
+  * `app`이라는 이름으로  `expressJS`의 서버 인스턴스를 `webpack-dev-server`가 넣어준다.
+
+  ![image](https://user-images.githubusercontent.com/52653793/96363997-018f1e80-1173-11eb-8cf3-bc382d515e5e.png)
+
+  > 이렇게 임시 api를 만들어 사용할 수 있다.
+
+* **connect-api-mocker**
+
+  mockup api가 많아지면, webpack.config.js에 그것들을 모두 정의 하는 것보다  `connect-api-mocker`를 사용하는 것이 좋다.
+
+  특정 목업 폴더를 만들어 api 응답값을 json 파일로 만들어 놓고, 이 폴더를 api로 제공해주는 기능을 한다.
+
+  * 설치 및 설정
+
+    ```bash
+    $ npm i -D connect-api-mocker
+    ```
+
+    이제 위에서 만들었던 mockup api를 파일로 관리할 수 있다.
+
+    루트에 `mocks`  폴더를 만들고, api에서 정의 한 주소와 똑같은 경로의 폴더들을 만들고 요청 메소드명과 같은 이름의 json 파일을 만들어준다. (mocks/api/users/GET.json)
+
+    ```javascript
+    // mocks/api/users/GET.json
+    // json 파일이므로 따옴표등의 형식을 잘맞춰주자.
+    [
+      {
+        "id": 1,
+        "name": "Alice"
+      },
+      {
+        "id": 2,
+        "name": "Bek"
+      },
+      {
+        "id": 3,
+        "name": "Chris"
+      }
+    ]
+    ```
+
+    ```javascript
+    // webpack.config.js
+    const apiMocker = require('connect-api-mocker')
+    ...
+      devServer: {
+        before: (app) => {
+          app.use(apiMocker('/api', 'mocks/api')) // express 미들웨어 연결
+        },
+      },
+    ```
+
+    * `apiMocker`의 인자로 `urlRoot`(해당 url로 시작하는 요청을 처리), `pathRoot`(만들어 놓은 json파일들의 root 경로) 를 넘겨준다
+
+    `webpack-dev-server`를 실행해보면 정상작동하는 것을 확인할 수 있다.
+
+#### CORS 해결
+
+`CORS` - 브라우져와 서버간의 보안상의 정책인데 브라우저가 최초로 접속한 서버에서만 ajax 요청을 할 수 있다.(포트가 달라도 요청이 불가능하다)
+
+* `server`측
+
+  해당 api 응답 헤더에 "Access-Control-Allow-Origiin: *" 헤더를 추가한 뒤 응답하면, 브라우져에서 응답 데이터를 받을 수 있다.
+
+  ```javascript
+  // server/index.js
+  app.get("/api/keywords", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*") // 헤더를 추가한다
+    res.json(keywords)
+  })
+  ```
+
+* `font`측
+
+  서버 응답 헤더를 추가할 필요없이 웹팩 개발 서버에서 api 서버로 **프록싱**하는 것이다. 웹팩 개발 서버는 [proxy](https://webpack.js.org/configuration/dev-server/#devserverproxy) 속성으로 이를 지원한다.
+
+  ```javascript
+  // webpack.config.js
+  devServer: {
+      proxy: {
+          'api': 'http://localhost:8081' // 프록시
+      }
+  }
+  ```
+
+  개발서버에 들어온 모든 http 요청중 `/api`로 시작되는 것은 `http://localhost:8081`로 요청하는 설정이다.
