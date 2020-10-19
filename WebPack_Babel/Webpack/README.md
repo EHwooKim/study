@@ -810,3 +810,61 @@ plugins: [
   ```
 
   개발서버에 들어온 모든 http 요청중 `/api`로 시작되는 것은 `http://localhost:8081`로 요청하는 설정이다.
+
+### 6.3 hot module
+
+`webpack-dev-server`는 코드의 변화를 감지하여 화면 전체를 갱신해 주지만, `SPA`와 같이 브라우저에서 데이터를 들고있는 경우, 새로고침시 데이터가 초기화 되어 오히려 불편할 수도 있다. 
+
+**핫 모듈 리플레이스먼트**는 전체화면을 갱신하지 않고 변경한 모듈만 바꿔치지 해주는 `webpack-dev-server`의 한 기능이다.
+
+* 설정
+
+  ```javascript
+  // webpack.config.js
+    devServer: {
+      hot: true
+    },
+  ```
+
+* 사용방법
+
+  hot 모듈을 켜게 되면 `module.app`에 해당 값이 들어오게 된다.
+
+  app.js에 아래 코드를 입력하여 결과를 확인해보자.
+
+  ```javascript
+  if (module.hot) {
+    console.log('핫 모듈 켜짐')
+  }
+  ```
+
+  ![image](https://user-images.githubusercontent.com/52653793/96417960-07e1d100-122d-11eb-9d6e-c11f037684e4.png)
+
+  이제 변경을 감지하는 코드를 작성하고, 해당 코드가 실행될 때 변경된 모듈만 다시 그려주는 방식으로 우리가 원하는 행동을 할 수 있다. [코드 확인](10(hot-모듈)/src/app.js) 
+
+  ```javascript
+  if (module.hot) {
+    console.log('핫 모듈 켜짐')
+    
+    module.hot.accept('./result', () => { // result 모듈이 변경되었을 때만 동작한다.
+      console.log('result 모듈 변경됨.') 
+      // 해당 모듈 다시 그려주는 코드
+      resultEl.innerHTML = await result.render()
+    })
+  }
+  // 위와 같은 코드를 HMR 인터페이스라고 한다.
+  ```
+
+  ![image](https://user-images.githubusercontent.com/52653793/96418520-d4537680-122d-11eb-8d4b-99c825a23583.png)
+
+  > input에 무언가 입력하고, result코드를 변경후 저장해도 result 모듈만 갱신되어 input값이 그대로 남아있다
+
+* 핫로딩을 지원하는 로더
+
+  HMR 인터페이스를 구현한 로더만이 핫 로딩을 지원하는데, 웹팩 기본편에서 보았던 `style-loader`가 그렇다. **이를 지원하기 때문에 지금까지 css 파일을 변경했을 새로고침이 되지 않고도 적용이 됐던 것이다.**
+
+  ![image](https://user-images.githubusercontent.com/52653793/96425301-d7069980-1236-11eb-870f-ab4f0ca3add9.png)
+
+  > [style-loader 코드](https://github.com/webpack-contrib/style-loader/blob/256b1c38b6a729df3516e722173288d146676482/src/index.js#L42)
+
+  이 외에도 리액트를 지원하는 `react-hot-loader`, 파일을 지원하는 `file-loader`는 hot module replacement를 지원한다. [참고](https://webpack.js.org/guides/hot-module-replacement/#other-code-and-frameworks)
