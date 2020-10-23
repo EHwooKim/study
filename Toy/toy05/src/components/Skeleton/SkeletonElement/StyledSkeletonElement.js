@@ -1,14 +1,5 @@
 import styled, { css, keyframes } from 'styled-components'
 
-const gradient = keyframes`
-  0% {
-    background-position: 110% 50%;
-  }
-  100% {
-    background-position: -20% 50%;
-  }
-`
-
 const types = {
   text: {
     width: '100%',
@@ -39,17 +30,28 @@ const typeStyles = ({ type }) => {
   `
 }
 
+const themeObj = {
+  light: {
+    background: '#ddd'
+  },
+  dark: {
+    background: '#777'
+  }
+}
+
+const themeStyle = ({ theme }) => css`
+  background: ${themeObj[theme]['background']};
+`
 
 export const StyledSkeletonElement = styled.div`
-  background: linear-gradient(-45deg, #ddd 45%, rgb(230, 230, 230) 50% 51%, #ddd 55%);
-  background-size: 200% 200%;
-  animation: ${gradient} 1.5s linear infinite;
   margin: 10px 0;
   border-radius: 4px;
 
   ${typeStyles}
+  ${themeStyle}
 `
 
 StyledSkeletonElement.defaultProps = {
-  type: 'text'
+  type: 'text',
+  theme: 'light'
 }

@@ -1,23 +1,17 @@
 import React from 'react'
-import styled from 'styled-components'
 import SkeletonElement from './SkeletonElement/SkeletonElement'
+import { StyledSkeletonWrapper } from './StyledSkeletonWrapper'
+import Shimmer from './Shimmer/Shimmer'
 
-const StyledSkeletonArticle = styled.div`
-  margin: 20px auto;
-  padding: 10px 15px;
-  background: rgb(243,242,243);
-`
-
-function SkeletonArticle() {
+function SkeletonArticle({ theme }) {
   return (
-    <StyledSkeletonArticle>
-      <div >
-        <SkeletonElement type="title"/>
-        <SkeletonElement type="text"/>
-        <SkeletonElement type="text"/>
-        <SkeletonElement type="text"/>
-      </div>
-    </StyledSkeletonArticle>
+    <StyledSkeletonWrapper theme={theme}>
+      <SkeletonElement theme={theme} type="title"/>
+      <SkeletonElement theme={theme} type="text"/>
+      <SkeletonElement theme={theme} type="text"/>
+      <SkeletonElement theme={theme} type="text"/>
+      <Shimmer theme={theme}/>
+    </StyledSkeletonWrapper>
   )
 }
 
