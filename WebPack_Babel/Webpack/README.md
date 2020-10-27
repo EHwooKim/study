@@ -868,3 +868,90 @@ plugins: [
   > [style-loader 코드](https://github.com/webpack-contrib/style-loader/blob/256b1c38b6a729df3516e722173288d146676482/src/index.js#L42)
 
   이 외에도 리액트를 지원하는 `react-hot-loader`, 파일을 지원하는 `file-loader`는 hot module replacement를 지원한다. [참고](https://webpack.js.org/guides/hot-module-replacement/#other-code-and-frameworks)
+
+### 6.4 최적화
+
+코드가 많아지면 번들링된 결과물도 커지기 마련이다. 그렇게되면 브라우저에서 파일을 다운로드하는데 시간이 많이 걸리이게 성능에 영향을 줄 수도 있다.
+
+번들링한 결과물을 어떻게 최적화할 수 있는지 알아보자. (압축, 파일 분리..)
+
+#### production 모드
+
+웹팩에 내장되어 있는 최적화 방법 중 `mode`값을 설정하는 방식이 가장 기본이다. 
+
+지금까지는 `development` 모드를 사용해왔다. 이때 디버깅 편의를 위해 아래 두 개의 플러그인을 사용한다.
+
+* `NamedChunksPlugin`
+* `NamedModulesPluin`
+
+그리고 `DefinePlugin`을 사용하면 process.env.NODE_ENV 값이 `development`로 설정되어 전역변수로 주입된다.
+
+**반면** mode를 `production`으로 설정하면 자바스크립 결과물을 최소화 하기 위해 다음 일곱개 플러그인을 사용한다.
+
+* `FlagDependencyUsagePlugin`
+* `FlagIncludeChunkPlugin`
+* `ModuleConcatenationPlugin`
+* `NoEmitOnErrorsPlugin`
+* `OccurreneceOrderPlugin`
+* `SideEffectsFlagPlugin`
+* `TerserPlugin`
+
+또한 `DefinePlugin`을 사용하면 process.env.NODE_ENV값이 `production`으로 설정되어 전역변수로 주입된다.
+
+```javascript
+// webpack.config.js
+const mode = process.env.NODE_ENV || 'development'
+
+module.exports = {
+    mode,
+}
+```
+
+> 이제 외부 환경변수에 따라 webpack을 development 또는 production 모드로 빌드할 수 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/97307648-4f0e3880-18a3-11eb-88fc-70dbe45e72b9.png)
+
+> NODE_ENV=production npm run build (암호화되어 빌드)
+
+![image](https://user-images.githubusercontent.com/52653793/97307787-7f55d700-18a3-11eb-8d09-bec0a1592583.png)
+
+> NODE_ENV=development npm run build (암호화x)
+
+**mode에 따라 빌드 결과물이 다른 것을 확인할 수 있다**
+
+즉, `production`모드로 빌드를 하는 것만으로도 1차적인 최적화가 가능하다.
+
+#### optimization 설정
+
+빌드 과정을 커스터마이징할 수 있는 여지를 제공해주는 것이 `optimization`속성이다
+
+`HtmlWebpackPlugin`이 html 파일을 압축한 것 처럼 css 파일도 빈칸을 없애는 압축할 수 있는데 `optimize-css-assets-webpack-plugin`을 사용하면된다.
+
+* 설치 및 설정
+
+  ```bash
+  $npm i -D optimize-css-assets-webpack-plugin
+  ```
+
+  ```javascript
+  // webpack-config.js
+  const OptimizaCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+  
+  module.exports = {
+      optimization: {
+          minimizer: mode === 'production' ? [
+              new OptimizaCSSAssetsPlugin()
+          ]
+      }
+  }
+  ```
+
+  > 다른 플러그인은 plugins에서 설정했지만 이 플러그인은 설정법이 조금 다르다
+
+![image](https://user-images.githubusercontent.com/52653793/97309809-d8266f00-18a5-11eb-8271-f533ad99e994.png)
+
+> 플러그인 사용 전.
+
+![image](https://user-images.githubusercontent.com/52653793/97309304-2f780f80-18a5-11eb-91a1-d0402ee8238c.png)
+
+> 플러그인 사용 후, 빌드된 css 파일이 압축된 것을 볼 수 있다.
