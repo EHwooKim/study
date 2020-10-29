@@ -29,7 +29,7 @@ function ArticleList(props) {
           </Link>
         </li>
       ))}
-      {!articles.length && [1, 2, 3, 4, 5].map(() => <Skeleton/>)}
+      {!articles.length && [1, 2, 3, 4, 5].map((n) => <Skeleton key={n}/>)}
     </ul>
   )
 }
