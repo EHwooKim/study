@@ -8,8 +8,9 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const apiMocker = require("connect-api-mocker");
 const OptimizaCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
-const mode = process.env.NODE_ENV || "development"
+const mode = process.env.NODE_ENV || "production"
 
 module.exports = {
   mode,
@@ -30,7 +31,14 @@ module.exports = {
   },
   optimization: {
     minimizer: mode === 'production' ? [
-      new OptimizaCSSAssetsPlugin()
+      // new OptimizaCSSAssetsPlugin(),
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true
+          }
+        }
+      })
     ] : []
   },
   module: {

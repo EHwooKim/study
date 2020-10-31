@@ -30,3 +30,5 @@ if (module.hot) {
     formEl.innerHTML = form.render()
   })
 }
+
+console.log('app.js - Terser plugin이 제거해주길 바랍니다.')

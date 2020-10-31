@@ -58,7 +58,7 @@ $npm i -D webpack webpack-cli
 
 ![webpack](https://user-images.githubusercontent.com/52653793/95010800-35445180-0667-11eb-919b-044a66100c67.png)
 
-* 실행 후 `dist 폴더`와 **웹팩을 통해 하나의 파일로 합쳐진** `main.js 파일`이 생긴 것을 확인할 수 있다. 그리고 index.html을 수정 후 실행해보면 정상 작동하는 것을 확인할 수 있다.
+* 실행 후 `dist 폴더`와 **웹팩을 통해 하나의 파일로 합쳐진** `main.js 파일`이 생긴 것을 확인할 수 있다. 그리고 index.html을 수정 후 실행해보면 정상 작동하는 것을 **확인할** 수 있다.
 
 
 
@@ -955,3 +955,46 @@ module.exports = {
 ![image](https://user-images.githubusercontent.com/52653793/97309304-2f780f80-18a5-11eb-91a1-d0402ee8238c.png)
 
 > 플러그인 사용 후, 빌드된 css 파일이 압축된 것을 볼 수 있다.
+
+#### TeserPlugin
+
+[production 모드일 떄 사용하는 plugin](####production-모드)중 `TerserWebpackPlugin`은 기본 설정으로 자바스크립트 코드를 난독화하고 debugger 구문을 제거한다. 기본 설정 외에도 **console.log를  제거**하는 옵션도 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/97778294-bd137200-1bb9-11eb-973c-892a6412d15e.png)
+
+> app.js
+
+* 설치 및 사용
+
+  ```bash
+  $ npm i -D terser-webpack-plugin
+  ```
+
+   ```javascript
+  // webpack.plugin.js
+  module.exports = {
+      optimization: {
+          minimizer: mode === 'production' ? [
+              new TerserPlugin({
+                  terserOptions: {
+                      compress: {
+                          drop_console:true
+                      }
+                  }
+              })
+          ]
+      }
+  }
+   ```
+
+##### :lipstick: Error
+
+![image](https://user-images.githubusercontent.com/52653793/97778849-745db800-1bbd-11eb-933f-82eb06d300e8.png)
+
+* `webpack`의 버전(version 4)과 `TerserPlugin`의 버전(version 5) 버전이 달라 에러가 발생했었다.
+
+  ```bash
+  npm i -D terser-webpack-plugin@4.2.3 
+  ```
+
+  TerserPlugin 버전을 낮춰 설치하니 정상적으로 `console.log`가 삭제되어 빌드되었다
