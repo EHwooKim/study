@@ -13,6 +13,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   resultEl = document.createElement('div')
   resultEl.innerHTML = await result.render()
   document.body.appendChild(resultEl)
+
+
+  // 아직은 파일이 작아 코드스플리팅 불필요, externals 실습을 위해 주석처리
+  // import(/* webpackChunkName: "result" */"./result").then(async m => {
+  //   const result = m.default // result 모듈(m)이 default로 내보내주는 값
+  //   resultEl = document.createElement('div')
+  //   resultEl.innerHTML = await result.render()
+  //   document.body.appendChild(resultEl)
+  // })
+
 });
 
 

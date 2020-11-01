@@ -9,6 +9,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const apiMocker = require("connect-api-mocker");
 const OptimizaCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+
 
 const mode = process.env.NODE_ENV || "production"
 
@@ -16,6 +18,7 @@ module.exports = {
   mode,
   entry: {
     main: "./src/app.js",
+    // result: "./src/result.js" // Dynamic Import 사용시 불필요
   },
   output: {
     path: path.resolve("./dist"),
@@ -31,7 +34,7 @@ module.exports = {
   },
   optimization: {
     minimizer: mode === 'production' ? [
-      // new OptimizaCSSAssetsPlugin(),
+      new OptimizaCSSAssetsPlugin(),
       new TerserPlugin({
         terserOptions: {
           compress: {
@@ -39,7 +42,13 @@ module.exports = {
           }
         }
       })
-    ] : []
+    ] : [],
+    // splitChunks: {   // Dynamic Import 사용시 불필요
+    //   chunks: "all"
+    // },
+  },
+  externals: {
+    axios: 'axios'
   },
   module: {
     rules: [
@@ -124,5 +133,13 @@ module.exports = {
     ...(process.env.NODE_ENV === "production"
       ? [new MiniCssExtractPlugin({ filename: "[name].css" })]
       : []),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: './node_modules/axios/dist/axios.min.js',
+          to: './axios.min.js'
+        }
+      ]
+    })
   ],
 };

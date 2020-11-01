@@ -956,7 +956,7 @@ module.exports = {
 
 > 플러그인 사용 후, 빌드된 css 파일이 압축된 것을 볼 수 있다.
 
-#### TeserPlugin
+#### TerserPlugin
 
 [production 모드일 떄 사용하는 plugin](####production-모드)중 `TerserWebpackPlugin`은 기본 설정으로 자바스크립트 코드를 난독화하고 debugger 구문을 제거한다. 기본 설정 외에도 **console.log를  제거**하는 옵션도 있다.
 
@@ -998,3 +998,180 @@ module.exports = {
   ```
 
   TerserPlugin 버전을 낮춰 설치하니 정상적으로 `console.log`가 삭제되어 빌드되었다
+
+#### 6.5 코드 스플리팅
+
+코드를 압축했는데도 파일이 클 경우에는 사용자가 해당 파일을 다운받기까지 시간이 오래 걸린다.
+
+이럴 때는 큰 파일 하나가 아닌 작은 파일 여러개를 다운받게하는 방법을 사용할 수 있다.
+
+가장 단순한 방법은, **엔트리를 여러개로 분리**하는 것이다.
+
+```javascript
+// webpack.config.js
+module.exports = {
+    entry: {
+        main: './src/app.js',
+        result: './src/result.js'
+    }
+}
+```
+
+> 현재 app.js에서 불러오는 result 모듈을 entry에 추가하여 빌드를 해보자
+
+![image](https://user-images.githubusercontent.com/52653793/97804604-5ca53300-1c94-11eb-8c38-bbb3cd5d471c.png)
+
+빌드 결과, `app.js`뿐 아니라 `result.js` 가 따로 빌드된 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/97804628-8a8a7780-1c94-11eb-81b7-93fe9afd0192.png)
+
+뿐만 아니라, 빌드된 `index.html` 파일을 확인해보면 `result.js` 파일을 불러오는 것을 확인할 수 있다.
+
+그런데, 지금은 `app.js`와 `result.js` 두 곳 모두 `Axios` 라이브러리를 불러오는, 중복된 코드가 존재한다.
+
+이러한 중복 코드를 제거해주는 옵션이 있다. (`optimization`)
+
+![image](https://user-images.githubusercontent.com/52653793/97804731-18666280-1c95-11eb-893a-0f75820a75d7.png)
+
+> webpack.config.js - optimization에 splitChunks 옵션을 추가
+
+![image](https://user-images.githubusercontent.com/52653793/97804754-2f0cb980-1c95-11eb-9927-02817f86358a.png)
+
+> `vendors-main~result.js`가 새로 생긴 것을 확인할 수 있다.
+
+코드를 확인해보면, `main.js`와 `result.js`에는 더이상 axios가 없고, `vender~.js`에 axios가 있는 것을 확인할 수 있다.
+
+* `코드 스플리팅 결과`
+
+![image](https://user-images.githubusercontent.com/52653793/97804848-ba864a80-1c95-11eb-9930-9d2de9d7099a.png)
+
+> 스플리팅 전
+
+![image](https://user-images.githubusercontent.com/52653793/97804817-9cb8e580-1c95-11eb-9634-8da266a4ac73.png)
+
+> 스플리팅 후
+
+큰 파일 하나였던 빌드 결과물에서 작은 파일 여러개로 분리된 것을 확인할 수 있다.
+
+<hr/>
+
+#### 6.6 Dynamic Import
+
+그런데, 이렇게 `entry` 를 직접 작성하여 분리하는 방법은 손이 많이가는 편이다.
+
+`=>` **자동화**하는 방법이 존재하고, webpack에서는 이를 `Dynamic Import`이라고 부른다.
+
+따로 설치, 설정하는 것은 없고,  모듈을 사용하는 파일에서의 코드만 바꿔주면 된다.
+
+**위에서 코드 스플리팅을 위해 설정한 것들은 다시 지우고**, 아래 코드처럼 작성해보자.
+
+```javascript
+// app.js - 변경 전
+import form from './form'
+import result from './result'
+import './app.css'
+
+let resultEl
+let formEl
+
+document.addEventListener("DOMContentLoaded", async () => {
+  formEl = document.createElement('div')
+  formEl.innerHTML = form.render()
+  document.body.appendChild(formEl)
+
+  resultEl = document.createElement('div')
+  resultEl.innerHTML = await result.render()
+  document.body.appendChild(resultEl)
+});
+```
+
+```javascript
+// app.js - 변경 후
+import form from './form'
+import './app.css'
+
+let resultEl
+let formEl
+
+document.addEventListener("DOMContentLoaded", async () => {
+  formEl = document.createElement('div')
+  formEl.innerHTML = form.render()
+  document.body.appendChild(formEl)
+
+  import(/* webpackChunkName: "result" */"./result").then(async m => {
+    const result = m.default // result 모듈(m)이 default로 내보내주는 값을 사용하겠다.
+    resultEl = document.createElement('div')
+    resultEl.innerHTML = await result.render()
+    document.body.appendChild(resultEl)
+  })
+
+});
+```
+
+:lipstick: 특히, `/* webpackChunkName: "result" */` 이 주석 부분이 중요하다. 
+
+빌드를 해보면, 정상적으로 `result.js`가 분리되었고, `splitChunks`옵션을 지워도 `vendors~.js` 파일 또한 정상적으로 생성된 것을 확인할 수 있다.
+
+이러한 코드 스플리팅은 개발 초기부터 필요하지는 않고, 번들 파일이 1MB이상으로 커져버리면 그때 분리하는 것을 추천한다.
+
+#### 6.7 Externals
+
+마지막 방법으로는, 애초에 번들하지 말아야할 대상은 빌드 범위에서 제외시키는 방법이있다.
+
+예를 들어 `axios`와 같은 써드파티 라이브러리는 패키지로 제공될 때 **이미 빌드 과정을 거쳐 빌드된 결과물이 있기 때문에** 우리의 빌드 프로세스에서는 제외하고, 다운받은 파일을 바로 사용해도 된다.
+
+```javascript
+// webpack.config.js
+module.exports = {
+    externals: {
+        axios: 'axios',
+    }
+}
+```
+
+> 빌드할 때, axios를 사용하는 부분이 있으면 전역변수 axios를 사용하는 것으로 간주하라. 라는 의미
+
+우리코드에서 `result.js`에 `axios`를 불러오는 부분이 있는데, 위 설정을하면 그부분에서 `axios` 모듈을 가져오지 않고, 전역변수 `axios`가 있는 것처럼 빌드를 해준다.
+
+그런데, 전역변수로 `axios`를 사용하려면 결국 어디선가 가져오긴 해야한다.
+
+현재 우리가 사용하는 `axios` 모듈은 `node_modules/axios/dist/axios.min.js` 에서 가져오는 것이고 이것을 불러오면 되고, 빌드할 때 해당 파일이 우리의 `dist`폴더로 **복사해서 가져오는 방식**이다.
+
+이때 필요한 라이브러리가 ` copy-webpack-plugin`
+
+* 설치 및 설정
+
+  ```bash
+  $ npm i copy-webpack-plugin
+  ```
+
+  ```javascript
+  // webpack.config.js
+  const CopyPlugin = require('copy-webpack-plugin')
+  
+  module.export = {
+    plugins: [
+      new CopyPlugin({
+        patterns: [
+          {
+            from: './node_modules/axios/dist/axios.min.js',
+            to: './axios.min.js'
+          }
+        ]
+      })
+    ]
+  }
+  ```
+
+  ```html
+  <!-- src/index.html-->
+  <body>
+    <script src="axios.min.js"></script>
+  </body> 
+  ```
+
+  > 복사해온 axios를 html 에서 불러오는 코드도 추가해줘야한다.
+
+![image](https://user-images.githubusercontent.com/52653793/97805448-8a40ab00-1c99-11eb-94cc-d765d053c380.png)
+
+빌드를 해보면, `dist` 폴더에 `axios` 라이브러리가 정상적으로 복사된 것을 확인할 수 있다.
