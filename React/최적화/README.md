@@ -162,7 +162,66 @@
 
 그런데 어떤 코드가 오래걸리는건지는 알수가 없다. 이럴때 필요한 것이 `Performance`탭.
 
+* bottleneck 코드 탐색
 
+![image](https://user-images.githubusercontent.com/52653793/98463764-148c9000-2201-11eb-8784-8e129c068e2a.png)
 
+html 파일을 불러오고 다 불러온 시점에 Parse HTML(HTML파일 분석)이 되고있다.
 
+![image](https://user-images.githubusercontent.com/52653793/98463801-7816bd80-2201-11eb-80f8-b473bc433c3d.png)
 
+현재 페이지에서는 세개의 JS 파일을 불러오고, 각 컴포넌트들이 실행되고 있는 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/98463901-23c00d80-2202-11eb-88ef-4213abf0963e.png)
+
+여러 색깔의 점선으로 분석 가이드를 제공해준다. 마우스를 올려보면 각 항목이 뜻하는 것을 확인할 수 있다.
+
+첫 가이드라인이 제공된 시점에 어떤 Network 통신이 이루어진 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/98463916-5964f680-2202-11eb-8830-f9484829e856.png)
+
+해당 Network를 클릭해보면 API 호출인 것을 확인할 수 있다.
+
+즉, **페이지 로드가 완료**되고, **API를 호출하는 시점**이다.
+
+![image](https://user-images.githubusercontent.com/52653793/98464007-3ab32f80-2203-11eb-9a40-31db07bcc2e9.png)
+
+그런데 API 호출이 1200ms 부분을 조금 지나 끝났는데(빨간선 부분) 회색선이 길게 이어져있다. (주황선 부분)
+
+이것은 해당 API의 callback을 의미하고 굉장히 오래 걸린 것을 확인할 수 있고  하단 Frame Chart를 보니 병목현상을 일으키는 모습이 보인다.
+
+병목현상을 일으키는 부분을 보면, `Article` 컴포넌트가 굉장히 길게 실행되고있는 것으로 보아 해당 부분에 문제가 있는 것을 유추할 수 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/98464084-b7dea480-2203-11eb-97fc-c3c552fead23.png)
+
+>  리액트의 경우 상단 `Timings`영역에 컴포넌트에 대한 Frame Chart가 같이 나오고 이곳에서도 Article 컴포넌트가 오랫동안 실행되는 것을 확인할 수 있다. 
+
+![image](https://user-images.githubusercontent.com/52653793/98464141-1dcb2c00-2204-11eb-9b23-9c656ca5bab9.png)
+
+`Article` 부분을 확대해보면 `removeSpecialCharacter`가 길게 실행되고 있으며 중간중간 `Minor GC`가 실행되고있는데 `Minor GC`는 메모리가 부족하여 `garbage collector`에의해 메모리가 정리되는 작업이다.
+
+* bottleneck 코드 최적화
+
+  ![image](https://user-images.githubusercontent.com/52653793/98464274-11939e80-2205-11eb-967c-9d7abf34957a.png)
+
+  > 문제의 코드
+
+* 해결방안
+
+  1. 특수 문자를 효율적으로 제거하기
+     1. replace함수와 정규식 사용
+     2. 마크다운 특수문자를 지워주는 라이브러리 사용 (remove-markdown)
+  
+  2. 작업하는 양 줄이기
+  
+     1. API 통신을 통해 가져오는 문자열 전체를 처리하는 것이 아닌 미리보기에 필요한 양만 처리하기
+  
+        >  (최장 9만자 - 대략 200자)
+
+![image](https://user-images.githubusercontent.com/52653793/98464547-03468200-2207-11eb-8bf5-c60faa70750d.png)
+
+최적화 이후 performance를 다시 측정해보면, `Article - removeSpecialCharacter`의 시간이 눈에 띄게 줄어든 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/52653793/98464588-4bfe3b00-2207-11eb-8314-1a4d1bc68413.png)
+
+`Lighthouse` 수치 또한 증가한 것을 확인할 수 있다.
