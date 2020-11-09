@@ -154,7 +154,7 @@
 (이미지 업로드 시점에 미리 가공하여 저장하도록 하거나, 브라우저 캐시를 사용하거나 등등)
 ```
 
-### 04. BottleNext 코드 최적화 
+### 04. BottleNeck 코드 최적화 
 
 ![image](https://user-images.githubusercontent.com/52653793/97713764-998df000-1b03-11eb-864e-e2663e14f924.png)
 
@@ -225,3 +225,67 @@ html 파일을 불러오고 다 불러온 시점에 Parse HTML(HTML파일 분석
 ![image](https://user-images.githubusercontent.com/52653793/98464588-4bfe3b00-2207-11eb-8314-1a4d1bc68413.png)
 
 `Lighthouse` 수치 또한 증가한 것을 확인할 수 있다.
+
+### 05. Code Splitting & Lazy Loading
+
+`performance`탭에서 유난이 다운로드가 오래걸리는 JS 파일이 있다.  해당 파일을 분석해보고, 최적화해보자
+
+* [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer) - webpack으로 번들링된 파일들이 어떻게 구성되어있는지 보여준다.
+
+* 설치 및 설정
+
+  ```bash
+  $ npm install --save-dev webpack-bundle-analyzer
+  ```
+
+  ```javascript
+  // webpack.config.js
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+   
+  module.exports = {
+    plugins: [
+      new BundleAnalyzerPlugin()
+    ]
+  }
+  ```
+
+그런데.. 우리는 webpack을 직접 구성한 것이 CLI를 통해 환경을 구성했었다.
+
+그렇기 때문에 설정을 변경하려면 CLI를 eject하거나, webpack.config.js를 커스텀할 수 있는 라이브러리를 사용해야한다.
+
+그런데 위 두가지 작업을 하지 않아도 bundle-analyzer를 사용할 수 있는 [cra-bundle-analyzer](https://www.npmjs.com/package/cra-bundle-analyzer)이 있다.
+
+* 설치 및 사용
+
+  ```bash
+  $ npm install --save-dev cra-bundle-analyzer
+  ```
+
+  ```bash
+  $ npx cra-bundle-analyzer
+  ```
+
+* 실행결과
+
+  ![image](https://user-images.githubusercontent.com/52653793/98540735-b7acda80-22d1-11eb-96b7-f3cb9bc55144.png)
+
+`performance`탭에서 확인했던 chunk파일의 크기가 왜 큰지 한번 살펴보자.
+
+`refractor`모듈이 chunk파일의 절반이상을 차지하는 것을 확인할 수 있고, 이 코드의 출처를 `package-lock.json`에서 찾을 수 있다.
+
+`package-lock.json`파일은 우리가 사용하고있는 모듈들의 하위 dependecy를 표시해준다
+
+![image](https://user-images.githubusercontent.com/52653793/98541399-bdef8680-22d2-11eb-96a0-f8293a36e7f4.png)
+
+예를 들어, `@babel/core`의 경우 아래의 `requires`부분을 필요로하니 이 모듈들도 같이 설치하여 사용하라는 의미이다.
+
+위에서 파일 크기가 컸던 `refractor`의 경우,
+
+![image](https://user-images.githubusercontent.com/52653793/98541544-f68f6000-22d2-11eb-9f4d-16871f862466.png)
+
+`react-syntax-heighter`에서 사용되는 모듈인 것을 확인할 수 있다.
+
+`react-syntax-heighter`는 게시글 리스트가 아닌 게시글 상세보기 페이지에서 필요한 모듈이기에 리스트 페이지에서 로드하는 것은 불필요한 행위이다.
+
+위와 같이 파일들을 분리하여 필요할 때 불러오도록 `Code Splitting`을 해보자.
+
