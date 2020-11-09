@@ -249,9 +249,9 @@ html 파일을 불러오고 다 불러온 시점에 Parse HTML(HTML파일 분석
   }
   ```
 
-그런데.. 우리는 webpack을 직접 구성한 것이 CLI를 통해 환경을 구성했었다.
+그런데.. 우리는 webpack을 직접 구성한 것이 CRA를 통해 환경을 구성했었다.
 
-그렇기 때문에 설정을 변경하려면 CLI를 eject하거나, webpack.config.js를 커스텀할 수 있는 라이브러리를 사용해야한다.
+그렇기 때문에 설정을 변경하려면 CRA를 eject하거나, webpack.config.js를 커스텀할 수 있는 라이브러리를 사용해야한다.
 
 그런데 위 두가지 작업을 하지 않아도 bundle-analyzer를 사용할 수 있는 [cra-bundle-analyzer](https://www.npmjs.com/package/cra-bundle-analyzer)이 있다.
 
@@ -289,3 +289,42 @@ html 파일을 불러오고 다 불러온 시점에 Parse HTML(HTML파일 분석
 
 위와 같이 파일들을 분리하여 필요할 때 불러오도록 `Code Splitting`을 해보자.
 
+#### Code Splitting
+
+![image](https://user-images.githubusercontent.com/52653793/98542736-b0d39700-22d4-11eb-82a0-0e305213d101.png)
+
+`Code Splitting`에는 여러 패턴이 있다.
+
+페이지 별로 코드를 분할하기도하고, 
+
+여러 페이지에서 공통적으로 사용하는 모듈이 있고 그 모듈의 크기가 크다면 모듈 별로 코드를 분할하기도 한다.
+
+중요한 것은 **불필요한 코드** 또는 **중복되는 코드**가 없이 **적절한 사이즈**의 코드가 **적잘한 타이밍**에 로드될 수 있도록 하는 것이다.
+
+
+
+![image](https://user-images.githubusercontent.com/52653793/98542511-63572a00-22d4-11eb-8897-4eabf7849724.png)
+
+현재 프로젝트 파일은 하나의 번들 파일에 두 페이지의 코드가 모두 들어있는 상태이다.
+
+그렇다보니 첫 페이지에 접속하는 것만으로 모든 파일을 다운받아 페이지 로드 시간이 오래 걸리게 된다.
+
+![image](https://user-images.githubusercontent.com/52653793/98542462-50445a00-22d4-11eb-9ffe-b89cefce6111.png)
+
+이제 하나의 번들 파일을 이렇게 페이지 단위로 분할하여 접속한 페이지의 코드만 다운받아 사용하도록해보자
+
+Code Splitting은 [리액트 공식문서](https://ko.reactjs.org/docs/code-splitting.html)에도 관련 내용이 있다.
+
+이번에는 라우팅 단위로 코드를 분할하는  `Route-based code splitting`를 적용해보자.
+
+![image](https://user-images.githubusercontent.com/52653793/98543179-6999d600-22d5-11eb-906e-dc414519aa85.png)
+
+ `Code Splitting`을 실제로 적용하는 주체가 리액트가 아닌 webpack이기 때문에 `webpack`에 `Code Splitting`설정을 해줘야한다. [공식문서](https://webpack.js.org/guides/code-splitting/)
+
+하지만, 너무나도 감사하게 CRA로 프로젝트를 만들면 이 설정이 이미 잘 되어있기 때문에 신경쓰지 않아도 된다.
+
+Code Splitting을 적용하고 다시 bundle-analyzer를 실행해보자
+
+![image](https://user-images.githubusercontent.com/52653793/98544946-0bbabd80-22d8-11eb-840c-902ad3f069b1.png)
+
+`Code Splitting`이 정상적으로 적용된 것을 확인할 수 있고, `Network`탭을 확인해보면 List Page에서 View Page로 이동할 때 추가적인 JS 파일을 다운받는 것을 확인할 수있다.
