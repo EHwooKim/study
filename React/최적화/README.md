@@ -328,3 +328,58 @@ Code Splitting을 적용하고 다시 bundle-analyzer를 실행해보자
 ![image](https://user-images.githubusercontent.com/52653793/98544946-0bbabd80-22d8-11eb-840c-902ad3f069b1.png)
 
 `Code Splitting`이 정상적으로 적용된 것을 확인할 수 있고, `Network`탭을 확인해보면 List Page에서 View Page로 이동할 때 추가적인 JS 파일을 다운받는 것을 확인할 수있다.
+
+![image](https://user-images.githubusercontent.com/52653793/98822074-b0253700-2473-11eb-991c-1ce996ebca13.png)
+
+> `Code Splitting`이후 `Lighthouse`점수가 많이 올랐다.
+
+#### 텍스트 압축
+
+`CRA`의 경우 `development`환경과 `production`환경에서 차이가 있다.
+
+`production`환경일 때 `minify`같은 것들이 적용되기에 성능측정의 경우 `production`환경에서 측정하는 것이 보다 정확하다
+
+`CRA`에 의해 설정은 모두 되어있으니 `npm run build`를 통해 빌드 후 빌드 결과물을 열어보자. 
+
+(현재 프로젝트에서는 `npm run serve`로 build 와 serve.js 실행까지 하도록 설정해두었다)
+
+배포 환경에서 다시 `Lighthouse`를 실행시키니 개발환경에서는 못보던 항목이 나온다.
+
+![image](https://user-images.githubusercontent.com/52653793/98823265-38580c00-2475-11eb-8a07-0f559e583b8a.png)
+
+> 서버로 부터 리소스를 받을 때 텍스트를 압축해서 받으라는 안내
+
+웹 페이지를 로드할 떄는 그에 필요한 다양한 리소스들을 같이 다운받는다. (HTML, JS, CSS...)
+
+`텍스트 압축(Text Compression)`은 이런 리소스들의 사이즈의 줄이는 방법 중 하나로 말 그대로 서버에서 보내는 리소스를 압축하여 보내는 방법이다.
+
+![제목 없음](https://user-images.githubusercontent.com/52653793/98824093-3773aa00-2476-11eb-9392-1f8217c8f5c5.png)
+
+`Network`탭에서  `articles` 파일을 보면 `Response Headers`에  `Content-Encoding: gzip`를 통해 압축 상태를 확인할 수 있다.
+
+하지만, `main.xxx.js`등 다른 번들 파일들은 `Content-Encoding`이라는 헤더가 없는 것으로 보아 텍스트 압축을 하고 있지 않다는 것을 알 수 있다.
+
+`GZIP`은 압축 알고리즘의 한 종류로 웹상에서는 주로  `GZIP`, `Deflate` 두가지 방식을 사용한다.
+
+`GZIP`은 내부적으로 `Deflate`를 사용하며 여러 기능이 추가된 방식이고 그렇기때문에 더 좋은 압축률을 자랑한다.
+
+텍스트압축은 클라이언트가 아닌 번들파일을 서비스해주는 **서버에서** 해줘야하기 때문에 리액트설정이 아닌 현재 서비스를 해주는 `serve.js`옵션을 확인해보자
+
+![image](https://user-images.githubusercontent.com/52653793/98825299-a998be80-2477-11eb-93e0-afb8b7e0dc23.png)
+
+> -u, -s 옵션과 함께 serve.js를 사용하고있다.
+
+![제목 없음](https://user-images.githubusercontent.com/52653793/98826048-94705f80-2478-11eb-872d-a4c98f118431.png)
+
+실습을 위해 `-u` 옵션으로 압축을 꺼놓은 상태였고, 이 옵션을 제거하고 서버를 실행시키면 텍스트 압축이 정상적으로된다.
+
+만약 각자의 서비스를 직접 구현한 서버에서 서비스한다면, 해당 서버에 텍스트 입축을 적용해야한다. 대규모 서비스의 경우 여러개의 서버를 사용하는데, 각 서버에 텍스트 압축을 적용하는 것이 아닌 모든 서버가 공통적으로 통하는 라우터서버에 텍스트 압축 기능을 적용하여 주로 사용한다.
+
+`-u`옵션 삭제 후 다시 서버를 실행시키면 정상적으로 텍스트 압축이 되어있다.
+
+그런데, `Network`탭을 확인해보니 모든 파일이 압축된 상태로 오는 것 아니다.
+
+기본적으로 서버에서 압축을 하면 클라이언트에서는 압축을 다시 풀어줘야하는데, 압축을 풀 때에도 시간이 걸리기 때문에 모든 파일을 무분별하게 압축을 하면 오히려 성능이 떨어지게 된다.
+
+그렇기 때문에 파일의 크기가 특정 크기 이상(ex. 2KB 이상)인 파일만 압축을 하는 것이 좋다.
+
