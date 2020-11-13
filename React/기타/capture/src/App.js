@@ -1,8 +1,12 @@
 import React from 'react'
 
+import AboutUs from './pages/AboutUs'
+
 function App() {
   return (
-    <h1>Film</h1>
+    <div className="App">
+      <AboutUs />
+    </div>
   )
 }
 
