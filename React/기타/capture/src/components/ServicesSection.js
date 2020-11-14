@@ -13,8 +13,8 @@ function ServicesSection() {
         <h2>High <span>quality </span><span>services</span></h2>
         <div className="cards">
           <div className="card">
-            <div alt="icon" className="icon">
-              <img src={clock} />
+            <div className="icon">
+              <img alt="icon" src={clock} />
               <h3>Efficient</h3>
             </div>
             <p>Lorem ipsum dolor sit amet.</p>
@@ -22,8 +22,8 @@ function ServicesSection() {
         </div>
         <div className="cards">
           <div className="card">
-            <div alt="icon" className="icon">
-              <img src={teamwork} />
+            <div className="icon">
+              <img alt="icon" src={teamwork} />
               <h3>Teamwork</h3>
             </div>
             <p>Lorem ipsum dolor sit amet.</p>
@@ -31,8 +31,8 @@ function ServicesSection() {
         </div>
         <div className="cards">
           <div className="card">
-            <div alt="icon" className="icon">
-              <img src={diaphragm} />
+            <div className="icon">
+              <img alt="icon" src={diaphragm} />
               <h3>Diaphragm</h3>
             </div>
             <p>Lorem ipsum dolor sit amet.</p>
@@ -40,8 +40,8 @@ function ServicesSection() {
         </div>
         <div className="cards">
           <div className="card">
-            <div alt="icon" className="icon">
-              <img src={money} />
+            <div className="icon">
+              <img alt="icon" src={money} />
               <h3>Affordable</h3>
             </div>
             <p>Lorem ipsum dolor sit amet.</p>
