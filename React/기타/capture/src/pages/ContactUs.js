@@ -1,10 +1,19 @@
 import React from 'react'
 
+import { motion } from 'framer-motion'
+import { PageAnimation } from '../animation'
+
 function ContactUs() {
   return (
-    <div>
+    <motion.div
+      variants={PageAnimation}
+      initial="hidden"
+      animate="show"
+      exit="exit"
+      style={{background: "#fff"}}
+    >
       <h1>ContactUs</h1>
-    </div>
+    </motion.div>
   )
 }
 
