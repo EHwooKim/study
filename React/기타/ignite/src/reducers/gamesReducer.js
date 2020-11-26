@@ -1,4 +1,3 @@
-const { DragFeature } = require("framer-motion")
 
 const initState = {
   popular: [],
@@ -10,7 +9,7 @@ const initState = {
 const gameReducer = (state = initState, action) => {
   switch (action.type) {
     case 'FETCH_GAMES':
-      return {...state}
+      return {...action.payload}
     default:
       return {...state}
   }
