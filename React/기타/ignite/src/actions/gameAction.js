@@ -11,7 +11,7 @@ export const loadGames = () => async (dispatch) => {
     payload: {
       popular: popularData.data.results,
       upcoming: upcomingData.data.results,
-      newGmes: newGameData.data.results
+      newGames: newGameData.data.results
     }
   })
 }
