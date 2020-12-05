@@ -6,6 +6,7 @@ import Game from '../components/Game'
 import styled from 'styled-components'
 import { motion, AnimatePresence, AnimateSharedLayout } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
+import { fadeIn } from '../animation'
 
 function Home() {
   const location = useLocation()
@@ -18,15 +19,30 @@ function Home() {
     
   }, [dispatch])
 
-  const { popular, upcoming, newGames } = useSelector(state => state.games)
-  console.log(popular)
+  const { popular, upcoming, newGames, searched } = useSelector(state => state.games)
 
   return (
-    <GameList>
+    <GameList  variants={fadeIn} initial="hidden" animate="show">
       <AnimateSharedLayout type="crossfade">
         <AnimatePresence>
           {pathId && <GameDetail pathId={pathId} />}
         </AnimatePresence>
+        {searched.length ? (
+          <div className="searched">
+            <h2>Searched Games</h2>
+            <Games>
+              {searched.map((game) => (
+                <Game
+                  name={game.name} 
+                  released={game.released} 
+                  id={game.id}
+                  image={game.background_image}
+                  key={game.id}
+                />
+              ))}
+            </Games>
+          </div>
+        ) : ''}
         <h2>Upcoming Games</h2>
           <Games>
             {upcoming.map((game) => (
