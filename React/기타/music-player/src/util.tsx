@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-type SongDataType = {
+export type SongDataType = {
   name: string,
   cover: string,
   artist: string,
