@@ -20,14 +20,14 @@ const Player:React.FC<Props> = ({ isPlaying, setIsPlaying, currentSong: { audio 
     currentTime: 0,
     duration: 0,
   })
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(new Audio(''))
 
 
   const playSongHandler = useCallback(() => {
     if (isPlaying) {
-      audioRef.current?.pause()
+      audioRef.current.pause()
     } else { 
-      audioRef.current?.play()
+      audioRef.current.play()
     }
     setIsPlaying(!isPlaying)
   }, [isPlaying])
@@ -36,9 +36,17 @@ const Player:React.FC<Props> = ({ isPlaying, setIsPlaying, currentSong: { audio 
     const current = (e.target as HTMLAudioElement).currentTime
     const duration = (e.target as HTMLAudioElement).duration
     setSongInfo({
-      ...songInfo, 
       currentTime: current,
       duration: duration
+    })
+  }
+
+  const dragHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dragTime = parseInt(e.target.value);
+    audioRef.current.currentTime = dragTime
+    setSongInfo({
+      ...songInfo,
+      currentTime: dragTime
     })
   }
 
@@ -46,7 +54,13 @@ const Player:React.FC<Props> = ({ isPlaying, setIsPlaying, currentSong: { audio 
     <div className="player">
       <div className="time-control">
         <p>{getTime(songInfo.currentTime)}</p>
-        <input type="range" />
+        <input 
+          min={0}
+          max={songInfo.duration}
+          value={songInfo.currentTime}
+          onChange={dragHandler}
+          type="range" 
+        />
         <p>{getTime(songInfo.duration)}</p>
       </div>
       <div className="play-control">
