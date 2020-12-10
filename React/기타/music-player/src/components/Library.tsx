@@ -1,18 +1,30 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import LibrarySong from './LibrarySong'
 
 import { SongDataType } from '../util'
 
 type Props = {
-  songs: SongDataType[]
+  audioRef: React.MutableRefObject<HTMLAudioElement>,
+  songs: SongDataType[],
+  setCurrentSong: Dispatch<SetStateAction<SongDataType>>,
+  isPlaying: boolean
 }
 
-const Library: React.FC<Props> = ({ songs }) => {
+const Library: React.FC<Props> = ({ audioRef, songs, setCurrentSong, isPlaying }) => {
   return (
     <div className="library">
       <h2>Library</h2>
       <div className="library-songs">
-        {songs.map(song => <LibrarySong currentSong={song} />)}
+        {songs.map(song => (
+          <LibrarySong 
+            songs={songs}
+            setCurrentSong={setCurrentSong} 
+            song={song}
+            key={song.id}
+            audioRef={audioRef}
+            isPlaying={isPlaying}
+          />
+        ))}
       </div>
     </div>
   )
