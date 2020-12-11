@@ -4,6 +4,7 @@ import LibrarySong from './LibrarySong'
 import { SongDataType } from '../util'
 
 type Props = {
+  libraryStatus: boolean,
   audioRef: React.MutableRefObject<HTMLAudioElement>,
   songs: SongDataType[],
   setSongs: Dispatch<React.SetStateAction<SongDataType[]>>,
@@ -11,9 +12,9 @@ type Props = {
   isPlaying: boolean
 }
 
-const Library: React.FC<Props> = ({ audioRef, songs, setSongs, setCurrentSong, isPlaying }) => {
+const Library: React.FC<Props> = ({ libraryStatus, audioRef, songs, setSongs, setCurrentSong, isPlaying }) => {
   return (
-    <div className="library">
+    <div className={`library ${libraryStatus ? 'active-library' : ''}`}>
       <h2>Library</h2>
       <div className="library-songs">
         {songs.map(song => (

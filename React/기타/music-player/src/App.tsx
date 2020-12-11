@@ -4,6 +4,8 @@ import './styles/app.scss'
 import Song from './components/Song'
 import Player from './components/Player'
 import Library from './components/Library'
+import Nav from './components/Nav'
+
 
 import data, { SongDataType } from './util'
 
@@ -13,7 +15,6 @@ export type SongInfoType = {
 }
 
 const App: React.FC = () => {
-  console.log('app rendered')
   const [songs, setSongs] = useState<SongDataType[]>(data())
   const [currentSong, setCurrentSong] = useState<SongDataType>(songs[0])
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -21,6 +22,7 @@ const App: React.FC = () => {
     currentTime: 0,
     duration: 0,
   })
+  const [libraryStatus, setLibraryStatus] = useState<boolean>(false)
 
   const audioRef = useRef<HTMLAudioElement>(new Audio(''))
 
@@ -35,6 +37,10 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      <Nav 
+        libraryStatus={libraryStatus}
+        setLibraryStatus={setLibraryStatus}
+      />
       <Song currentSong={currentSong} />
       <Player 
         audioRef={audioRef}
@@ -51,6 +57,7 @@ const App: React.FC = () => {
         src={currentSong.audio}
       ></audio>
       <Library 
+        libraryStatus={libraryStatus}
         audioRef={audioRef}
         songs={songs} 
         setSongs={setSongs}
