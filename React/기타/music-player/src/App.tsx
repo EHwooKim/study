@@ -13,6 +13,7 @@ export type SongInfoType = {
 }
 
 const App: React.FC = () => {
+  console.log('app rendered')
   const [songs, setSongs] = useState<SongDataType[]>(data())
   const [currentSong, setCurrentSong] = useState<SongDataType>(songs[0])
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -52,6 +53,7 @@ const App: React.FC = () => {
       <Library 
         audioRef={audioRef}
         songs={songs} 
+        setSongs={setSongs}
         setCurrentSong={setCurrentSong}
         isPlaying={isPlaying}
       />

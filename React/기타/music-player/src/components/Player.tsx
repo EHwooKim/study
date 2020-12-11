@@ -1,4 +1,4 @@
-import React, { useState, useRef, SetStateAction, Dispatch, useCallback  } from 'react'
+import React, { useState, useRef, SetStateAction, Dispatch, useCallback,   } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay, faAngleLeft, faAngleRight, faPause } from '@fortawesome/free-solid-svg-icons'
 
@@ -15,6 +15,7 @@ type Props = {
 }
 
 const Player:React.FC<Props> = ({ audioRef ,isPlaying, setIsPlaying, songInfo, setSongInfo, currentSong }) => {
+  console.log('player rendered')
 
   const playSongHandler = useCallback(() => {
     if (isPlaying) {

@@ -1,19 +1,34 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, memo } from 'react'
 
 import { SongDataType } from '../util'
 
 type Props = {
   audioRef: React.MutableRefObject<HTMLAudioElement>,
   songs: SongDataType[],
+  setSongs: Dispatch<React.SetStateAction<SongDataType[]>>,
   song: SongDataType,
   setCurrentSong: Dispatch<SetStateAction<SongDataType>>,
   isPlaying: boolean
 }
 
-const LibrarySong:React.FC<Props> = ({ audioRef, songs, song, setCurrentSong, isPlaying }) => {
-
+const LibrarySong:React.FC<Props> = ({ audioRef, songs, setSongs, song, setCurrentSong, isPlaying }) => {
   const songSelectHandler = () => {
     setCurrentSong(song)
+    const newSongs = songs.map((s) => {
+      if (s.id === song.id) {
+        return {
+          ...s,
+          active: true
+        }
+      } else {
+        return {
+          ...s,
+          active: false
+        }
+      }
+    })
+    setSongs(newSongs)
+
     if (isPlaying) {
       const playPromise = audioRef.current.play()
       console.log(playPromise)
@@ -26,7 +41,7 @@ const LibrarySong:React.FC<Props> = ({ audioRef, songs, song, setCurrentSong, is
   }
 
   return (
-    <div onClick={songSelectHandler} className="library-song">
+    <div onClick={songSelectHandler} className={`library-song ${song.active ? 'selected': ''}`}>
       <img src={song.cover} alt={song.name}/>
       <div className="song-description">
         <h3>{song.name}</h3>
@@ -36,4 +51,4 @@ const LibrarySong:React.FC<Props> = ({ audioRef, songs, song, setCurrentSong, is
   )
 }
 
-export default LibrarySong
+export default memo(LibrarySong)

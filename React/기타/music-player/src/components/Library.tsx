@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, memo } from 'react'
 import LibrarySong from './LibrarySong'
 
 import { SongDataType } from '../util'
@@ -6,11 +6,12 @@ import { SongDataType } from '../util'
 type Props = {
   audioRef: React.MutableRefObject<HTMLAudioElement>,
   songs: SongDataType[],
+  setSongs: Dispatch<React.SetStateAction<SongDataType[]>>,
   setCurrentSong: Dispatch<SetStateAction<SongDataType>>,
   isPlaying: boolean
 }
 
-const Library: React.FC<Props> = ({ audioRef, songs, setCurrentSong, isPlaying }) => {
+const Library: React.FC<Props> = ({ audioRef, songs, setSongs, setCurrentSong, isPlaying }) => {
   return (
     <div className="library">
       <h2>Library</h2>
@@ -18,6 +19,7 @@ const Library: React.FC<Props> = ({ audioRef, songs, setCurrentSong, isPlaying }
         {songs.map(song => (
           <LibrarySong 
             songs={songs}
+            setSongs={setSongs}
             setCurrentSong={setCurrentSong} 
             song={song}
             key={song.id}
@@ -30,4 +32,4 @@ const Library: React.FC<Props> = ({ audioRef, songs, setCurrentSong, isPlaying }
   )
 }
 
-export default Library
+export default memo(Library)
