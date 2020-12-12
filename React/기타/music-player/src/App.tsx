@@ -44,11 +44,14 @@ const App: React.FC = () => {
       <Song currentSong={currentSong} />
       <Player 
         audioRef={audioRef}
+        songs={songs} 
+        setSongs={setSongs}
         songInfo={songInfo}
         setSongInfo={setSongInfo}
         isPlaying={isPlaying} 
         setIsPlaying={setIsPlaying} 
         currentSong={currentSong} 
+        setCurrentSong={setCurrentSong}
       />
       <audio
         onTimeUpdate={timeUpdateHandler}
