@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, memo } from 'react'
 import LibrarySong from './LibrarySong'
 
-import { SongDataType } from '../util'
+import { SongDataType } from '../data'
 
 type Props = {
   libraryStatus: boolean,

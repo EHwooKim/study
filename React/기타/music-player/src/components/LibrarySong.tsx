@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, memo } from 'react'
 
-import { SongDataType } from '../util'
+import { SongDataType } from '../data'
+import { playAudio } from '../util'
 
 type Props = {
   audioRef: React.MutableRefObject<HTMLAudioElement>,
@@ -28,16 +29,7 @@ const LibrarySong:React.FC<Props> = ({ audioRef, songs, setSongs, song, setCurre
       }
     })
     setSongs(newSongs)
-
-    if (isPlaying) {
-      const playPromise = audioRef.current.play()
-      console.log(playPromise)
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          audioRef.current.play()
-        })
-      }
-    }
+    playAudio(isPlaying, audioRef)
   }
 
   return (

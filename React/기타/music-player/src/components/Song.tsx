@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { SongDataType } from '../util'
+import { SongDataType } from '../data'
 
 type Props = {
   currentSong: SongDataType

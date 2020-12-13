@@ -7,7 +7,7 @@ import Library from './components/Library'
 import Nav from './components/Nav'
 
 
-import data, { SongDataType } from './util'
+import data, { SongDataType } from './data'
 
 export type SongInfoType = {
   currentTime: number,
