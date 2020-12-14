@@ -83,24 +83,6 @@ function chillHop():SongDataType[] {
       id: uuidv4(),
       active: false,
     },
-    {
-      name: "You and I",
-      cover: "https://chillhop.com/wp-content/uploads/2020/10/0e5bb63f838ff92eeac142aae944e9f678df13c9-1024x1024.jpg",
-      artist: "Melodiesinfonie",
-      audio: "https://mp3.chillhop.com/serve.php/?mp3=10339",
-      color: ["#9c3035", "#25515e"],
-      id: uuidv4(),
-      active: false,
-    },
-    {
-      name: "You and I",
-      cover: "https://chillhop.com/wp-content/uploads/2020/10/0e5bb63f838ff92eeac142aae944e9f678df13c9-1024x1024.jpg",
-      artist: "Melodiesinfonie",
-      audio: "https://mp3.chillhop.com/serve.php/?mp3=10339",
-      color: ["#9c3035", "#25515e"],
-      id: uuidv4(),
-      active: false,
-    },
   ];
 }
 

@@ -11,7 +11,8 @@ import data, { SongDataType } from './data'
 
 export type SongInfoType = {
   currentTime: number,
-  duration: number
+  duration: number,
+  animationPercentage: number
 }
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   const [songInfo, setSongInfo] = useState<SongInfoType>({ 
     currentTime: 0,
     duration: 0,
+    animationPercentage: 0
   })
   const [libraryStatus, setLibraryStatus] = useState<boolean>(false)
 
@@ -29,9 +31,14 @@ const App: React.FC = () => {
   const timeUpdateHandler = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
     const current = (e.target as HTMLAudioElement).currentTime
     const duration = (e.target as HTMLAudioElement).duration
+    const roundedCurrent = Math.round(current)
+    const roundedDuration = Math.round(duration)
+    const animationPercentage = Math.round((roundedCurrent/roundedDuration) * 100)
+    console.log(animationPercentage)
     setSongInfo({
       currentTime: current,
-      duration: duration
+      duration: duration,
+      animationPercentage: animationPercentage
     })
   }
 

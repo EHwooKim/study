@@ -70,18 +70,29 @@ const Player:React.FC<Props> = ({ audioRef, songs, setSongs, isPlaying, setIsPla
     }
     playAudio(isPlaying, audioRef)
   }
+  const trackAnim = {
+    transform: `translateX(${songInfo.animationPercentage}%)`
+  }
+  const trackBackgroundColor = {
+    background: currentSong.color 
+      ? `linear-gradient(to right, ${currentSong.color[0]}, ${currentSong.color[1]})`
+      : 'lightblue' 
+  }
 
   return (
     <div className="player">
       <div className="time-control">
         <p>{getTime(songInfo.currentTime)}</p>
-        <input 
-          min={0}
-          max={songInfo.duration || 0}
-          value={songInfo.currentTime}
-          onChange={dragHandler}
-          type="range" 
-        />
+        <div className="track" style={trackBackgroundColor} >
+          <input 
+            min={0}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            onChange={dragHandler}
+            type="range" 
+          />
+          <div style={trackAnim} className="animate-track"></div>
+        </div>
         <p>{songInfo.duration ? getTime(songInfo.duration) : '00:00'}</p>
       </div>
       <div className="play-control">
