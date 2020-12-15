@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, memo } from 'react'
 
 import { SongDataType } from '../data'
-import { playAudio } from '../util'
 
 type Props = {
   audioRef: React.MutableRefObject<HTMLAudioElement>,
@@ -13,7 +12,7 @@ type Props = {
 }
 
 const LibrarySong:React.FC<Props> = ({ audioRef, songs, setSongs, song, setCurrentSong, isPlaying }) => {
-  const songSelectHandler = () => {
+  const songSelectHandler = async () => {
     setCurrentSong(song)
     const newSongs = songs.map((s) => {
       if (s.id === song.id) {
@@ -28,8 +27,8 @@ const LibrarySong:React.FC<Props> = ({ audioRef, songs, setSongs, song, setCurre
         }
       }
     })
-    setSongs(newSongs)
-    playAudio(isPlaying, audioRef)
+    await setSongs(newSongs)
+    if (isPlaying) audioRef.current.play()
   }
 
   return (

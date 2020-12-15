@@ -34,12 +34,17 @@ const App: React.FC = () => {
     const roundedCurrent = Math.round(current)
     const roundedDuration = Math.round(duration)
     const animationPercentage = Math.round((roundedCurrent/roundedDuration) * 100)
-    console.log(animationPercentage)
     setSongInfo({
       currentTime: current,
       duration: duration,
       animationPercentage: animationPercentage
     })
+  }
+
+  const songEndHandler = async () => {
+    let currentIndex = songs.findIndex((song) => song.id === currentSong.id)
+    await setCurrentSong(songs[(currentIndex + 1) % songs.length])
+    if (isPlaying) audioRef.current.play()
   }
 
   return (
@@ -65,6 +70,7 @@ const App: React.FC = () => {
         onLoadedMetadata={timeUpdateHandler}
         ref={audioRef} 
         src={currentSong.audio}
+        onEnded={songEndHandler}
       ></audio>
       <Library 
         libraryStatus={libraryStatus}

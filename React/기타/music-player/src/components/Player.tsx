@@ -4,7 +4,6 @@ import { faPlay, faAngleLeft, faAngleRight, faPause } from '@fortawesome/free-so
 
 import { SongInfoType } from '../App'
 import { SongDataType } from '../data'
-import { playAudio } from '../util'
 
 
 type Props = {
@@ -55,20 +54,20 @@ const Player:React.FC<Props> = ({ audioRef, songs, setSongs, isPlaying, setIsPla
     })
   }
 
-  const skipTrackHandler = (direction: string) => {
+  const skipTrackHandler = async (direction: string) => {
     let currentIndex = songs.findIndex((song) => song.id === currentSong.id)
     if (direction === 'skip-forward') {
-      setCurrentSong(songs[(currentIndex + 1) % songs.length])
+      await setCurrentSong(songs[(currentIndex + 1) % songs.length])
     } 
     if (direction === 'skip-back') {
       if (currentIndex === 0) {
-        setCurrentSong(songs[songs.length - 1])
-        playAudio(isPlaying, audioRef)
+        await setCurrentSong(songs[songs.length - 1])
+        if (isPlaying) audioRef.current.play()
         return 
       }
-      setCurrentSong(songs[(currentIndex - 1) % songs.length])
+      await setCurrentSong(songs[(currentIndex - 1) % songs.length])
     }
-    playAudio(isPlaying, audioRef)
+    if (isPlaying) audioRef.current.play()
   }
   const trackAnim = {
     transform: `translateX(${songInfo.animationPercentage}%)`
