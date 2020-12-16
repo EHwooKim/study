@@ -7,11 +7,31 @@
   img {
     width: 20%;
     border-radius: 50%;
+    &.playing {
+      animation: rotate 30s infinite linear;
+    }
   }
   h2 {
     padding: 3rem 1rem 1rem 1rem;
   }
   h3 {
     font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .song-container {
+    img {
+      width: 60%;
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0)
+  }
+  to {
+    transform: rotate(360deg)
   }
 }

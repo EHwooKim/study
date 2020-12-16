@@ -1,4 +1,4 @@
-import React, { Dispatch } from 'react'
+import React, { Dispatch, memo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMusic } from '@fortawesome/free-solid-svg-icons'
 
@@ -19,4 +19,4 @@ return (
   )
 }
 
-export default Nav
+export default memo(Nav)
