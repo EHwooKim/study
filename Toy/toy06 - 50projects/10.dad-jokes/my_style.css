@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  height: 100vh;
+  background: lightcyan;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  width: 800px;
+  height: 400px;
+  padding: 50px;
+  text-align: center;
+  background: white;
+}
+.container p {
+  margin: 3rem;
+}
+.button {
+  padding: 1rem 4rem;
+  background: green;
+  color: white;
+  border: none;
+}

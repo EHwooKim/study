@@ -1,0 +1,34 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: lightblue;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn {
+  display: inline-block;
+  width: 150px;
+  height: 78px;
+  background: darkblue;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+.btn:active {
+  transform: scale(0.95);
+}
+.btn + .btn {
+  margin-left: 2rem;
+}
