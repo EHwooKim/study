@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} 
+body {
+  height: 100vh;
+  background: #8e44ad;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  display: flex;
+
+}
+.card {
+  color: white;
+  margin: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.card h2 {
+  font-size: 3rem;
+}
+.card p {
+  font-size: 1.1rem;
+}
