@@ -280,3 +280,222 @@ test('throws on octopus', () => {
 
 
 
+## Setup and Teardown
+
+`test`를 진행할 때 각 `test`가 시작할 때나 끝날 때마다 특정 작업을 실행시키는 방법에 대해 알아보자
+
+### beforeEach, afterEach
+
+* `beforeEach` - 각 `test` 코드가 시작하기 전에 실행
+
+* `afterEach` - 각 `test` 코드가 종료된 후 실행
+
+* 각 `test` 시작 전 실행시킬 함수 `initializeCityDatabase`, 종료 후 실행시킬 `clearCityDatabase`가 있다면 아래와 같이 사용하면 된다.
+
+  ```javascript
+  beforeEach(() => {
+    initializeCityDatabase();
+  });
+  
+  afterEach(() => {
+    clearCityDatabase();
+  });
+  
+  test('city database has Vienna', () => {
+    expect(isCity('Vienna')).toBeTruthy();
+  });
+  
+  test('city database has San Juan', () => {
+    expect(isCity('San Juan')).toBeTruthy();
+  });
+  ```
+
+* 만약 `beforeEach`와 `afterEacg`가 비동기 함수를 다룬다면, **비동기 함수 테스트** 떄와 마찬가지로 `done`인자를 받아 코드 마지막에 실행시키거나, `Promise`를 반환하면 된다.
+
+  ```javascript
+  beforeEach(() => {
+    return initializeCityDatabase();
+  });
+  ```
+
+* `beforeEach`, `afterEach`는 같은 test 파일에 작성된 test 코드에서만 작동한다. (다른파일 영향 X)
+
+### beforeAll, afterAll
+
+* `beforeEach`, `faterEach`는 모든 `test`코드가 실행될 때마다 작동하지만, `beforeAll`, `afterAll`은 모든 `test` 코드가 실행되고, 끝날 때 한번씩만 실행된다.
+
+* `test`  코드가 실행되기 전 데이터를 비동기로 받아오는 함수가 있고 이를 모든 `test`코드가 시작하고, 끝날 떄 한번씩만 실행하고 싶다면 아래와 같이 사용하면 된다.
+
+  ```javascript
+  beforeAll(() => {
+    return initializeCityDatabase();
+  });
+  
+  afterAll(() => {
+    return clearCityDatabase();
+  });
+  
+  test('city database has Vienna', () => {
+    expect(isCity('Vienna')).toBeTruthy();
+  });
+  
+  test('city database has San Juan', () => {
+    expect(isCity('San Juan')).toBeTruthy();
+  });
+  ```
+
+* `beforeEach`, `afterEach`와 마찬가지로 같은 파일에 작성된 `test` 코드에 대해서만 한번씩 작동한다.(다른파일 영향 X)
+
+### Scoping
+
+* `before*`, `after*` 블럭은 파일내의 모든 `test` 코드에 대해 작동한다.
+* 하지만, `describe` 블럭을 사용하면 특정 `test`코드를 그룹화하며 `before*`, `after*`를 해당 그룹 내에서만 작동하도록 만들 수 있다.
+
+```javascript
+// 아래 beforeEach 블럭은 이 파일에 있는 모든 test코드가 작동하기 전에 실행된다.
+beforeEach(() => {	// ----------------------- (1)
+  return initializeCityDatabase();
+});
+
+test('city database has Vienna', () => {	// ----------------------- (1-1)
+  expect(isCity('Vienna')).toBeTruthy();
+});
+
+test('city database has San Juan', () => {	// ----------------------- (1-2)
+  expect(isCity('San Juan')).toBeTruthy();
+});
+
+describe('matching cities to foods', () => {
+  // 아래 beforeEach 블럭은 현재 describe 블럭 내부의 test코드가 작동하기 전에만 실행된다.
+  beforeEach(() => {	// ----------------------- (2)
+    return initializeFoodDatabase();
+  });
+
+  test('Vienna <3 sausage', () => {	// ----------------------- (2-1)
+    expect(isValidCityFoodPair('Vienna', 'Wiener Schnitzel')).toBe(true);
+  });
+
+  test('San Juan <3 plantains', () => {	// ----------------------- (2-2)
+    expect(isValidCityFoodPair('San Juan', 'Mofongo')).toBe(true);
+  });
+});
+```
+
+* `describe` 블럭 내부에서는 해당 블럭 안에 작성된 `before*`, `after*`**만** 실행되는 것이 아닌 `describe`블럭 외부(전역..?)에 있는 `before*`, `after*` 코드 또한 실행된다.
+
+  * 즉, 위 코드에서 `(2-1)`, `(2-2)`코드가 각각 실행되기 전에 `describe`블럭 내부의 `(2)`코드**만** 실행되는 것이 아닌 `(1)`, `(2)` 코드가 모두 실행된다.
+
+  ```javascript
+  beforeAll(() => console.log('1 - beforeAll'));
+  afterAll(() => console.log('1 - afterAll'));
+  beforeEach(() => console.log('1 - beforeEach'));
+  afterEach(() => console.log('1 - afterEach'));
+  test('', () => console.log('1 - test'));
+  describe('Scoped / Nested block', () => {
+    beforeAll(() => console.log('2 - beforeAll'));
+    afterAll(() => console.log('2 - afterAll'));
+    beforeEach(() => console.log('2 - beforeEach'));
+    afterEach(() => console.log('2 - afterEach'));
+    test('', () => console.log('2 - test'));
+  });
+  
+  // 1 - beforeAll
+  // 1 - beforeEach
+  // 1 - test
+  // 1 - afterEach
+  // 2 - beforeAll
+  // 1 - beforeEach
+  // 2 - beforeEach
+  // 2 - test
+  // 2 - afterEach
+  // 1 - afterEach
+  // 2 - afterAll
+  // 1 - afterAll
+  ```
+
+### 실행 순서
+
+* `Jest`는 `describe` 블럭 내의 `test`코드를 제외한 모든 코드를 실행 시킨 후에 `test`코드는 **마지막에 한꺼번에 처리한다.** (`test` 코드만 비동기처럼 실행되는 느낌)
+
+* 위와 같은 이유때문에서라도 `before*`, `after*` 블럭이 필요한 것이다.
+
+* 아래 코드에서 `console.log` 결과를 예측해보자.
+
+  ```javascript
+  describe('outer', () => {
+    console.log('describe outer-a');
+  
+    describe('describe inner 1', () => {
+      console.log('describe inner 1');
+      test('test 1', () => {
+        console.log('test for describe inner 1');
+        expect(true).toEqual(true);
+      });
+    });
+  
+    console.log('describe outer-b');
+  
+    test('test 1', () => {
+      console.log('test for describe outer');
+      expect(true).toEqual(true);
+    });
+  
+    describe('describe inner 2', () => {
+      console.log('describe inner 2');
+      test('test for describe inner 2', () => {
+        console.log('test for describe inner 2');
+        expect(false).toEqual(false);
+      });
+    });
+  
+    console.log('describe outer-c');
+  });
+  
+  console.log('out of describe block')
+  ```
+
+  ```javascript
+  // 결과
+  // describe outer-a
+  // describe inner 1
+  // describe outer-b
+  // describe inner 2
+  // describe outer-c
+  // out of describe block
+  // test for describe inner 1
+  // test for describe outer
+  // test for describe inner 2
+  ```
+
+  * 다른 코드가 먼저 실행되고 `test` 코드는 마지막에 **한꺼번에 몰아서 실행**되는 것을 확인할 수 있다.
+
+### test.only
+
+* 테스트가 실패했을 떄 `test.only`를 통해 특정 `test`코드만 실행시키는 방법으로 문제점을 찾을 수도 있다.
+
+* `test.only`를 통해 해당 `test`코드만 실행시키는 것이기 떄문에 `before*`, `after*` 또한 그때만 실행된다.
+
+  ```javascript
+  beforeEach(() => {
+    console.log('init')
+  });
+  
+  afterEach(() => {
+    console.log('clear')
+  });
+  
+  test.only('test only', () => {
+    expect(1).toBe(1)
+  });
+  
+  test('test', () => {
+    expect(2).toBe(2)
+  });
+  ```
+
+  ![image](https://user-images.githubusercontent.com/52653793/109378490-59564700-7916-11eb-86e3-f1d3b85a3c48.png)
+
+  > test.only 외에는 모두 skip된다.
+
+
+
