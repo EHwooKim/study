@@ -280,6 +280,131 @@ test('throws on octopus', () => {
 
 
 
+## 비동기 테스트
+
+* 자바스크립트 특성상 비동기 코드를 다루는 일이 많아 이를 테스트하는 방법을 알아보자
+
+### Callback
+
+* 함수 `fetchData(callback)`가 비동기적으로 어떤 data를 받아와서 `callback(data)`를 실행시키는 함수라 했을 때, 반환되는 값이 `'peanut butter'`인지 `test`해보는 코드를 작성해보자
+
+  ```javascript
+  test('the data is peanut butter', () => {
+    function callback(data) {
+      expect(data).toBe('peanut butter');
+    }
+  
+    fetchData(callback);
+  });
+  ```
+
+  * 이 코드를 작동시켜보면 테스트를 통과한 것 처럼 결과가 나온다.
+  * 하지만 실제로는 비동기 코드를 기다리지 않고 테스트를 진행하여 우리가 원하는대로 동작한 것이 아니다.
+
+* 비동기 코드를 기다리기 위해서는 `test`함수의 두번째인자에 해당하는 테스트 코드에 `done`이라는 인자를 받아 이를 활용하면 된다.
+
+  ```javascript
+  test('the data is peanut butter', done => {
+    function callback(data) {
+      try {
+        expect(data).toBe('peanut butter');
+        done();
+      } catch (error) {
+        done(error);
+      }
+    }
+  
+    fetchData(callback);
+  });
+  ```
+
+  * 이렇게 `done`을 받아 원하는 위치에 실행을 해주면, `Jest`는 `done` 함수가 실행될 떄까지 테스트를 기다리게 된다.
+
+### Promise
+
+* `Promise`를 사용하면 보다 쉽게 비동기 코드를 테스트할 수 있다.
+
+* 테스트 코드에서 `Promise`를 반환해주면 `Jest`는 `Promise`가 `resolve`될 떄까지 기다려준다.
+
+  ```javascript
+  test('the data is peanut butter', () => {
+    return fetchData().then(data => {
+      expect(data).toBe('peanut butter');
+    });
+  });
+  ```
+
+  * `promise`를 `return`해줘야 하는 것을 잊지말자. 
+  * `return`이 없으면 위 코드가 의도대로 작동하지 않는다.
+  * 만약 해당 `promise`가 `reject`된다면 테스트는 실패하게 된다.
+
+* `promise`가 `reject`되는지를 테스트하기 위해서는 `then`이 아닌 `catch`를 사용하면된다
+
+  ```javascript
+  test('the fetch fails with an error', () => {
+    expect.assertions(1);
+    return fetchData().catch(e => expect(e).toMatch('error'));
+  });
+  ```
+
+### resolves / rejects
+
+* 위 방법과 비슷하지만 `Jest`의 `matcher`들 중 `resolves`, `rejects`를 사용할 수도 있다.
+
+  * `resolves`
+
+    ```javascript
+    test('the data is peanut butter', () => {
+      return expect(fetchData()).resolves.toBe('peanut butter');
+    });
+    ```
+
+  * `rejects`
+
+    ```javascript
+    test('the fetch fails with an error', () => {
+      return expect(fetchData()).rejects.toMatch('error');
+    });
+    ```
+
+* promise떄와 마찬가지로 `return`으로 반환을 해줘야 의도대로 작동하는 것에 유의하자.
+
+### Async / Await
+
+* `async`, `await`를 사용하면 보다 간편하게 테스트 코드를 작성할 수 있다.
+
+* 일반적인 비동기 함수를 사용하는 것과 큰 차이가 없기 때문에 가독성 또한 좋다
+
+  ```javascript
+  test('the data is peanut butter', async () => {
+    const data = await fetchData();
+    expect(data).toBe('peanut butter');
+  });
+  
+  test('the fetch fails with an error', async () => {
+    expect.assertions(1);
+    try {
+      await fetchData();
+    } catch (e) {
+      expect(e).toMatch('error');
+    }
+  });
+  ```
+
+* `Async / Await`와 위에서 알아본 `resolves / rejects` `matchers`를 함께 사용할 수도 있다.
+
+  ```javascript
+  test('the data is peanut butter', async () => {
+    await expect(fetchData()).resolves.toBe('peanut butter');
+  });
+  
+  test('the fetch fails with an error', async () => {
+    await expect(fetchData()).rejects.toThrow('error');
+  });
+  ```
+
+  
+
 ## Setup and Teardown
 
 `test`를 진행할 때 각 `test`가 시작할 때나 끝날 때마다 특정 작업을 실행시키는 방법에 대해 알아보자
