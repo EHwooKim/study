@@ -103,5 +103,6 @@ test('renders learn react link', () => {
   * 유저가 어떻게 사용하는지를 테스트한다.
 * `Jest`와 `Enzyme`의 경우 `Unit test`, `Integration test`에 주로 사용된다.
 
+## Simple React App : Click Counter
 
-
+[Click Counter](../click-counter)
