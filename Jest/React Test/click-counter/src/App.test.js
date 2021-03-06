@@ -31,8 +31,18 @@ test('renders couter display', () => {
   expect(counterDisplay.length).toBe(1)
 })
 test('counter starts at 0', () => {
-
+  const wrapper = setup()
+  const count = findByTestAttr(wrapper, "count").text()
+  expect(count).toBe("0")
 })
 test('clicking on button increase couter display', () => {
-
+  const wrapper = setup()
+  // find the button
+  const button = findByTestAttr(wrapper, 'increment-button')
+  // click the button
+  button.simulate('click')
+  // find the display, and test that the number has been incremented
+  const count = findByTestAttr(wrapper, "count").text()
+  expect(count).toBe("1")
 })
+  

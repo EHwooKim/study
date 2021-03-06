@@ -176,9 +176,117 @@ test('renders couter display', () => {
 })
 ```
 
+리팩토링 후에도 중복된 코드가 많습니다. 그렇다고 코드 중복을 줄이기 위해 아래와 같이 테스트 코드를 작성하는 것은 추천하지 않습니다.
 
+```javascript
+// App.test.js
+const setup = () => shallow(<App/>)
+const findByTestAttr = (wrapper, val) => wrapper.find(`[data-test='${val}']`)
 
+test("renders component and elements without error", () => {
+  const wrapper = setup()    
+  
+  const appComponent = findByTestAttr(wrapper, 'component-app')
+  expect(appComponent.length).toBe(1)
+    
+  const button = findByTestAttr(wrapper, 'increment-button')
+  expect(button.length).toBe(1)
+    
+  const counterDisplay = findByTestAttr(wrapper, 'counter-display')
+  expect(counterDisplay.length).toBe(1)
+})
 
+```
 
+:notebook_with_decorative_cover: ​하나의 `test에`는 하나의 `expect`만 작성하는 것이 좋습니다.
 
+각 `test`의 설명과 통과된 `test`의 개수들은 굉장히 유용한 정보이고, 하나의 `test`에 여러개의 `expect`가 있을 경우 앞선 `expect`에서 에러가 발생하면 뒤쪽 코드가 실행되지 않아 원하는 `test`를 모두 진행해볼 수 없습니다.
 
+또한 앞으로 배우게 될 `before*` 메서드를 효율적으로 사용하기 위해서도 하나의 `test`에는 하나의 `expect`만 있는 것이 좋습니다.
+
+###  counter starts at 0
+
+이제 counter가 정상적으로 작동하는지 테스트해보겠습니다.
+
+우선 counter의 초기값으로 `0`이 화면에 그려지는지 테스트할 것입니다.
+
+이때 우리는 React 코드상에 값을 테스트하는 것이 아닌,  `.text()` 메서드를 통해 `화면에 그려지는 값`을 테스트 할 것입니다.
+
+* `.text() => String` [공식문서](https://enzymejs.github.io/enzyme/docs/api/ShallowWrapper/text.html)
+
+```javascript
+// App.js
+...
+  <h1 data-test="counter-display">
+    The counter is currently
+    <span data-test="count">{count}</span>
+  </h1>
+...
+```
+
+> 테스트를 위해 span 태그에 data-test 값을 추가하고, count를 보여줍니다.
+
+```javascript
+test('counter starts at 0', () => {
+  const wrapper = setup()
+  const count = findByTestAttr(wrapper, "count").text()
+  expect(count).toBe(0)
+})
+```
+
+> findByTestAttr(wrapper, "count")를 통해 원하는 요소를 찾고, .text() 메서드로 해당 요소 안의 text값을 가져와 테스트를 진행합니다.
+
+![image](https://user-images.githubusercontent.com/52653793/110204254-714d3e00-7eb5-11eb-821f-5e01d5fd4398.png)
+
+>  :exclamation:  .text() 메서드는 String을 반환하기 때문에 toBe(0)이 아닌 toBe("0")으로 해야 테스트를 통과합니다.
+
+### increase couter display
+
+이제 아래 과정에 따라 버튼을 클릭했을 떄 counter가 1씩 증가하는지를 테스트해보겠습니다.
+
+1. 버튼을 찾는다
+2. 버튼을 클릭한다.
+3. 화면에 그려지는 부분을 찾아 증가된 값이 제대로 그려졌는지 확인힌다.
+
+버튼을 찾는 것까지는 지금까지 해왔던 것 처럼 wrapper와 `.find()` 메서드로 충분히 할 수 있습니다.
+
+해당 버튼을 클릭해보는 작업은 `.simulate()`메서드를 통해 할 수 있습니다.
+
+*  `.simulate(event[, ...args]) => Self` [공식문서](https://enzymejs.github.io/enzyme/docs/api/ShallowWrapper/simulate.html)
+   *  첫번째 인자로 `evnet`를 받는데, 지금 우리는 `'click'`을 넣어주면 됩니다.
+
+```javascript
+// App.js
+...
+  <button 
+    data-test="increment-button"
+    onClick={() => setCount(count + 1)}
+  >
+    increment counter
+  </button>
+...
+```
+
+> button에 click 이벤트를 달아주고
+
+```javascript
+// App.test.js
+test('clicking on button increase couter display', () => {
+  const wrapper = setup()
+  // find the button
+  const button = findByTestAttr(wrapper, 'increment-button')
+  // click the button
+  button.simulate('click')
+  // find the display, and test that the number has been incremented
+  const count = findByTestAttr(wrapper, "count").text()
+  expect(count).toBe("1")
+})
+```
+
+> 버튼을 한번 클릭하면 값이 0에서 1이 되길 바라는 테스트 코드입니다.
+>
+> 위와 마찬가지로 text()메서드는 String을 반환하므로  toBe(1)이 아닌 toBe("1")임에 유의해야합니다.
+
+`npm start`로 리액트를 실행하지 않아도, 우리가 원하는 테스를 진행할 수 있게 되었습니다.
+
+![image](https://user-images.githubusercontent.com/52653793/110204622-60053100-7eb7-11eb-8150-468436050d52.png)
