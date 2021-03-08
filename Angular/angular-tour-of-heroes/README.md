@@ -1,10 +1,25 @@
 # Angular Tutorial
 
+## 0. 목차
 
-
-
+|                    목차                    | 내용                                                         |
+| :----------------------------------------: | :----------------------------------------------------------- |
+| 1. [The hero editor](##1. The hero editor) | 1. `CLI`  - 프로젝트 생성, 컴포넌트 생성<br />2. 컴포넌트에 프로퍼티 추가 및 화면 보이기<br />3. TS inferface 생성<br />4. Formatting<br />5. Module 추가 - `FormsModule` -> `ngModel` |
+|  2. [DIsplay a List](##2. Display a List)  | 1. 반복문 `*ngFor`<br />2. 조건문 `*ngIf`<br />3. `event binding`<br />4. `class binding`<br />5. 스타일 적용 |
 
 ## 1. The hero editor
+
+### Create new Project
+
+`CLI`를 통해 간편하게 새로운 프로젝트를 생성할 수 있다.
+
+```bash
+$ng new angular-tour-of-heroes
+```
+
+> Angular CLI가 설치 안되어있다면
+>
+> $npm install -g @angular/cli 를 통해 설치하자
 
 ### Create the component
 
