@@ -1,15 +1,16 @@
 # Angular Tutorial
 
-## 0. 목차
+## 00. 목차
 
-|                    목차                    | 내용                                                         |
-| :----------------------------------------: | :----------------------------------------------------------- |
-| 1. [The hero editor](##1. The hero editor) | 1. `CLI`  - 프로젝트 생성, 컴포넌트 생성<br />2. 컴포넌트에 프로퍼티 추가 및 화면 보이기<br />3. TS inferface 생성<br />4. Formatting<br />5. Module 추가 - `FormsModule` -> `ngModel` |
-|  2. [DIsplay a List](##2. Display a List)  | 1. 반복문 `*ngFor`<br />2. 조건문 `*ngIf`<br />3. `event binding`<br />4. `class binding`<br />5. 스타일 적용 |
+|                             목차                             | 내용                                                         |
+| :----------------------------------------------------------: | :----------------------------------------------------------- |
+|         1. [The hero editor](##01.-The-hero-editor)          | 1. `CLI`  - 프로젝트 생성, 컴포넌트 생성<br />2. 컴포넌트에 프로퍼티 추가 및 화면 보이기<br />3. TS inferface 생성<br />4. Formatting<br />5. Module 추가 - `FormsModule` -> `ngModel` |
+|          2. [DIsplay a List](##02.-Display-a-List)           | 1. 반복문 `*ngFor`<br />2. 조건문 `*ngIf`<br />3. `event binding`<br />4. `class binding`<br />5. 스타일 적용 |
+| 3. [Create a Feature Component](##03.-Create-a-Feature-Component) | 1. 컴포넌트 분리<br />2. 부모로 부터 값 전달받기 `@Input()`  |
 
-## 1. The hero editor
+## 01. The hero editor
 
-### Create new Project
+### 1.Create new Project
 
 `CLI`를 통해 간편하게 새로운 프로젝트를 생성할 수 있다.
 
@@ -21,7 +22,7 @@ $ng new angular-tour-of-heroes
 >
 > $npm install -g @angular/cli 를 통해 설치하자
 
-### Create the component
+### 2.Create the component
 
 `CLI`를 통해 새로운 component를 만들 수 있다.
 
@@ -53,7 +54,7 @@ export class HeroesComponent implements OnInit {
 
   > 당연히 해당 클래스를 export해줘야 다른 곳에서 사용할 수 있다.
 
-#### add property and show
+#### 2-1. add property and show
 
 `Heroes Component`에 `hero` 프로퍼티를 추가
 
@@ -79,7 +80,7 @@ export class HeroesComponent implements OnInit {
 
 ![image](https://user-images.githubusercontent.com/52653793/109899303-fe876b80-7cd8-11eb-8f51-c1a19a7c8664.png)
 
-### Create Hero interface
+### 3.Create Hero interface
 
 `Angular`는 `typescript`를 정식으로 지원하는 만큼,  hero의 `interface`를 만들어 사용할 수 있다
 
@@ -126,7 +127,7 @@ export class HeroesComponent implements OnInit {
 
 ![image](https://user-images.githubusercontent.com/52653793/109905926-e9173f00-7ce2-11eb-8a6a-f6810ce35a9f.png)
 
-### Format with the UppercasePipe
+### 4.Format with the UppercasePipe
 
 `Angular`에 내장된 `pipe`를 사용하여 문자열, 날짜 등을 다양한 모양으로 바꿀 수 있다.
 
@@ -137,7 +138,7 @@ export class HeroesComponent implements OnInit {
 <h3>{{hero.name | uppercase}}</h3>
 ```
 
-### Edit the hero
+### 5.Edit the hero
 
 `<input>`을 통해 hero의 이름을 수정할 수 있도록 만들어보자.
 
@@ -145,7 +146,7 @@ export class HeroesComponent implements OnInit {
 
 이것을 위해 `<input>` 요소와 `hero.name` 프로퍼티, 양방향 데이터 바인딩을 해주면된다.
 
-#### Two-way binding
+#### 5-1. Two-way binding
 
 `Heroes Component`를 아래와 같이 리팩토링.
 
@@ -163,7 +164,7 @@ export class HeroesComponent implements OnInit {
 
 그런데, 아직 `ngModel`을 불러오지 않았기떄문에 에러가 발생하게 되는데 `ngModel`은 `FormsModule`에 들어있고, 우리는 `Angular`에게 이 모듈을 사용할 것을 알려야 한다.
 
-### App Module
+### 6. App Module
 
 우리가 만든 componenet가 서로 잘 맞물리는지, 그리고 어떤 라이브러리를 필요로 하는지 `Angular`가 알 수 있게 해야하는데 그런 정보를 `metadata`라고 부른다.
 
@@ -175,7 +176,7 @@ export class HeroesComponent implements OnInit {
 
 ![image](https://user-images.githubusercontent.com/52653793/109908609-eec35380-7ce7-11eb-9782-ce693f13f627.png)
 
-#### Import FormsModule
+#### 6-1. Import FormsModule
 
 이제 `FormsModule`을 불러와 `@NgModule`의 `imports`배열에 추가하면 우리가 `ngModel`이  정상작동할 것이다.
 
@@ -193,17 +194,17 @@ import { FormsModule } from '@angular/forms'; // NgModel이 들어있는 모듈
 
 ![Animation_2021-03-04-12-56-01](https://user-images.githubusercontent.com/52653793/109909185-018a5800-7ce9-11eb-807c-35d7e5c66f20.gif)
 
-#### Declare Heroes Component
+#### 6-2. Declare Heroes Component
 
 지금까지 우리가 만든 컴포넌트를 포함하여 모든 컴포넌트들은 반드시 `@NgModule`에 선언해줘야한다.
 
 그런데 이미 `app.module.ts` - `@NgModule.declarations`배열에 우리가 만든 `HeroesComponent`가 선언되어 있다. `CLI`로 컴포넌트를 생성했기 때문에 자동으로 선언까지된 것이다.
 
-## 2. Display a List
+## 02. Display a List
 
 지금까지 만든 내용에 영웅을 클릭하면 해당 영웅의 상세정보를 보여주는 기능을 추가해보겠습니다.
 
-### Create mock heroes
+### 1. Create mock heroes
 
 보통은 정보를 서버에서 가져오지만 지금은 임시 데이터를 만들어서 사용하겠습니다.
 
@@ -227,7 +228,7 @@ export const HEROES: Hero[] = [
 ];
 ```
 
-### Displaying heroes
+### 2. Displaying heroes
 
 이제 `HeroesComponent`에서 위의 임시 데이터를 불러옵니다.
 
@@ -241,7 +242,7 @@ export class HeroesComponent implements OnInit {
 }
 ```
 
-#### List heroes with `*ngFor`
+#### 2-1. List heroes with `*ngFor`
 
 ```HeroesComponent```의 템플릿 파일을 아래와 같이 변경해줍니다.
 
@@ -269,7 +270,7 @@ export class HeroesComponent implements OnInit {
 
 ![image](https://user-images.githubusercontent.com/52653793/110267133-84b9ef80-8002-11eb-9120-64a6db016c99.png)
 
-#### Style the heroes
+#### 2-2. Style the heroes
 
 이제 heroes list에 style을 적용시켜보겠습니다. Angular는 두가지 방법으로 컴포넌트의 style을 적용시킬 수 있습니다.
 
@@ -337,11 +338,11 @@ input {
 
 ![image](https://user-images.githubusercontent.com/52653793/110268522-1dea0580-8005-11eb-8f48-3c64d1c85f45.png)
 
-### Viewing details
+### 3. Viewing details
 
 이제 유저가 특정 영웅을 클릭하면 해당 영웅의 상세정보가 보이도록 해보겠습니다.
 
-#### Add a click event binding
+#### 3-1. Add a click event binding
 
 클릭했을때 상세정보가 보여지기 위해 `<li> `태그에 `click` 이벤트를 바인딩해줘야합니다.
 
@@ -353,7 +354,7 @@ input {
   *  `Angular`의[event binding](https://angular.io/guide/event-binding) 문법
   * 유저가 `li`태그를 `click`했을 때 `onSelect`가 실행됩니다.
 
-#### Add the click event handler
+#### 3-2. Add the click event handler
 
 이제 `onSelected` 메서드와 선택된 영웅을 담을 `selectedHero`프로퍼티를 만들어주겠습니다.
 
@@ -367,7 +368,7 @@ input {
 ...
 ```
 
-#### Add a details section
+#### 3-3. Add a details section
 
 선택된 영웅의 정보를 보여주는 템플릿을 작성합니다.
 
@@ -391,7 +392,7 @@ HeroesComponent.html:3 ERROR TypeError: Cannot read property 'name' of undefined
 
 초기값을 설정해주어 에러를 해결할 수도 있겠지만, 조건문을 통해 `selectedHero`의 값이 있을 때만 상세정보 요소가 보여지도록하여 에러를 해결해보겠습니다.
 
-#### *ngIf
+#### 3-4. `*ngIf`
 
 상세정보 요소들을 하나의 `div` 요소로 감싸고 그 부분에 조건문을 적용시키겠습니다.
 
@@ -417,7 +418,7 @@ HeroesComponent.html:3 ERROR TypeError: Cannot read property 'name' of undefined
 
 > 처음에는 상세정보가 없고 특정 영웅을 클릭했을 때 해당 상세정보가 보이는 것을 확인할 수 있습니다.
 
-#### Style the selected hero
+#### 3-5. Style the selected hero
 
 이제 기능은 정상적으로 작동합니다. 추가적으로 선택된 영웅에 스타일을 추가하여 구분해보도록 하겠습니다.
 
@@ -442,3 +443,82 @@ HeroesComponent.html:3 ERROR TypeError: Cannot read property 'name' of undefined
 
 
 
+## 03. Create a Feature Component
+
+현재 `HeroesComponent`에서 영웅 목록과 영웅 상세정보를 모두 보여주고있다.
+
+컴포넌트를 분리하여 `HeroesComponent`에서는 영웅 목록만, `HeroDetailComponent`에서는 영웅 상세정보만 보여주도록 코드를 수정해보겠습니다.
+
+### 1. Make the HeroDetailComponent
+
+우선, `CLI`를 통해 `hero-detail` 컴포너트를 새로 생성합니다.
+
+```bash
+$ng generate component hero-detail
+```
+
+`HeroesComponent` 때와 마찬가지로 `hero-detail`컴포넌트 파일들을 가진 폴더가 새로 생겼고 `app.module.ts`의 `@NgModule`에 해당 컴포넌트가 등록되었습니다.
+
+#### 1-1. Write the template
+
+기존 `HeroesComponent` 에서 영웅 상세정보 템플릿을 복사하여 `HeroDetailComponent` 으로 옮겨줍니다.
+
+```html
+<!-- hero-detail.component.html -->
+<div *ngIf="hero">
+  <h2>{{hero.name | uppercase}} Details</h2>
+  <div><span>id: </span>{{hero.id}}</div>
+  <div>
+    <label for="hero-name">Hero name: </label>
+    <input id="hero-name" [(ngModel)]="hero.name" placeholder="name">
+  </div>
+</div>
+```
+
+이때, 이전까지는 selectedHero를 참조하여 화면에 나타냈던 것을 부모로부터 `hero`로  받아 보여줄 것이기 때문에 `selectedHero`를 모두 `hero`로 바꿔주었습니다.
+
+#### 1-2. Add the `@Input()` hero property
+
+우선 `HeroDetailComponent` 에서 사용할 `hero` 프로퍼티의 `type`을 불러와줍니다.
+
+```typescript
+// hero-detail.component.ts
+import { Hero } from '../hero';
+```
+
+`HeroDetailComponent` 의 `hero` 프로퍼티는 부모요소인 `HeroesComponent` 로부터 전달 받을 것입니다.
+
+`Angular`에서는 `@Input` 데코레이터를 통해 부모요소로부터 전달 받은 값을 나타낼 수 있습니다.
+
+`@angular/core`에서 `Input`을 불러와 `hero` 프로퍼티 앞에 `@Input()`을 붙여주면 됩니다.
+
+```typescript
+// hero-detail.component.ts
+import { Component, OnInit, Input } from '@angular/core';
+...
+	@Input() hero?: Hero
+...
+```
+
+이제 부모요소로부터 값을 전달받을 준비가 끝났습니다
+
+### 2. Show the `HeroDetailComponent`
+
+자식요소로 값을 전달하기 위해 `HeroesComponent`에서 바꿀 것은 많지 않습니다.
+
+`HeroesComponent`의 템플릿만 조금 수정해주면 됩니다.
+
+#### 2-1. Update the `HeroesComponent` template
+
+`HeroDetailComponent`의 selector인 `app-hero-detail`를 사용해 원하는 위치에 요소를 위치하고
+
+`[hero]="selectedHero"` 와 같은 문법을 사용해 `hero`라는 이름으로 `selectedHero`값을 전달해줍니다.
+
+```html
+<!-- heroes.component.html -->
+...
+
+<app-hero-detail [hero]="selectedHero"></app-hero-detail>
+```
+
+이렇게 부모-자식 간의 단방향 데이터 바인딩을하는 방식으로 두개의 컴포넌트로 분리를 하였습니다.
