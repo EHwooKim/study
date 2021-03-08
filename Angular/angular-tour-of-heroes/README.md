@@ -1,8 +1,14 @@
+# Angular Tutorial
+
+
+
+
+
 ## 1. The hero editor
 
 ### Create the component
 
-CLI를 통해 새로운 component를 만들 수 있다.
+`CLI`를 통해 새로운 component를 만들 수 있다.
 
   ```bash
 $ng generate component heroes
@@ -177,3 +183,247 @@ import { FormsModule } from '@angular/forms'; // NgModel이 들어있는 모듈
 지금까지 우리가 만든 컴포넌트를 포함하여 모든 컴포넌트들은 반드시 `@NgModule`에 선언해줘야한다.
 
 그런데 이미 `app.module.ts` - `@NgModule.declarations`배열에 우리가 만든 `HeroesComponent`가 선언되어 있다. `CLI`로 컴포넌트를 생성했기 때문에 자동으로 선언까지된 것이다.
+
+## 2. Display a List
+
+지금까지 만든 내용에 영웅을 클릭하면 해당 영웅의 상세정보를 보여주는 기능을 추가해보겠습니다.
+
+### Create mock heroes
+
+보통은 정보를 서버에서 가져오지만 지금은 임시 데이터를 만들어서 사용하겠습니다.
+
+`mock-heroes.ts`에 `HEROES` 배열을 생성합니다.
+
+```typescript
+// src/app/app.mock-heroes.ts
+import { Hero } from './hero'; // Hero interface 가져오기
+
+export const HEROES: Hero[] = [
+  { id: 11, name: 'Dr Nice' },
+  { id: 12, name: 'Narco' },
+  { id: 13, name: 'Bombasto' },
+  { id: 14, name: 'Celeritas' },
+  { id: 15, name: 'Magneta' },
+  { id: 16, name: 'RubberMan' },
+  { id: 17, name: 'Dynama' },
+  { id: 18, name: 'Dr IQ' },
+  { id: 19, name: 'Magma' },
+  { id: 20, name: 'Tornado' }
+];
+```
+
+### Displaying heroes
+
+이제 `HeroesComponent`에서 위의 임시 데이터를 불러옵니다.
+
+```typescript
+// src/app/heroes/heroes.component.ts
+import { HEROES } from '../mock-heroes'
+
+export class HeroesComponent implements OnInit {
+  
+  heroes = HEROES;
+}
+```
+
+#### List heroes with `*ngFor`
+
+```HeroesComponent```의 템플릿 파일을 아래와 같이 변경해줍니다.
+
+```html
+<!-- heroes.component.html -->
+<h2>My Heroes</h2>
+<ul class="heroes">
+  <li>
+    <span class="badge">{{hero.id}}</span> {{hero.name}}
+  </li>
+</ul>
+```
+
+이제 임시 데이터에 있는 10명의 히어로를 화면에 보여주기 위해 10개의 `li` 태그를 만들어야 합니다.
+
+`Angular`는 [*ngFor](https://angular.io/api/common/NgForOf)를 통해 템플릿 파일에서 반복문을 사용할 수 있습니다.
+
+```html
+<li *ngFor="let hero of heroes">
+```
+
+반복하고자하는 요소에 `*ngFor`를 입력하고 좌측에 js의 `of` 반복문처럼 값을 입력해주면 됩니다.
+
+> :heavy_exclamation_mark: ngFor 앞에 *를 반드시 붙여줘야합니다!!!!
+
+![image](https://user-images.githubusercontent.com/52653793/110267133-84b9ef80-8002-11eb-9120-64a6db016c99.png)
+
+#### Style the heroes
+
+이제 heroes list에 style을 적용시켜보겠습니다. Angular는 두가지 방법으로 컴포넌트의 style을 적용시킬 수 있습니다.
+
+* `@Component.styles` - 문자열 배열을 통해 원하는 스타일을 inlile 형태로 적용시킬 수 있습니다.
+* `Component.styleUrls` - 문자열 배열을 통해 stylesheet 파일의 경로를 입력하여 스타일을 적용시킬 수 있습니다.
+
+>  :notebook_with_decorative_cover: 스타일을 적용하는 두가지 방법 모두 해당 컴포넌트에만 적용됩니다.
+
+우리는 `CLI`를 통해 컴포넌트를 만들었기 때문에 css 파일이 생성되어 `module.ts`에 연결까지 되어있습니다.
+
+```css
+/* HeroesComponent's private CSS styles */
+.heroes {
+  margin: 0 0 2em 0;
+  list-style-type: none;
+  padding: 0;
+  width: 15em;
+}
+.heroes li {
+  cursor: pointer;
+  position: relative;
+  left: 0;
+  background-color: #EEE;
+  margin: .5em;
+  padding: .3em 0;
+  height: 1.6em;
+  border-radius: 4px;
+}
+.heroes li:hover {
+  color: #2c3a41;
+  background-color: #e6e6e6;
+  left: .1em;
+}
+.heroes li.selected {
+  background-color: black;
+  color: white;
+}
+.heroes li.selected:hover {
+  background-color: #505050;
+  color: white;
+}
+.heroes li.selected:active {
+  background-color: black;
+  color: white;
+}
+.heroes .badge {
+  display: inline-block;
+  font-size: small;
+  color: white;
+  padding: 0.8em 0.7em 0 0.7em;
+  background-color:#405061;
+  line-height: 1em;
+  position: relative;
+  left: -1px;
+  top: -4px;
+  height: 1.8em;
+  margin-right: .8em;
+  border-radius: 4px 0 0 4px;
+}
+
+input {
+  padding: .5rem;
+}
+```
+
+![image](https://user-images.githubusercontent.com/52653793/110268522-1dea0580-8005-11eb-8f48-3c64d1c85f45.png)
+
+### Viewing details
+
+이제 유저가 특정 영웅을 클릭하면 해당 영웅의 상세정보가 보이도록 해보겠습니다.
+
+#### Add a click event binding
+
+클릭했을때 상세정보가 보여지기 위해 `<li> `태그에 `click` 이벤트를 바인딩해줘야합니다.
+
+```html
+<li *ngFor="let hero of heroes" (click)="onSelect(hero)">
+```
+
+* `(click)="onSelect(hero)"`
+  *  `Angular`의[event binding](https://angular.io/guide/event-binding) 문법
+  * 유저가 `li`태그를 `click`했을 때 `onSelect`가 실행됩니다.
+
+#### Add the click event handler
+
+이제 `onSelected` 메서드와 선택된 영웅을 담을 `selectedHero`프로퍼티를 만들어주겠습니다.
+
+```typescript
+// heroes.component.ts - HeroesComponent 클래스 내부에 작성
+...
+    selectedHero?: Hero;
+    onSelect(hero: Hero): void {
+      this.selectedHero = hero;
+    }
+...
+```
+
+#### Add a details section
+
+선택된 영웅의 정보를 보여주는 템플릿을 작성합니다.
+
+```html
+<!-- heroes.component.html - 기존 코드 아래쪽에 작성 -->
+<h2>{{selectedHero.name | uppercase}} Details</h2>
+<div><span>id: </span>{{selectedHero.id}}</div>
+<div>
+  <label for="hero-name">Hero name: </label>
+  <input id="hero-name" [(ngModel)]="selectedHero.name" placeholder="name">
+</div>
+```
+
+여기까지 모두 입력하고 Angular를 실행시켜보면, 에러와 함께 정상적으로 작동하지 않을 것입니다.
+
+```bash
+HeroesComponent.html:3 ERROR TypeError: Cannot read property 'name' of undefined
+```
+
+`name` 이 없다는 에러가 발생하는데, 그 이유는 `selectedHero`의 초기값이 없다보니 처음 이 컴포넌트가 랜더링 될 때 에러가 발생하는 것입니다.
+
+초기값을 설정해주어 에러를 해결할 수도 있겠지만, 조건문을 통해 `selectedHero`의 값이 있을 때만 상세정보 요소가 보여지도록하여 에러를 해결해보겠습니다.
+
+#### *ngIf
+
+상세정보 요소들을 하나의 `div` 요소로 감싸고 그 부분에 조건문을 적용시키겠습니다.
+
+* [*ngIf](https://angular.io/api/common/NgIf) 
+  *  `Angular` template에서 사용되는 조건문 문법입니다.
+  * `[*ngFor]`와 마찬가지로 `*`를 반드시 붙여줘야합니다.
+
+```html
+<!-- heroes.component.html -->
+<div *ngIf="selectedHero">
+  <h2>{{selectedHero.name | uppercase}} Details</h2>
+  <div><span>id: </span>{{selectedHero.id}}</div>
+  <div>
+    <label for="hero-name">Hero name: </label>
+    <input id="hero-name" [(ngModel)]="selectedHero.name" placeholder="name">
+  </div>
+</div>
+```
+
+> 이제 selectedHero의 값이 존재할 때만 해당 요소가 랜더링됩니다.
+
+![Animation_2021-03-08-12-15-20](https://user-images.githubusercontent.com/52653793/110269878-fba5b700-8007-11eb-9073-7b095b0204c4.gif)
+
+> 처음에는 상세정보가 없고 특정 영웅을 클릭했을 때 해당 상세정보가 보이는 것을 확인할 수 있습니다.
+
+#### Style the selected hero
+
+이제 기능은 정상적으로 작동합니다. 추가적으로 선택된 영웅에 스타일을 추가하여 구분해보도록 하겠습니다.
+
+영웅을 클릭하면, 해당 `li`요소에 `selected` 클래스를 추가하고 싶습니다.
+
+`Angular`의 [class binding](https://angular.io/guide/attribute-binding#class-binding)을 통해  조건적으로 클래스를 추가하거나 삭제할 수 있습니다.
+
+* `class binding` - `[class.some-css-class]="some-condition"` 
+
+```html
+<!-- heroes.component.html (list item hero) -->
+<li *ngFor="let hero of heroes"
+  [class.selected]="hero === selectedHero"  <!-- << class-binding >> -->
+  (click)="onSelect(hero)">
+  <span class="badge">{{hero.id}}</span> {{hero.name}}
+</li>
+```
+
+이제 `hero`와 `selectedHero`를 비교하여 그 둘이 같으면 `selected` 클래스를 추가하고 다르면 삭제되어 선택된 영웅을 구분할 수 있게 되었습니다.
+
+![Animation_2021-03-08-12-25-50](https://user-images.githubusercontent.com/52653793/110270565-715e5280-8009-11eb-9cf8-ef387d631b89.gif)
+
+
+
