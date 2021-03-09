@@ -10,7 +10,7 @@
 
 ## 01. The hero editor
 
-### 1.Create new Project
+### 1. Create new Project
 
 `CLI`를 통해 간편하게 새로운 프로젝트를 생성할 수 있다.
 
@@ -22,7 +22,7 @@ $ng new angular-tour-of-heroes
 >
 > $npm install -g @angular/cli 를 통해 설치하자
 
-### 2.Create the component
+### 2. Create the component
 
 `CLI`를 통해 새로운 component를 만들 수 있다.
 
@@ -80,7 +80,7 @@ export class HeroesComponent implements OnInit {
 
 ![image](https://user-images.githubusercontent.com/52653793/109899303-fe876b80-7cd8-11eb-8f51-c1a19a7c8664.png)
 
-### 3.Create Hero interface
+### 3. Create Hero interface
 
 `Angular`는 `typescript`를 정식으로 지원하는 만큼,  hero의 `interface`를 만들어 사용할 수 있다
 
@@ -127,7 +127,7 @@ export class HeroesComponent implements OnInit {
 
 ![image](https://user-images.githubusercontent.com/52653793/109905926-e9173f00-7ce2-11eb-8a6a-f6810ce35a9f.png)
 
-### 4.Format with the UppercasePipe
+### 4. Format with the UppercasePipe
 
 `Angular`에 내장된 `pipe`를 사용하여 문자열, 날짜 등을 다양한 모양으로 바꿀 수 있다.
 
@@ -138,7 +138,7 @@ export class HeroesComponent implements OnInit {
 <h3>{{hero.name | uppercase}}</h3>
 ```
 
-### 5.Edit the hero
+### 5. Edit the hero
 
 `<input>`을 통해 hero의 이름을 수정할 수 있도록 만들어보자.
 
@@ -522,3 +522,362 @@ import { Component, OnInit, Input } from '@angular/core';
 ```
 
 이렇게 부모-자식 간의 단방향 데이터 바인딩을하는 방식으로 두개의 컴포넌트로 분리를 하였습니다.
+
+## 04. Add Services
+
+지금처럼 컴포넌트에 데이터를 저장하고 데이터 처리 또한 컴포넌트에서 하고 것 보다 `service`를 활용하여 데이터를 관리하는 것이 좋습니다.
+
+### 1. Why services
+
+ 컴포넌트는 데이터를 화면에 보여주는 역할만 하도록 하는고  `service`라는 곳에서 데이터를 관리하는 것이 좋습니다. 이 방법은  특히 여러 컴포넌트에서 필요한 데이터를 관리할 때 굉장히 유용합니다.
+
+지금 `HeroesComponent`에서 불러오는 `HEROES` 데이터를 관리하는 `HeroService`를 생성하고 이 `service`를 Angular의 [의존성 주입](https://angular.kr/guide/dependency-injection) 방법에 따라 `HeroesComponent`의 **생성자**로 주입하여 사용할 것입니다.
+
+#### 2. Create the HeroService
+
+`service`또한 `CLI`를 통해 만들 수 있습니다.
+
+```bash
+$ ng generate service hero
+```
+
+명령어를 입력하면 아래와 같이` src/app/hero.service.ts`경로에  `HeroService` 클래스가 생성됩니다.
+
+```typescript
+//src/app/hero.service.ts
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HeroService {
+
+  constructor() { }
+
+}
+```
+
+#### 2-1. `@Injectable()` services
+
+생성된 `service` 클래스를 보면 `Injectable`을 불러와 클래스의 데코레이터로 사용한 것을 확인할 수 있습니다.
+
+이는 해당 클래스가 **의존성 주입 시스템에 포함된 클래스**임을 알려주어 `HeroService` 클래스가 **의존성으로 주입될 수 있으며** 반대로 의존성을 주입받을 수도 있습니다.
+
+그리고 `@Injectable()` 데코레이터도 메타데이터 객체를 인자로 받습니다.
+
+#### 2-2. Get hero data
+
+`HeroService`는 `HeroesComponent`에서 필요한 데이터를 `local storage`, `mock data`, `web service`등 어느 곳에서든 데이터를 불러올 수 있습니다.
+
+`service`를 활용하여 현재 코드를 리팩토링 해보겠습니다.
+
+```typescript
+// hero.service.ts
+...
+import { Hero } from './hero'
+import { HEROES } from './mock-heroes'
+...
+	getHeroes(): Hero[] {
+    return HEROES
+}
+...
+```
+
+* `Hero Interface`와 `HEROES mock data`를 불러옵니다.
+* `HEROES` 데이터를 반환하는 `getHeroes`메서드를 추가합니다.
+
+이제 이 `service`를 의존성 주입을 통해 `HeroesComponent`에서 사용할 것입니다.
+
+### 3. Provide the HeroService
+
+`HeroService`를 `HeroesComponent`에 의존성을 주입하기 위해서는 이 `service`의 프로바이더(provider) 가 Angular 의존성 주입 시스템에 등록되어야 합니다. 프로바이더는 서비스를 생성하고 전달하는 방식을 정의한 것입니다. 이 예제에서는 **서비스 클래스**가 `HeroService`의 프로바이더입니다.
+
+서비스 프로버이더는 `unjector`에 등록되어 의존성 주입 요청이 있었던 객체를 적절히 선태하고 생성하는 역할을 합니다.
+
+`CLI`로 `service`를 만들었다면 `@Injectable()` 데코레이터에 `providedIn: 'root'`를 지정해서 서비스 프로바이더를 **최상위 인젝터**에 등록합니다.
+
+서비스가 **최상위 인젝터**에 등록되면 Angular는 `HeroService`(클래스)의 **인스턴스**를 **하나**만 생성하며, 이 클래스가 주입되는 모든 곳에서 **같은 인스턴스를 공유**합니다.  그리고 `@Injectable()` 데코레이터는 이 데코레이터가 등록된 클래스가 실제로 사용되지 않으면 이 클래스를 최종 빌드 결과물에서 제거하는 대상으로 등록하는 역할도 합니다.
+
+### 4. Update HeroesComponent
+
+`service`를 활용하기 위해 `HeroesComponent`를 수정해보겠습니다.
+
+데이터를 `HeroService`에서 관리 하기 때문에 더이상 `HeroesComponent` 에서 `HEROES` 데이터를 불러올 필요가 없습니다.
+
+```typescript
+// src/app/heroes/heroes.component.ts
+// import { HEROES } from './mock-heroes'  <<- delete
+import { HeroService } from '../hero.service';
+...
+	heroes: Hero[];
+...
+```
+
+#### 4-1. Inject the `HeroService`
+
+`HeroesComponent` 클래스 생성자에 `HeroService` 타입의 `heroservice` 인자를 선언하고 이 인자를 **private**로 지정합니다.
+
+```typescript
+// src/app/heroes/heroes.component.ts
+...
+	constructor(private heroService: HeroService) {}
+...
+```
+
+이렇게 작성하면 `heroService` 인자를 **클래스 프로퍼티**로 선언하면서 `HeroService` 타입의 **의존성 객체**가 주입되기를 요청한다는 것을 의미합니다.
+
+그러면 Angular가 `HeroesComponent`를 **생성할 때** 의존성 주입 시스템이 `HeroService`의 **인스턴스**를 찾아서 `heroService` 라는 인자로 전달할 것입니다.
+
+#### 4-2. Add `getHeroes()`
+
+`HeroesComponent`에 `service`로부터 영웅 목록을 받아오는 메소드를 정의합니다.
+
+```typescript
+// src/app/heroes/heroes.component.ts
+...
+    getHeroes(): void {
+      this.heroes = this.heroService.getHeroes();
+    }
+...
+```
+
+#### 4-3. Call it in `ngOnInit()`
+
+위에서 만든 `getHeroes` 메서드를 생성자 함수에서 호출할 수도 있겠지만 좋은 방법은 아닙니다.
+
+컴포넌트의 생성자 함수는 인자를 클래스 프로퍼티로 연결하는 정도로 간단하게 유지하는 것이 좋고 그 외의 로직은 들어가지 않는 것이 좋습니다.
+
+다른 프레임워크들과 마찬가지로 `lifecycle`을 활용해 데이터를 불러오는 것이 좋습니다.
+
+`ngOnInit()` 함수는 Angular가 `HeroesComponent`의 인스턴스를 생성한 직후에 실행되는 함수로 이 안에서 `getHeroes`메서드를 호출하는 것이 좋습니다.
+
+```typescript
+// src/app/heroes/heroes.component.ts
+...
+ngOnInit() {
+  this.getHeroes();
+}
+...
+```
+
+서버를 실행해보면 모든 기능이 정상적으로 작동하는 것을 확인할 수 있습니다.
+
+### 5. Observable data
+
+현재 우리는 `HEROES` 데이터를 `mock-heros`로부터 동기적으로 가져옵니다.
+
+하지만 개발을 하다보면 보통 백엔드 서버로부터 데이터 비동기적으로 가져오는 것이 일반적입니다.
+
+만약 데이터를 가져오는 코드가 비동기 코드라면, 위에서 작성한 방법으로는 정상적인 작동을 하지 않을 것입니다.
+
+비동기 동작의 경우 `callback`, `promise`을 톨해 처리할 수도 있겠지만`Observable`을 활용해 처리할 수도 있습니다. `Angular`가 제공하는 `HttpClient.get` 메소드가 `Observable`을 반환하기 때문에 이번 튜토리얼에서도 `HeroService.getHeroes()` 함수가 `Observable`을 반환하도록 구현해 보겠습니다.
+
+#### 5-1. Observable `HeroService`
+
+`Observable`이라는 개념은 [Rxjs](https://rxjs.dev/)에서 제공하는 클래스 중 가장 중요한 클래스입니다.
+
+```typescript
+// src/app/hero.service.ts 
+import { Observable, of } from 'rxjs';
+...
+    getHeroes(): Observable<Hero[]> {
+      return of(HEROES);
+    }
+...
+```
+
+> Rxjs의 of() 함수로 Observable 데이터를 즉시 반환했습니다.
+
+`of(HEROES)`는  `hero mock-data`를 `Observable` 타입으로 한번에 반환합니다.
+
+#### 5-2. Subscribe in `HeroesComponent`
+
+여기까지 코드를 수정하면 당연히 에러가 발생할 것입니다.
+
+왜냐하면 이전까지는  `HeroService.getHeroes` 메서드가 `Hero[]` 타입을 반환했지만 지금은`Observable<Hero[]>`를 반환하기 때문입니다.
+
+`Observable` 데이터를 다루는 `Subscribe`를 통해 `HereosComponent`를 수정해보겠습니다.
+
+```typescript
+// heroes.component.ts
+// getHeroes(): void {  << 기존코드
+//   this.heroes = this.heroService.getHeroes(); 동기로 가져온 데이터를 즉시 할당
+// }
+...
+    getHeroes(): void {
+      this.heroService.getHeroes()
+          .subscribe(heroes => this.heroes = heroes);
+    }
+...
+```
+
+>   this.heroService.getHeroes()로부터 비동기적으로 Observable 데이터가 넘어오면, 그 시점이 언제든 넘어온 순간 subscribe가 서버에서 받은 응답을 콜백 함수로 전달하여 해당 데이터를 heroes 프로퍼티에 할당합니다.
+
+이제 에러없이 정상적으로 코드가 동작할 것입니다.
+
+서버를 통해 데이터를 가져오는 등의 비동기 동작이 있다면 위와같은 방법으로 해야한다는 것을 잊지마세요
+
+### 6. Show messages
+
+`service`를 활용하여 컴포넌트를 하나 더 만들어보겠습니다.
+
+- 애플리케이션에서 발생하는 메시지를 화면 아래쪽에 표시하는 `MessagesComponent`를 추가합니다.
+- 앱 전역 범위에 의존성으로 주입할 수 있는 `MessageService`를 만들고, 이 `service`로 메시지를 보내봅니다.
+- `MessageService`를 `HeroService`에 주입해 봅니다.
+- `HeroService`가 서버에서 가져온 히어로 데이터를 화면에 표시합니다.
+
+#### 6-1. Create `MessagesComponent`
+
+```bash
+$ ng generate component messages
+```
+
+```html
+<!-- src/app/app.component.html
+ -->
+<h1>{{title}}</h1>
+<app-heroes></app-heroes>
+<app-messages></app-messages>
+```
+
+#### 6-2. Create the `MessageService`
+
+```bash
+$ ng generate service message
+```
+
+`message service`에 프로퍼티와 메서드를 추가합니다.
+
+```typescript
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MessageService {
+  messages: string[] = [];
+
+  add(message: string) {
+    this.messages.push(message);
+  }
+
+  clear() {
+    this.messages = [];
+  }
+}
+```
+
+#### 6-3. Inject it into the `HeroService`
+
+특정 이벤트가 발생했을 때 `hero` 데이터를 `messages` 배열에 추가할 것이기 때문에 의존성 주입을 해줘야합니다.
+
+```typescript
+// /src/app/hero.service.ts
+import { MessageService } from './message.service';
+...
+	constructor(private messageService: MessageService) { }
+...
+```
+
+`HeroService`에 `MessageService`를 불러옵니다.
+
+`HeroService` 생성자를 수정해서 `messageService` 프로퍼티를 `private`으로 선언하도록 합니다. 그러면 `HeroService`가 생성될 때 Angular가 `MessageService`의 **싱글턴 인스턴스를 의존성으로 주입할 것**입니다.
+
+> `MessageService`는 `HeroService`에 의존성으로 주입되고, `HeroService`는 다시 `HeroesComponent`에 의존성으로 주입되어있는 상태입니다.
+
+#### 6-4. Send a message from `HeroService`
+
+```typescript
+// src/app/hero.service.ts
+...
+  getHeroes(): Observable<Hero[]> {
+    const heroes = of(HEROES)
+    this.messageService.add('HeroService: fetched heroes')
+    return heroes
+  }
+...
+```
+
+#### 6-5. Display the message from `HeroService`
+
+`MessageService`가 받은 메시지를 표시하기 위해 `MessageComponent`를 수정합니다.
+
+```typescript
+// src/app/messages/messages.component.ts
+import { MessageService } from '../message.service';
+...
+	constructor(public messageService: MessageService) {}
+...
+```
+
+이때 `messageService`를 **public**으로 할당해줍니다. 이렇게 작성하면 Angular가 `MessagesComponent`의 인스턴스를 생성할 때 `MessageService`의 싱글턴 인스턴스를 이 프로퍼티로 전달할 것입니다.
+
+:heavy_exclamation_mark:`messageService` 프로퍼티는 템플릿에 바인딩되기 때문에 **반드시 public으로** 선언해야합니다.
+
+> Angular에서는 *public* 으로 선언된 컴포넌트 프로퍼티만 HTML에 바인딩할 수 있습니다.
+
+#### 6-6. Bind to the `MessageService`
+
+```html
+<!-- src/app/messages/messages.component.html -->
+
+<div *ngIf="messageService.messages.length">
+  <h2>Messages</h2>
+  <button class="clear"
+          (click)="messageService.clear()">clear</button>
+  <div *ngFor='let message of messageService.messages'> {{message}} </div>
+</div>
+```
+
+이 템플릿은 컴포넌트에 읜존성으로 주입된 `messageService`를 직접 바인딩했습니다.
+
+* 템플릿에 **직접** 바인딩 하기 위해 **public** 으로 선언을 했던 것입니다.
+* `*ngIf`와 `*ngFor`를 사용하여 화면을 구성했습니다.
+* `button` 에  `click` 이벤트에 `messageService`의 `clear()`메서드를 바인딩 했습니다.
+
+### 7. Add additional messages to hero service
+
+이제 영웅을 클릭했을 때 어떤 영웅을 클릭했는지 `messageService`에 보내줄 것입니다.
+
+```typescript
+// src/app/heroes/heroes.component.ts
+import { Component, OnInit } from '@angular/core';
+
+import { Hero } from '../hero';
+import { HeroService } from '../hero.service';
+import { MessageService } from '../message.service';
+
+@Component({
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css']
+})
+export class HeroesComponent implements OnInit {
+
+  selectedHero: Hero;
+
+  heroes: Hero[];
+
+  constructor(private heroService: HeroService, private messageService: MessageService) { } // ㅇmessageService 의존성 주입
+
+  ngOnInit() {
+    this.getHeroes();
+  }
+
+  onSelect(hero: Hero): void {
+    this.selectedHero = hero;
+    this.messageService.add(`HeroesComponent: Selected hero id=${hero.id}`);
+      // 영웅을 클릭할 때마다 messageService.add 메서드 실행
+  }
+
+  getHeroes(): void {
+    this.heroService.getHeroes()
+        .subscribe(heroes => this.heroes = heroes);
+  }
+}
+
+```
+
+서버를 실행하면 기능들이 정상적으로 작동하는 것을 확인할 수 있습니다.
+
+![Animation_2021-03-09-21-25-41](https://user-images.githubusercontent.com/52653793/110470340-0fdbd800-811e-11eb-83ea-db823a1d0c28.gif)
