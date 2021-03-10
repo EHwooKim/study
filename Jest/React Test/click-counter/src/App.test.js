@@ -45,4 +45,47 @@ test('clicking on button increase couter display', () => {
   const count = findByTestAttr(wrapper, "count").text()
   expect(count).toBe("1")
 })
+
+test('error does not show when not needed', () => {
+  const wrapper = setup()
+  const errorDiv = findByTestAttr(wrapper, 'error-message')
+  const errorHasHiddenClass = errorDiv.hasClass('hidden')
+  expect(errorHasHiddenClass).toBe(true)
+})
+
+describe('Decrement', () => {
+  test('renders decrement button', () => {
+    const wrapper = setup()
+    const button = findByTestAttr(wrapper, 'decrement-button')
+    expect(button.length).toBe(1)
+  })
+
+  describe('counter is 0 and decrement is clicked', () => {
+    let wrapper
+    beforeEach(() => {
+      wrapper = setup()
+
+      const button = findByTestAttr(wrapper, 'decrement-button')
+      button.simulate('click')
+    })
+    test('error does not show', () => {
+      const errorDiv = findByTestAttr(wrapper, 'error-message')
+      const errorHasHiddenClass = errorDiv.hasClass('hidden')
+      expect(errorHasHiddenClass).toBe(false)
+    })
+    test('counter still display 0', () => {
+      const count = findByTestAttr(wrapper, "count").text()
+      expect(count).toBe("0")
+    })
+    test('clicking increment clears the error', () => {
+      const button = findByTestAttr(wrapper, 'increment-button')
+      button.simulate('click')
+
+      const errorDiv = findByTestAttr(wrapper, 'error-message')
+      const errorHasHiddenClass = errorDiv.hasClass('hidden')
+      expect(errorHasHiddenClass).toBe(true)
+    })
+  })
+
+})
   

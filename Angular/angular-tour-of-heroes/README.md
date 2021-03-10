@@ -7,6 +7,7 @@
 |         1. [The hero editor](##01.-The-hero-editor)          | 1. `CLI`  - 프로젝트 생성, 컴포넌트 생성<br />2. 컴포넌트에 프로퍼티 추가 및 화면 보이기<br />3. TS inferface 생성<br />4. Formatting<br />5. Module 추가 - `FormsModule` -> `ngModel` |
 |          2. [DIsplay a List](##02.-Display-a-List)           | 1. 반복문 `*ngFor`<br />2. 조건문 `*ngIf`<br />3. `event binding`<br />4. `class binding`<br />5. 스타일 적용 |
 | 3. [Create a Feature Component](##03.-Create-a-Feature-Component) | 1. 컴포넌트 분리<br />2. 부모로 부터 값 전달받기 `@Input()`  |
+|            4. [Add Services](##04.-Add-Services)             | 1. `service`<br />2. `Observable`                            |
 
 ## 01. The hero editor
 
