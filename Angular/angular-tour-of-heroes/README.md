@@ -882,3 +882,366 @@ export class HeroesComponent implements OnInit {
 서버를 실행하면 기능들이 정상적으로 작동하는 것을 확인할 수 있습니다.
 
 ![Animation_2021-03-09-21-25-41](https://user-images.githubusercontent.com/52653793/110470340-0fdbd800-811e-11eb-83ea-db823a1d0c28.gif)
+
+## 05. Add navigation with routing
+
+현재 부모자식 관계인 `HerosComponent`와 `HeroDetailComponent`를  `Route`기능을 활용하여 각각의 `Route`로 분리하고, 영웅을 선택할 수 있는 `DashboardComponent`도 추가해보겠습니다.
+
+### 1. Add the `AppRoutingModule`
+
+Angular에서는 최상위 모듈과 같은 계층에 별개의 모듈을 두고, 이 모듈에 애플리케이션 최상위 라우팅 모듈을 정의하는 방법을 권장합니다. `AppModule`은 이렇게 정의한 라우팅 설정을 로드해서 사용하기만 하면 됩니다.
+
+`CLI`를 통해 라우팅에 사용할 새로운 모듈을 만듭니다.
+
+```bash
+$ ng generate module app-routing --flat --module=app
+```
+
+> 일반적으로 애플리케이션 최상위 라우팅을 담당하는 모듈의 클래스 이름은 `AppRoutingModule`이라고 정의합니다.
+>
+> --flat :  새로운 폴더를 만들지 않고 src/app 폴더에 파일을 생성합니다.
+>
+> --module=app : 새로 만든 모듈을 AppModule의 imports 배열에 자동으로 추가합니다.
+
+명령어를 실행하면 다음과 같은 모듈 파일이 생성됩니다.
+
+```typescript
+// src/app/app-routing.module.ts (
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@NgModule({
+  imports: [
+    CommonModule
+  ],
+  declarations: []
+})
+export class AppRoutingModule { }
+```
+
+이렇게 만들어진 모듈은 아직 아무 역할을 하지 않습니다. 이 모듈에 `Angular`에서 제공하는 모듈 시스템을 활용하여 라우팅을 담당하는 모듈로 만들어주면 됩니다.
+
+```typescript
+// src/app/app-routing.module.ts 
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HeroesComponent } from './heroes/heroes.component';
+
+const routes: Routes = [
+  { path: 'heroes', component: HeroesComponent }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+* 필요없는 `CommonModule` , `declarations` 은 삭제합니다.
+
+* 라우팅 규칙에 따라 이동할 `HeroesComponent`를 로드합니다.
+
+  ```typescript
+  const routes: Routes = [
+    { path: 'heroes', component: HeroesComponent }
+  ];
+  ```
+
+  * 라우팅 정보를 정의할 `Routes`타입의  `routes` 배열을 선언합니다.
+
+    > type Routes = Route[]
+
+  * `path`와 해당 경로로 접근했을 때 보여줄 `component`를 정의합니다.
+
+  * 이제  `localhost:4200/heroes`와 같은 URL로 이동하면 `HeroesComponent`를 표시할 수 있습니다.
+
+* `@NgModule`에 메타데이터를 정의해줍니다.
+
+  ```typescript
+  @NgModule({
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule]
+  })
+  ```
+
+  * `@NgModule`에 메타데이터를 지정하면 모듈이 생성될 때 라우터를 초기화하고 브라우저의 주소가 변화되는 것을 감지합니다.
+
+  *  `AppRoutingModule`에도 라우터를 초기화하기 위해 `imports` 배열에 `RouterModule`을 등록해야 하는데, 이 때 `RouterModule.forRoot()` 메소드에 위에서 만든`routes` 배열을 인자로 넣어서 실행한 결과를 지정합니다.
+
+    > 애플리케이션 최상위 계층에 존재하는 라우터를 설정할 때는 `forRoot()` 메소드를 사용합니다. `forRoot()` 메소드를 사용하면 라우팅과 관련된 서비스 프로바이더(?)와 디렉티브(?)를 애플리케이션에 제공할 수 있으며, 브라우저에서 변경되는 URL을 감지할 수 있습니다.
+
+  * 앱에서도 `RouterModule`을 사용할 수 있도록 `AppRoutingModule`의 `exports` 배열에도 `RouterModule`을 추가해줍니다.
+
+### 2. Add `RouterOutlet`
+
+`[router-outlet]` selector를 통해 라우팅을 통해 변경할 컴포넌트의 위치를 지정해줄 수 있습니다.
+
+>  [router-outlet 공식문서](https://angular.io/api/router/RouterOutlet) 
+
+`AppComponent`에서 `<app-heroes>` 대신에 `<router-outlet>`엘리먼트로 변경합니다.
+
+```html
+<!-- src/app/app.component.html -->
+<h1>{{title}}</h1>
+<router-outlet></router-outlet>
+<app-messages></app-messages>
+```
+
+>`RouterOutlet` 디렉티브는 `AppComponent`에서도 사용할 수 있습니다. 왜냐하면 `AppModule`이 로드하고 있는 `AppRoutingModule`이 `RouterModule`을 외부로 공개하고 있기 때문인데,  `CLI`로 routing module을 생성하면서 `--module=app` 플래그를 지정했기 때문에 자동으로 추가된 것입니다.
+>
+> `app-routing.module.ts` 파일을 직접 생성했거나 Angular CLI 외의 툴을 사용했다면 `app.module.ts` 파일에서 `AppRoutingModule`을 로드하고 `NgModule`의 `imports` 배열에 이 라우팅 모듈을 추가하면 됩니다.
+
+서버를 실행하면 더 이상 메인 화면에 `HeroesComponent`가 보이지 않고, URL주소 뒤에 `/heroes`를 추가하면 보이게 될 것입니다.
+
+### 3. Add a navigation link
+
+매번 URL을 직접 수정할 수는 없기 때문에 링크를 클릭하여 라우터 이동을 할 수 있도록 네비게이션을 추가합니다.  `<a>` 요소와 `routerLink`를 통해 라우터 이동을 할 수 있습니다.
+
+```html
+<!-- src/app/app.component.html -->
+<h1>{{title}}</h1>
+<nav>
+  <a routerLink="/heroes">Heroes</a>
+</nav>
+<router-outlet></router-outlet>
+<app-messages></app-messages>
+```
+
+`routerLink`는 `RouterModule`이 제공하는 `RouterLink` 디렉티브이며, 사용자가 이 디렉티브가 적용된 엘리먼트를 클릭하면 네비게이션을 실행합니다. `routerLink` 어트리뷰트의 값으로 `HeroesComponent`의 경로인 `"/heroes"`를 할당해주면 됩니다.
+
+### 4. Add a dashboard view
+
+새로운 컴포넌트 `DashboardComponent`를 만들어 라우팅 연습을 해보겠습니다.
+
+```bash
+$ng generate component dashboard
+```
+
+```html
+<!-- dashboard.component.html -->
+<h3>Top Heroes</h3>
+<div class="grid grid-pad">
+  <a *ngFor="let hero of heroes" class="col-1-4">
+    <div class="module hero">
+      <h4>{{hero.name}}</h4>
+    </div>
+  </a>
+</div>
+```
+
+```typescript
+// dashboard.component.ts
+import { Component, OnInit } from '@angular/core';
+import { Hero } from '../hero';
+import { HeroService } from '../hero.service';
+
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: [ './dashboard.component.css' ]
+})
+export class DashboardComponent implements OnInit {
+  heroes: Hero[] = [];
+
+  constructor(private heroService: HeroService) { }
+
+  ngOnInit() {
+    this.getHeroes();
+  }
+
+  getHeroes(): void {
+    this.heroService.getHeroes()
+      .subscribe(heroes => this.heroes = heroes.slice(1, 5));
+  }
+}
+```
+
+>  [스타일은 공식문서 참고..](https://angular.io/tutorial/toh-pt5#add-a-dashboard-view)
+
+#### 4-1. Add the dashboard route
+
+`route`에도 추가하고 네이게이션에 링크를 추가해줍니다.
+
+```typescript
+// app-routing.module.ts
+import { DashboardComponent } from './dashboard/dashboard.component';
+```
+
+```typescript
+// app-routing.module.ts
+...
+	{ path: 'dashboard', component: DashboardComponent },
+...
+```
+
+```html
+<!-- app.component.html -->
+<nav>
+  <a routerLink="/dashboard">Dashboard</a>
+  <a routerLink="/heroes">Heroes</a>
+</nav>
+```
+
+
+
+#### 4-2. Add a default route
+
+지금은 첫 화면에 접근했을 때의 라우터를 설정하지않아 아무것도 안보입니다.
+
+처음 접근했을 때 `DashboardComponent`가 보여지도록 다음과 같은 `route`를 추가해줍니다.
+
+```typescript
+// app-routing.module.ts
+...
+	{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+...
+```
+
+이제 브라우저의 URL이 빈 문자열일 때 `/dashboard` 주소로 이동하도록 설정하였습니다.
+
+### 5. Navigating to hero details
+
+지금까지는 `HerodetailComponent`는 `HeroesComponenet`의 자식요소로 부모로부터 영웅 정보를 받아 화면에 보여줬지만, 이제 하나의 라우터로 분리하고 그에 맞게 코드를 수정해보겠습니다.
+
+#### 5-1. Add a *hero detail* route
+
+`HeroesComponent`에서 `HeroDetailComponent`를 삭제하고 라우터를 등록해줍니다.
+
+```typescript
+// app-routing.module.ts
+import { HeroDetailComponent } from './hero-detail/hero-detail.component';
+...
+	{ path: 'detail/:id', component: HeroDetailComponent },
+...
+```
+
+>  이제 `localhost:4200/heroe/2`로 접근하면 id가 2인 영웅의 상세정보를 보여주게 됩니다.
+
+#### 5-2. `DashboardComponent` hero links
+
+`DashboardComponent`에서 영웅을 클릭하면 라우터 이동하도록 템플릿을 수정합니다.
+
+```html
+<!-- dashboard.component.html -->
+<a *ngFor="let hero of heroes"
+  routerLink="/detail/{{hero.id}}">
+  {{hero.name}}
+</a>
+```
+
+#### 5-3. `HeroesComponent` hero links
+
+`HeroescComponent` 역시 `onSelect` 함수를 통한 동작이 아닌 라우터 이동 방식으로 코드를 수정합니다.
+
+```html
+<!-- heroes.component.html -->
+<ul class="heroes">
+  <li *ngFor="let hero of heroes">
+    <a routerLink="/detail/{{hero.id}}">
+      <span class="badge">{{hero.id}}</span> {{hero.name}}
+    </a>
+  </li>
+</ul>
+```
+
+```typescript
+// heroes.component.ts
+
+export class HeroesComponent implements OnInit {
+  heroes: Hero[];
+
+  constructor(private heroService: HeroService) { }
+
+  ngOnInit() {
+    this.getHeroes();
+  }
+
+  getHeroes(): void {
+    this.heroService.getHeroes()
+    .subscribe(heroes => this.heroes = heroes);
+  }
+}
+```
+
+### 6. Routable `HeroDetailComponent`
+
+`HeroDetailComponent`와 관련된 라우터 처리는 모두 해주었습니다.
+
+이제 `HeroDetailComponent`코드가 부모로부터 정보를 받는 방식이 아닌 라우터 이동시 URL을 활용하는 방식으로 코드를 수정해보겠습니다.
+
+```typescript
+// hero-detail.component.ts
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+
+import { HeroService } from '../hero.service';
+...
+    constructor(
+      private route: ActivatedRoute,
+      private heroService: HeroService,
+      private location: Location
+    ) {}
+...
+```
+
+> 컴포넌트 생성자로 `ActivatedRoute`, `HeroService`, `Location` 서비스를 의존성으로 주입하고 `private` 프로퍼티로 선언합니다
+
+* `ActivatedRoute`는 `HeroDetailComponent`의 인스턴스를 생성하면서 적용한 라우팅 규칙에 대한 정보를 담고 있어 전달되는 변수를 추출할 수 있습니다.
+* 그렇게 가져온 정보를 통해 `heroService`에서 정보를 가져옵니다.
+* `location`은 브라우저를 제어할 수 있어 나중에 이전 페이지로 가는 기능을 만들 때 사용합니다.
+
+#### 6-1. Extract the `id` route parameter
+
+```typescript
+// hero-detail.component.ts
+
+ngOnInit(): void {
+  this.getHero();
+}
+
+getHero(): void {
+  const id = +this.route.snapshot.paramMap.get('id');
+  this.heroService.getHero(id)
+    .subscribe(hero => this.hero = hero);
+}
+```
+
+`route.snapshot`은 컴포넌트가 생성된 직후에 존재하는 라우팅 규칙에 대한 정보를 담고 있는 객체입니다.
+
+이 객체가 제공하는 `paramMap`을 사용하면 URL에 존재하는 라우팅 변수를 참조할 수 있습니다. 지금 작성하고 있는 예제에서는 서버로부터 받아올 히어로의 `id`에 해당하는 값을 URL에 있는 `"id"` 키로 참조합니다.
+
+라우팅 변수는 언제나 문자열 타입입니다. 그래서 라우팅 변수로 전달된 값이 원래 숫자였다면 문자열로 받아온 라우팅 변수에 JavaScript (+) 연산자를 사용해서 숫자로 변환할 수 있습니다.
+
+#### 6-2. Add `HeroService.getHero()`
+
+`HeroDetailComponent`에서 사용한 `heroService.getHero`메서드도 정의해줍니다.
+
+```typescript
+// hero.service.ts
+getHero(id: number): Observable<Hero> {
+  // TODO: 이 메시지는 서버에서 히어로 정보를 가져온 _후에_ 보내야 합니다.
+  this.messageService.add(`HeroService: fetched hero id=${id}`)
+  return of(HEROES.find(hero => hero.id === id));
+}
+```
+
+이제 서버를 실행해보면 모든 기능이 정상적으로 작동할 것입니다.
+
+#### 6-3. Find the way back
+
+마지막으로 `HeroDetailComponent`에서 뒤로가기 버튼을 구현해보겠습니다.
+
+```html
+<!-- /hero-detail.component.html -->
+<button (click)="goBack()">go back</button>
+```
+
+```typescript
+// hero-detail.component.ts
+goBack(): void {
+  this.location.back();
+}
+```
+
+> 생성자에서 정의한 location (Location)을 통해 브라우저를 제어하여 이전 페이지로 돌아갑니다.
