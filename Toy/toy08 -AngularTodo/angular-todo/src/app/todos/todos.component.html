@@ -1,0 +1,19 @@
+<div class="todos-container">
+  <div class="todos-header">
+    <h2>Todos</h2>
+    <form class="input-wrapper"
+      (submit)="addTodo()"
+    >
+      <input type="text" 
+        placeholder="todo"
+        name="todoContent" 
+        [(ngModel)]="todoContent" 
+      >
+    </form>
+  </div>
+  <ul class="todo-container">
+    <li *ngFor="let todo of todos" class="todo">
+      <span>{{todo.content}}</span>
+    </li>
+  </ul>
+</div>

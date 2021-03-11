@@ -1,0 +1,42 @@
+.todos-container {
+  width: 50vw;
+  background: white;
+  border-radius: 32px;
+  box-shadow: 1px 1px 1px 1px lightgray;
+}
+.todos-header {
+  padding: 2rem 2rem 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.input-wrapper {
+  padding: 0 1rem;
+  width: 20rem;
+  height: 2.5rem;
+  background: #ebf0fa;
+  border-radius: 20px;
+}
+.input-wrapper input {
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+  background: #ebf0fa;
+  border: none;
+  outline: none;
+}
+.todo-container {
+  height: 40vh;
+  overflow-y: scroll;
+}
+.todo {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e9ebf0;
+}
+.todo:hover {
+  border-top-color: #c3cff4;
+}
+.todo:hover+.todo {
+  border-top-color: #c3cff4;
+}
