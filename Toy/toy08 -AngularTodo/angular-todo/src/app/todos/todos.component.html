@@ -2,12 +2,11 @@
   <div class="todos-header">
     <h2>Todos</h2>
     <form class="input-wrapper"
-      (submit)="addTodo()"
+      (submit)="addTodo(todo.value); todo.value = ''"
     >
       <input type="text" 
         placeholder="todo"
-        name="todoContent" 
-        [(ngModel)]="todoContent" 
+        #todo
       >
     </form>
   </div>
