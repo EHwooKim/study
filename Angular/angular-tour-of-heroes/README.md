@@ -8,6 +8,7 @@
 |          2. [DIsplay a List](##02.-Display-a-List)           | 1. 반복문 `*ngFor`<br />2. 조건문 `*ngIf`<br />3. `event binding`<br />4. `class binding`<br />5. 스타일 적용 |
 | 3. [Create a Feature Component](##03.-Create-a-Feature-Component) | 1. 컴포넌트 분리<br />2. 부모로 부터 값 전달받기 `@Input()`  |
 |            4. [Add Services](##04.-Add-Services)             | 1. `service`<br />2. `Observable`                            |
+| 5. [Add navigation with routing](##05.-Add-navigation-with-routing) | 1. `routing`                                                 |
 
 ## 01. The hero editor
 
