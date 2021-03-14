@@ -10,7 +10,7 @@ import { HeaderComponent } from './header/header.component';
   declarations: [
     AppComponent,
     TodosComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,

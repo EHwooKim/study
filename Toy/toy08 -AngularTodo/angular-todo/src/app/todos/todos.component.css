@@ -33,10 +33,27 @@
 .todo {
   padding: 1rem 1.5rem;
   border-top: 1px solid #e9ebf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .todo:hover {
   border-top-color: #c3cff4;
 }
 .todo:hover+.todo {
   border-top-color: #c3cff4;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: #0e3183;
+  background-color: #f3f6fd;
+}
+button:active {
+  transform: scale(0.95);
 }
