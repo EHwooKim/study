@@ -2,7 +2,8 @@
 <script>
   /*
     ## 일급 활용
-    - 비동기 상황을 값으로 다루는 일급의 성질을 활용해보자
+    - Promise가 비동기 상황을 값으로 다루는 '일급의 성질'을 가지고있다는 점을  활용해보자
+    - 비동기 상황이 값이라는 것은 해당 값을 함수에 전달할 수 있고, 해당 값이 어떤 값인지 (Promise인지 아닌지)를 확인할 수 있다는 것이다.
   */
   const go1 = (a, f) => f(a)
   const add5 = a => a + 5
@@ -20,10 +21,9 @@
   const go2 = (a, f) => a instanceof Promise ? a.then(f) : f(a)   // 입력받은 a가 Promise인지 판별하여 코드 구분.
   log(go2(delay100(10), add5))
   
-  var r = go2(10, add5)
-  log(r)
+  var r = go1(10, add5)
   // 위와 완전히 동일한 아래코드
-  go2(go2(10, add5), log)
+  go1(go1(10, add5), log)
 
   var r2 = go2(delay100(10), add5)
   r2.then(log)
@@ -37,6 +37,6 @@
   const n2 = delay100(10)
   go2(go2(n2, add5), log)
 
-  log(go2(go2(n1, add5), log)) // 즉시 실행된 최종 결과를 받아 log
-  log(go2(go2(n2, add5), log)) // Promise를 계속 이어주게된다.
+  log(go2(go2(n1, add5), log)) // undefined -  즉시 실행된 최종 결과를 받아 log
+  log(go2(go2(n2, add5), log)) // Promise - Promise를 계속 이어주게된다.
 </script>
