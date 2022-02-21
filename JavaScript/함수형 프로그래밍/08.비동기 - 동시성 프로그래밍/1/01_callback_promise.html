@@ -1,14 +1,16 @@
 <script src="fx.js"></script>
 <script>
   /*
-    # Promise
-    ## 일급
+    # 자바스크립트에서 비동기, 동시성 프로그래밍하는 방법은 두가지
+      1. callback패턴
+      2. Promise (async/await)
+    위 두 방식에 대해 알아보고 이를 함수형 프로그래밍과 연관지어 Promise가 어떤 가치를 가지는지 알아보자.
   */
 </script>
 <script>
-  // callback 패턴
+  // 1. callback 패턴
   function add10(a, callback) {
-    setTimeout(() => callback(a + 10), 100)
+    setTimeout(() => callback(a + 10), 100) // 의도적 delay
   }
   add10(5, res => {
     log(res)
