@@ -1,0 +1,74 @@
+<script src='./fx.js'></script>
+<script>
+  /*
+    ## go, pipe, reduce에서 비동기 제어
+    - 비동기를 값으로 다루는 Promise의 성질을 활용하여 동기상황, 비동상황 모두 잘 대응하는 go1이라는 함수를 만들었었다.
+    - 기존의 go, pipe, reduce 함수들은 결국 어떤 함수를 연속적으로 실행하는 함수합성에 대한 함수인데
+    - 이 함수들에서 비동기를 값으로 다루는 Promise를 활용하여 비동기 상황에서도 대응가능하거나 Kleisli를 활용하여 에러상황에 대응가능한 함수로 만들어보자 
+  */
+</script>
+
+<script>
+  // go(1,
+  //   a => a + 10,
+  //   a => a + 100,
+  //   a => a + 1000,
+  //   log,
+  // ) 이런 동기적인 함수만 합성되는 것이 아닌 중간에 비동기적인 함수가 합성된 상황을 생각해보자
+
+  go(1,
+    a => a + 10,
+    a => Promise.resolve(a + 100),
+    a => a + 1000,
+    a => a + 10000,
+    log,
+  )
+  // [object Promise] 100010000 와 같은 비정상적인 값이나온다..
+  // go1을 만들 떄 사용하던 기법을 쓰면된다. 
+  // 우선 go는 reduce를 사용해 만들어졌고, 그 안에서는 즉시 함수를 실행하는 일 외에는 다른 일이 없기때문에 go 함수의 제어권은 reduce에게 있다. 즉, reduce를 수정하면된다 (pipe도 마찬가지)
+  
+  const tmpReduce = curry((f, acc, iter) => {
+    if (!iter) {
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    } else {
+      iter = iter[Symbol.iterator]();
+    }
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      acc = f(acc, a);
+      // acc = f(acc, a) 대신 acc = acc instanceof Promise ? acc.then(acc => f(acc, a)) : f(acc, a) 으로 써도 동작하긴하지만,
+      // 이코드는 좋은 방법이 아니다, 왜냐하면 Promise.resolve(a + 100) 이후의 코드 모두 Promise 체인에 합성하기떄문에 연속해서 비동기가 일어난다.
+      // 그런데 a+1000, a+10000는 동기적으로, 하나의 콜스택에서 실행되길 바래도 올바르게 처리를 할 수 없다.
+      // 결국 중간에 Promise를 만나도 Promise가 아닐 떄는 동기적으로 넘어가도록 구성하는 것이 좋다. (재귀를 이용하면 좋다)
+      // 그것이 지금 fx.js에 있는 reduce함수이고, go1을 적용시킨 이유는 첫번째 값으로 Promise가 들어왔을 때
+      // 해당 Promise를 풀어서 다음 함수로 넘기기위함이다
+    }
+    return acc;
+  });
+</script>
+
+<script>
+  // 현재 fx.js의 reduce처럼 작성되면
+  go(1,
+    a => a + 10,
+    a => Promise.resolve(a + 100),
+    a => Promise.reject('error!!!!!'),
+    a => console.log(`----${a}`),
+    a => a + 1000,
+    a => a + 10000,
+    log,
+  )
+  // 이렇게 중간에 reject가 발생하면 그 아랫줄들은 실행되지않고 reject된 시점에 함수 실행이 멈추게된다.
+  go(1,
+    a => a + 10,
+    a => Promise.resolve(a + 100),
+    a => Promise.reject('error!!!!!'),
+    a => console.log(`----${a}`),
+    a => a + 1000,
+    a => a + 10000,
+    log,
+  ).catch(a => console.log(a))
+  // 그렇기 떄문에 이렇게 catch로 받아서 에러상황을 캐치할 수 있다.
+</script>
