@@ -1,0 +1,23 @@
+<script src='./fx.js'></script>
+<script>
+  /*
+    ## promise.then의 중요한 규칙
+    - then 메서드를 통해 결과를 꺼냈을 때의 값이 반드시 promise가 아니라는 규칙이 있다.
+  */
+</script>
+<script>
+  // 아래와 같이 Promise가 중첩되어있어도 단 한번의 then으로 값을 꺼낼 수 있다.
+  // 이점은 Promise chain이 여러개 걸려있어도 내가 원하는 곳에서 한번의 then으로 값을 받을 수 있다는 이야기
+  Promise.resolve(Promise.resolve(Promise.resolve(1))).then(log)
+
+  // 아래와 같은 경우도 마찬가지.
+  // 얼만큼 중첩되어있든 한번의 then으로 꺼낼 수 있고
+  new Promise(resolve => resolve(new Promise(resolve => resolve(1)))).then(log)
+
+  // 또한,
+  Promise.resolve(Promise.resolve(1)).then(function(a) {
+    log(a)
+    // 이럴 때 왠지 느낌상 이쪽으로 넘겨지는 a가 Promise.resolve(1)일 것 같지만
+    // 가장 깊이있는 1이 떨어지게 된다
+  })
+</script>
