@@ -1,0 +1,92 @@
+<script src='./fx.js'></script>
+
+## reduce에서 nop 지원
+
+<script>
+  go([1, 2, 3, 4, 5],
+    L.map(a => Promise.resolve(a * a)),
+    L.filter(a => Promise.resolve(a % 2)),
+    reduce(add)/*,
+    log*/);
+</script>
+
+<script>
+  // ### reduce 수정하기
+  const prevReduce = curry((f, acc, iter) => {
+    if (!iter) {
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    } else {
+      iter = iter[Symbol.iterator]();
+    }
+    return go1(acc, function recur(acc) { // 1로 시작한 Promise는 go1에 의해 Promise가 풀어지지만. 2, 3...등에 Promise가 적용된 것들은 Promise가 풀리지 않은 상태로 f에 전달되어 문제가 생긴다.
+      let cur;
+      while (!(cur = iter.next()).done) {
+        const a = cur.value; // 이부분에서 nop catch와 a Promise 풀어주는 것이 필요
+        acc = f(acc, a); // 이부분 까지
+        if (acc instanceof Promise) return acc.then(recur);
+      }
+      return acc;
+    });
+  });
+
+  const reduceF_ = (acc, a, f) =>
+    // acc는 recur를 통해 Promise가 풀린 값만 오기때문에 a만 신경쓰면된다.
+    a instanceof Promise ?
+      a.then(a => f(caa, c), e => e === nop ? acc : Promise.reject(e)) : // then 이후에 catch 해도 되지만, then의 두번째 인자로 reject 전달 가능
+      f(acc, a)
+
+  // ### reduceF 적용, catch 적용
+  const reduce1 = curry((f, acc, iter) => {
+    if (!iter) {
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    } else {
+      iter = iter[Symbol.iterator]();
+    }
+    return go1(acc, function recur(acc) {
+      let cur;
+      while (!(cur = iter.next()).done) {
+        acc = reduceF_(acc, cur,value, f);
+        if (acc instanceof Promise) return acc.then(recur);
+      }
+      return acc;
+    });
+  });
+
+  // iter에서 head를 뽑고, 나머지 iter로 ruduce를 적용하는 코드였으니 헤드를 뽑는 함수를 만들어보자
+  const head1 =  iter => go1(take(1, iter), ([h]) => h)
+
+  // ### reduce2, 문장이 아닌 표현식으로 정리
+  // iter.next() 부분에서도 비동기가 일어날 떄를 대비하여 코드 작성
+  // 코드를 문장이 아닌 표현식으로 작성하려는건 다형성을 지원하고 안전하게 에러를 흘려보내기 위함.
+  const reduce1 = curry((f, acc, iter) => {
+    if (!iter) return reduce1(f, head1(iter = acc[Symbol.iterator]()), iter)
+
+    iter = iter[Symbol.iterator]();
+    return go1(acc, function recur(acc) {
+      let cur;
+      while (!(cur = iter.next()).done) {
+        acc = reduceF_(acc, cur,value, f);
+        if (acc instanceof Promise) return acc.then(recur);
+      }
+      return acc;
+    });
+  });
+
+</script>
+
+<script>
+  go([1, 2, 3, 4, 5, 6, 7, 8],
+    L.map(a => {
+      log(a);
+      return new Promise(resolve => setTimeout(() => resolve(a * a), 1000))
+    }),
+    L.filter(a => {
+      log(a);
+      return new Promise(resolve => setTimeout(() => resolve(a % 2), 1000))
+    }),
+    take(2),
+    reduce(add),
+    log);
+</script>
