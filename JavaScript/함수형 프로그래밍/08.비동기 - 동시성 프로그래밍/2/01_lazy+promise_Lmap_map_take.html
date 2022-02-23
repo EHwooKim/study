@@ -142,3 +142,25 @@
     map(a => Promise.resolve(a + 10)),
     log);
 </script>
+
+<script>
+  // nop 상황을 위한 take 수정
+  const resultTake = curry((l, iter) => {
+    let res = [];
+    iter = iter[Symbol.iterator](); 
+    return function recur() {
+      let cur;
+      while (!(cur = iter.next()).done) {
+        const a = cur.value;
+        if (a instanceof Promise) {
+          return a
+            .then(a => (res.push(a), res).length == l ? res : recur())
+            .catch(e => e === nop ? recur() : Promise.reject(e)) // nop 이면 에러를 무시하고 다음 재귀, nop이 아니면 실제 에러이니 다시한번 reject
+        }
+        res.push(a);
+        if (res.length == l) return res;
+      }
+      return res;
+    }();
+  });
+</script>

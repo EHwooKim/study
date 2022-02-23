@@ -1,0 +1,62 @@
+<script src='./fx.js'></script>
+<script>
+  /*
+    - filter에서 지연평가와 비동기를 함께 지원하려면 Kleisli Composition을 활용해야한다.
+  */
+</script>
+## Kleisli Composition - L.filter, filter, nop, take
+
+<script>
+  go([1, 2, 3, 4, 5, 6],
+    L.map(a => Promise.resolve(a * a)), // 이렇게 내려오는 값이 Promise가 되어 오거나
+    L.filter(a => a % 2), // filter가 내뱉는 값이 Promise가 될 때 어떻게 해야 지연평가 + 비동기 동시성 모두 지원하는 map, filter, reduce가 될까
+    take(2),
+    log) // [] filter에 내려온 값이 Promise이기 때문에 필터링이 제대로 안된다.
+</script>
+
+<script>
+  // ## Filter 수정하기
+
+  // 기존 L.filter
+  L.filter = curry(function *(f, iter) {
+    for (const a of iter) {
+      if (f(a)) yield a
+    }
+  })
+
+  // a가 Promise로 오기때문에 f에 전달 전에 Promise를 해결한 채로 f에 전달하면되겠지
+  L.filter = curry(function *(f, iter) {
+    for (const a of iter) {
+      const b = go1(a, f)
+      if (b instanceof Promise) yield b.then(b => b ? a : Promise.reject(Symbol('nop')))
+      // Promise reject? b가 참일 때는 a를 다음단계로 보내주면 되지만, 거짓일 떄는 필터링하여 다음단계로 보내면안된다. 즉, 아무것도 실행되서는 안된다.
+      // 이때 필요한 것이 Kleisli Composition이고 Promise.reject().
+      // 그런데 그냥 reject만 해버리면 이게 아무것도 안하길 바라는건지, 에러를 발생시킨건지 알 수 없기때문에 에러를 발생시키며 실행이 중단되어버린다.
+      // Kleisli를 활용하여 그 이후의 함수 합성을 취소한 것과 다름없게 하겠다. 라는 구분자가 필요하다.
+      // 그래서 구분자 nop이 필요 Symbol('nop')
+      // 해당 구분자가 넘어오면 아무처리도 안하도록 해주면 된다.
+      // 해당 처리는 take와 같은 다른 이 reject를 받는 곳에서 해주면 된다. (01.~~ 파일 resultTake)
+      // reject가 되면, 그 이후에 아무리 많은 then이 있더라도 모두 무시하고 catch로 가기때문에
+      // take 이전까지는 아무행동도 하지 않는 것처럼 되는 것이다.
+      else if (b) yield a
+    }
+  })
+</script>
+
+<script>
+go([1, 2, 3, 4, 5, 6],
+  L.map(a => Promise.resolve(a * a)),
+  // L.map(a => a * a),
+  filter(a => Promise.resolve(a % 2)),
+  // L.map(a => a * a),
+  /*L.map(a => {
+    log(a);
+    return a * a;
+  }),
+  L.map(a => {
+    log(a);
+    return a * a;
+  }),*/
+  // take(4),
+  /*log*/);
+</script>
