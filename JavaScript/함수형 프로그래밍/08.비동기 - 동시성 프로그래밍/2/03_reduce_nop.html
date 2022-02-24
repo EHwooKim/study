@@ -81,7 +81,7 @@
     L.map(a => {
       log(a);
       return new Promise(resolve => setTimeout(() => resolve(a * a), 1000))
-    }),
+    }), // 지연평가 + Promise를 적용하면 이처럼 비용이 많이 드는 비동기 상황에서도 필요한 만큼만 실행되기 때문에 효율적으로 동작한다.
     L.filter(a => {
       log(a);
       return new Promise(resolve => setTimeout(() => resolve(a % 2), 1000))
