@@ -1,0 +1,84 @@
+<script src="./fx.js"></script>
+<script src="./fx2.js"></script>
+<script>
+  const delay500 = (a, name) => new Promise(res => {
+    console.log(`${name}: ${a}`)
+    setTimeout(() => res(a), 500)
+  })
+</script>
+
+즉시, 지연, Promise,병렬적 조합하기
+
+<script>
+  /*
+    병렬적으로 평가할지, 지연적으로 평가할지, 부하를 주더라도 빠르게 가져올지, 평가를 최소할지, 모두 엄격하게 평가할지 등을
+    모두 자유롭게 조합이 가능하니 상황에 맞게 전략을 잘 짜보자
+  */
+</script>
+
+<script>
+  /*
+    합수 조합 전략을 만들어보자.
+  */
+</script>
+
+<script>
+  // 가장 엄격하게, 매번 모두 돌면서 처리
+  // console.time('')
+  // go([1, 2, 3, 4, 5, 6, 7, 8],
+  //   map(a => delay500(a * a, 'map 1')),
+  //   filter(a => delay500(a % 2, 'filter 1')),
+  //   map(a => delay500(a + 1, 'map 3')),
+  //   take(2),
+  //   log,
+  //   _ => console.timeEnd(''))
+</script>
+위 아래의 차이를 이제 알겠지
+<script>
+  // 모두 지연 후 take에서 평가
+  // console.time('')
+  // go([1, 2, 3, 4, 5, 6, 7, 8],
+  //   L.map(a => delay500(a * a, 'map 1')),
+  //   L.filter(a => delay500(a % 2, 'filter 1')),
+  //   L.map(a => delay500(a + 1, 'map 3')),
+  //   take(2),
+  //   log,
+  //   _ => console.timeEnd(''))
+</script>
+
+<script>
+  // C.map으로 처음에는 병렬 평가
+  // console.time('')
+  // go([1, 2, 3, 4, 5, 6, 7, 8],
+  //   C.map(a => delay500(a * a, 'map 1')),
+  //   L.filter(a => delay500(a % 2, 'filter 1')),
+  //   L.map(a => delay500(a + 1, 'map 3')),
+  //   take(2),
+  //   log,
+  //   _ => console.timeEnd(''))
+</script>
+
+<script>
+  // L.map에서 뒤로 마루고 C.filter에서 병렬적 실행
+  // console.time('')
+  // go([1, 2, 3, 4, 5, 6, 7, 8],
+  //   L.map(a => delay500(a * a, 'map 1')),
+  //   C.filter(a => delay500(a % 2, 'filter 1')),
+  //   L.map(a => delay500(a + 1, 'map 3')),
+  //   take(2),
+  //   log,
+  //   _ => console.timeEnd(''))
+</script>
+
+<script>
+  // 평가를 모두 미루고 take에서 병렬적으로 처리
+  console.time('')
+  go([1, 2, 3, 4, 5, 6, 7, 8],
+    L.map(a => delay500(a * a, 'map 1')),
+    L.filter(a => delay500(a % 2, 'filter 1')),
+    L.map(a => delay500(a + 1, 'map 3')),
+    C.take(2),
+    log,
+    _ => console.timeEnd(''))
+</script>
+
