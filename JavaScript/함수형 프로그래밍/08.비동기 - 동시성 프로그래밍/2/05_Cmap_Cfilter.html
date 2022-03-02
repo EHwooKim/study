@@ -1,0 +1,34 @@
+<script src="./fx.js"></script>
+<script src="./fx2.js"></script>
+
+<script>
+  /*
+    - 지금까지는 함수를 여러개 등록해두고 마지막 평가단계에서 병렬적으로 실행하거나 동기적으로 실행하는 방식을 사용
+    - 이번에는 특정 라인에서만 병렬적으로 실행하고 그 이후는 동기적으로 실해허는등의 작업을 하는 Cmap, Cfilter 를 배워본다.
+ */
+</script>
+
+## 즉시 병렬적으로 실행하기 - C.map, C.filter
+
+<script>
+  /*
+    map = L.map + takeAll
+    filter = L.filter + takeAll 
+
+    C.takeAll, C.map, C.filter 모두 C.takeAll로 간단히 생성 가능
+  */
+
+  C.takeAll = C.take(Infinity)
+
+  C.map = curry(pipe(L.map,  C.takeAll))
+
+  C.filter = curry(pipe(L.filter,  C.takeAll))
+</script>
+
+<script>
+  C.map(a => delay1000(a * a), [1, 2, 3, 4]).then(log)
+  // map(a => delay1000(a * a), [1, 2, 3, 4]).then(log) 과 비교해보자
+
+  C.filter(a => delay1000(a % 2), [1, 2, 3, 4]).then(log)
+  // filter(a => delay1000(a % 2), [1, 2, 3, 4]).then(log) 과 비교해보자
+</script>
