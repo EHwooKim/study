@@ -1,0 +1,23 @@
+<script src="./fx.js"></script>
+<script src="./fx2.js"></script>
+
+<script>
+  // 지금의 C.reduce도 좋지만 함수를 연속적으로 실행하는 방식으로 표현하는 것이 더 깔끔하고 좋다
+  const prevCatchNoop_ = arr => 
+  (arr.forEach(a => a instanceof Promise ? a.catch(noop_) : a), arr)
+
+  C.prevReduce = curry((f, acc, iter) => {
+  const iter2 = catchNoop_(iter ? [...iter] : [...acc])
+  return iter ?
+    reduce(f, acc, iter2) :
+    reduce(f, iter2)
+  })
+
+  const catchNoop_ = ([...arr]) => 
+  (arr.forEach(a => a instanceof Promise ? a.catch(noop_) : a), arr)
+
+  C.reduce = curry((f, acc, iter) => iter ?
+    reduce(f, acc, catchNoop_(iter)) :
+    reduce(f, catchNoop_(acc)))
+  
+</script>
